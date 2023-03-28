@@ -1,9 +1,14 @@
 package com.gftraining.microserviceProduct.controllers;
 
-
 import com.gftraining.microserviceProduct.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import com.gftraining.microserviceProduct.model.ProductEntity;
+import com.gftraining.microserviceProduct.services.ProductService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/products")
@@ -22,4 +27,10 @@ private ProductService productService;
 
 }
 
+    @GetMapping("/{id}")
+    public ProductEntity getProductById(@PathVariable Long id){
+
+        return productService.getProductById(id);
+    }
 }
+
