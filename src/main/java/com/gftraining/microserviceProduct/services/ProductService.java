@@ -11,10 +11,12 @@ public class ProductService {
     public ProductService(ProductRepository productRepository) {
     super();
         this.productRepository = productRepository;}
-    public void deleteProductById(Long id){
+    public void deleteProductById(Long id) {
 
         productRepository.deleteById(id);
-
-
     }
+    public ProductEntity getProductById(Long id) {
+        return productRepository.findById(id).orElse(null);
+    }
+
 }
