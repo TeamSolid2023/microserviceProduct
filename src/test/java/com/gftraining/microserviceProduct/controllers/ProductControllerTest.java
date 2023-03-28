@@ -36,5 +36,17 @@ class ProductControllerTest {
         verify(productService,times(1)).deleteProductById(anyLong());
     }
 
+    @Test
+    void getProductById_Test() throws Exception {
 
+        ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
+                new CategoryEntity(1L,"Juguetes",20),"pelota futbol",19.99,24);
+
+        when(productService.getProductById(anyLong())).thenReturn(productEntity);
+
+        mockmvc.perform(get("/products/{id}",1398L))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().json("{\"id\":1398,\"name\":\"Pelota\",\"category\":{\"id\":1,\"name\":\"Juguetes\",\"discount\":20}" +
+                        ",\"description\":\"pelota futbol\",\"price\":19.99,\"stock\":24}"));
+    }
 }

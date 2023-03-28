@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -28,6 +29,17 @@ class ProductServiceTest {
        service.deleteProductById(1L);
 
        verify(repository,times(1)).deleteById(anyLong());
+
+    }
+
+    @Test
+    void getProductById() {
+        ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
+                new CategoryEntity(1L,"Juguetes",20),"pelota futbol",19.99,24);
+
+        when(repository.findById(anyLong())).thenReturn(Optional.of(productEntity));
+        assertThat(service.getProductById(1398L)).isEqualToComparingFieldByFieldRecursively(productEntity);
+
 
     }
 }
