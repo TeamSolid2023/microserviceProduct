@@ -27,10 +27,6 @@ private ProductService productService;
 
 }
 
-    @GetMapping("/{id}")
-    public ProductEntity getProductById(@PathVariable Long id){
 
-        return productService.getProductById(id);
-    }
 }
 
