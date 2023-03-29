@@ -1,6 +1,8 @@
 package com.gftraining.microserviceProduct.controllers;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,8 +27,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProductController.class)
@@ -42,36 +46,45 @@ class ProductControllerTest {
             , new ProductEntity(2L, "Espaguetis", new CategoryEntity(4L, "Comida", 25), "pasta italiana elaborada con harina de grano duro y agua", 2.00, 220)
     );
 
+    ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
+            new CategoryEntity(1L,"Juguetes",20),"pelota futbol",19.99,24);
+
     @Test
     void testGetAll() throws Exception {
         Mockito.when(productService.allProducts())
                 .thenReturn(productList);
 
         mockmvc.perform(MockMvcRequestBuilders.get("/products/getAll"))
-                .andExpect(content().json(new ObjectMapper().writeValueAsString(productList)))
-                .andReturn();
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().json(new ObjectMapper().writeValueAsString(productList)));
     }
 
     @Test
     void deleteProductById() throws Exception {
-
-        mockmvc.perform(MockMvcRequestBuilders.delete("/products/deleteById/{id}",1l))
+        mockmvc.perform(MockMvcRequestBuilders.delete("/products/{id}",1l))
                                                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         verify(productService,times(1)).deleteProductById(anyLong());
     }
 
     @Test
-    void getProductById_Test() throws Exception {
-
-        ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
-                new CategoryEntity(1L,"Juguetes",20),"pelota futbol",19.99,24);
-
+    void getProductById() throws Exception {
         when(productService.getProductById(anyLong())).thenReturn(productEntity);
 
         mockmvc.perform(get("/products/{id}",1398L))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().json("{\"id\":1398,\"name\":\"Pelota\",\"category\":{\"id\":1,\"name\":\"Juguetes\",\"discount\":20}" +
                         ",\"description\":\"pelota futbol\",\"price\":19.99,\"stock\":24}"));
+    }
+
+    @Test
+    void putProductById() throws Exception {
+        when(productService.getProductById(anyLong())).thenReturn(productEntity);
+
+        mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(productEntity)))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        assertEquals(productService.getProductById(1L), productEntity);
     }
 }

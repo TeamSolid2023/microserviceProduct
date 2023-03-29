@@ -1,6 +1,7 @@
 package com.gftraining.microserviceProduct.controllers;
 
 import com.gftraining.microserviceProduct.services.ProductService;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.gftraining.microserviceProduct.model.ProductEntity;
@@ -28,18 +29,21 @@ private ProductService productService;
         return productService.allProducts();
     }
 
-    @DeleteMapping("deleteById/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProductById(@PathVariable Long id){
         productService.deleteProductById(id);
-
-}
+    }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ProductEntity getProductById(@PathVariable Long id){
-
         return productService.getProductById(id);
+    }
+
+    @PutMapping("/{id}")
+    public void putProductById(@PathVariable Long id, @RequestBody ProductEntity newProduct) {
+        productService.putProductById(newProduct, id);
     }
 }
 

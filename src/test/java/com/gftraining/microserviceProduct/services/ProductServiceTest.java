@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -32,6 +31,9 @@ class ProductServiceTest {
             new ProductEntity(2L, "Espaguetis", new CategoryEntity(4L, "Comida", 25), "pasta italiana elaborada con harina de grano duro y agua", 2.00, 220)
     );
 
+    ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
+            new CategoryEntity(1L,"Juguetes",20),"pelota futbol",19.99,24);
+
     @Test
     void testGetAll() {
         when(repository.findAll()).thenReturn(productList);
@@ -41,18 +43,20 @@ class ProductServiceTest {
     @Test
     void deleteProductById() {
        service.deleteProductById(1L);
-       verify(repository,times(1)).deleteById(anyLong());
 
+       verify(repository,times(1)).deleteById(anyLong());
     }
 
     @Test
     void getProductById() {
-        ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
-                new CategoryEntity(1L,"Juguetes",20),"pelota futbol",19.99,24);
-
         when(repository.findById(anyLong())).thenReturn(Optional.of(productEntity));
         assertThat(service.getProductById(1398L)).isEqualToComparingFieldByFieldRecursively(productEntity);
+    }
 
-
+    @Test
+    void putProductById() {
+        service.putProductById(productEntity, 1L);
+        when(repository.findById(anyLong())).thenReturn(Optional.of(productEntity));
+        assertEquals(repository.findById(1L).get(), service.getProductById(1L));
     }
 }
