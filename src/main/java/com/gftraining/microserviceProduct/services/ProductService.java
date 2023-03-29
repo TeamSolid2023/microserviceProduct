@@ -6,14 +6,21 @@ import com.gftraining.microserviceProduct.repositories.ProductRepository;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductService {
     private ProductRepository productRepository;
     public ProductService(ProductRepository productRepository) {
     super();
-        this.productRepository = productRepository;}
-    public void deleteProductById(Long id) {
+        this.productRepository = productRepository;
+    }
 
+    public List<ProductEntity> allProducts() {
+        return productRepository.findAll();
+    }
+
+    public void deleteProductById(Long id) {
         productRepository.deleteById(id);
     }
     public ProductEntity getProductById(Long id) {
