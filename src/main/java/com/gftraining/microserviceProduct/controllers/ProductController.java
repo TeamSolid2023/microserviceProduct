@@ -36,8 +36,8 @@ private ProductService productService;
 
 }
     @PostMapping(value = "/newProduct")
-    public Long addProduct(@RequestBody ProductDTO product){
-        return productService.saveProduct(product);
+    public ResponseEntity<Long> addProduct(@RequestBody ProductDTO product){
+        return new ResponseEntity<>(productService.saveProduct(product), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
