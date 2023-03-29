@@ -1,9 +1,10 @@
 package com.gftraining.microserviceProduct.services;
 
 import com.gftraining.microserviceProduct.model.CategoryEntity;
+import com.gftraining.microserviceProduct.model.ProductDTO;
 import com.gftraining.microserviceProduct.model.ProductEntity;
 import com.gftraining.microserviceProduct.repositories.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -28,6 +29,7 @@ public class ProductService {
         return productRepository.findById(id).orElse(null);
     }
 
+
     public void putProductById(ProductEntity newProduct, Long id) {
         productRepository.findById(id).map(product ->
         {
@@ -39,5 +41,16 @@ public class ProductService {
             product.setStock(newProduct.getStock());
             return productRepository.save(product);
         });
+
+    public @NonNull Long saveProduct(ProductDTO productDTO){
+        ProductEntity product = new ProductEntity();
+
+        product.setName(productDTO.getName());
+        product.setDescription(productDTO.getName());
+        product.setPrice(productDTO.getPrice());
+        product.setStock(productDTO.getStock());
+        product.setCategory(productDTO.getCategory());
+
+        return productRepository.save(product).getId();
     }
 }
