@@ -3,7 +3,7 @@ package com.gftraining.microserviceProduct.services;
 import com.gftraining.microserviceProduct.model.ProductDTO;
 import com.gftraining.microserviceProduct.model.ProductEntity;
 import com.gftraining.microserviceProduct.repositories.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +21,7 @@ public class ProductService {
         return productRepository.findById(id).orElse(null);
     }
 
-    public ProductEntity saveProduct(ProductDTO productDTO){
+    public @NonNull Long saveProduct(ProductDTO productDTO){
         ProductEntity product = new ProductEntity();
 
         product.setName(productDTO.getName());
@@ -30,6 +30,6 @@ public class ProductService {
         product.setStock(productDTO.getStock());
         product.setCategory(productDTO.getCategory());
 
-        return productRepository.save(product);
+        return productRepository.save(product).getId();
     }
 }

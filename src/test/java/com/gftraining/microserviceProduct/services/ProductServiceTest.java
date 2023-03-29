@@ -40,14 +40,12 @@ class ProductServiceTest {
 
     @Test
     void saveProduct() {
-        ProductDTO productdto = new ProductDTO(new ProductEntity(109L,"A", new CategoryEntity(1L, "Libros", 20),"B", 2, 25));
+        ProductEntity product = new ProductEntity(109L,"A", new CategoryEntity(1L, "Libros", 20),"B", 2, 25);
 
-        Mockito.when(service.saveProduct(productdto))
-                .thenReturn(new ProductEntity(125L,"Fuet", new CategoryEntity(1L, "Libros", 20),"B", 2, 25));
+        when(repository.save(product)).thenReturn(product);
+        Long id = repository.save(product).getId();
 
-        ProductEntity productEnt = service.saveProduct(productdto);
-
-        assertEquals(125, productEnt.getId());
+        assertEquals(109, id);
     }
 
     @Test
@@ -57,16 +55,5 @@ class ProductServiceTest {
 
         when(repository.findById(anyLong())).thenReturn(Optional.of(productEntity));
         assertThat(service.getProductById(1398L)).isEqualToComparingFieldByFieldRecursively(productEntity);
-    }
-
-    @Test
-    void getProductById() {
-        ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
-                new CategoryEntity(1L,"Juguetes",20),"pelota futbol",19.99,24);
-
-        when(repository.findById(anyLong())).thenReturn(Optional.of(productEntity));
-        assertThat(service.getProductById(1398L)).isEqualToComparingFieldByFieldRecursively(productEntity);
-
-
     }
 }

@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.gftraining.microserviceProduct.model.ProductEntity;
-import com.gftraining.microserviceProduct.services.ProductService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,8 +28,8 @@ private ProductService productService;
 
 }
     @PostMapping(value = "/newProduct")
-    public ProductDTO addProduct(@RequestBody ProductDTO product){
-        return new ProductDTO(productService.saveProduct(product));
+    public Long addProduct(@RequestBody ProductDTO product){
+        return productService.saveProduct(product);
     }
 
     @GetMapping("/{id}")

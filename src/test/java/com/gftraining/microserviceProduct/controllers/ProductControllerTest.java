@@ -2,6 +2,8 @@ package com.gftraining.microserviceProduct.controllers;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +47,7 @@ class ProductControllerTest {
     void addNewProduct() throws Exception {
         ProductEntity product = new ProductEntity(109L,"A", new CategoryEntity(1L, "Libros", 20),"B", 2, 25);
 
-        Mockito.when(productService.saveProduct(Mockito.any(ProductDTO.class))).thenReturn(product);
+        Mockito.when(productService.saveProduct(Mockito.any(ProductDTO.class))).thenReturn(product.getId());
 
         mockmvc.perform(MockMvcRequestBuilders.post("/products/newProduct")
                         .content(asJsonString(product))
@@ -67,7 +69,7 @@ class ProductControllerTest {
                 .andExpect(content().json("{\"id\":1398,\"name\":\"Pelota\",\"category\":{\"id\":1,\"name\":\"Juguetes\",\"discount\":20}" +
                         ",\"description\":\"pelota futbol\",\"price\":19.99,\"stock\":24}"));
     }
-    
+
 
 
     public static String asJsonString(final Object obj) {
