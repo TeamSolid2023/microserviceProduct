@@ -5,6 +5,7 @@ import com.gftraining.microserviceProduct.model.ProductEntity;
 import com.gftraining.microserviceProduct.repositories.ProductRepository;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.List;
 
@@ -24,10 +25,12 @@ public class ProductService {
         productRepository.deleteById(id);
     }
     public ProductEntity getProductById(Long id) {
-
-        return productRepository.findById(id).orElse(null);
+        return productRepository.findById(id).orElse( null);
     }
 
+    public ProductEntity getProductByName(String name) {
+        return productRepository.findByName(name);
+    }
     public @NonNull Long saveProduct(ProductDTO productDTO){
         ProductEntity product = new ProductEntity();
 

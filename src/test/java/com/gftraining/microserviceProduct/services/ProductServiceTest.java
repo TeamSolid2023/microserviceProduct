@@ -36,6 +36,8 @@ class ProductServiceTest {
             new ProductEntity(1L, "Playmobil", new CategoryEntity(1L, "Juguetes", 20), "juguetes de plástico", 40.00, 100),
             new ProductEntity(2L, "Espaguetis", new CategoryEntity(4L, "Comida", 25), "pasta italiana elaborada con harina de grano duro y agua", 2.00, 220)
     );
+    ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
+            new CategoryEntity(1L,"Juguetes",20),"pelota futbol",19.99,24);
 
     @Test
     void testGetAll() {
@@ -61,10 +63,13 @@ class ProductServiceTest {
 
     @Test
     void getProductById() {
-        ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
-                new CategoryEntity(1L,"Juguetes",20),"pelota futbol",19.99,24);
-
-        when(repository.findById(anyLong())).thenReturn(Optional.of(productEntity));
+        when(repository.findById(1398L)).thenReturn(Optional.of(productEntity));
         assertThat(service.getProductById(1398L)).isEqualToComparingFieldByFieldRecursively(productEntity);
+    }
+
+    @Test
+    void getProductByName() {
+        when(repository.findByName("Pelota")).thenReturn(productEntity);
+        assertThat(service.getProductByName("Pelota")).isEqualToComparingFieldByFieldRecursively(productEntity);
     }
 }

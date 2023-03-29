@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+import org.webjars.NotFoundException;
 
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/products")
@@ -41,10 +43,26 @@ private ProductService productService;
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public ProductEntity getProductById(@PathVariable Long id){
-
-        return productService.getProductById(id);
+        ProductEntity productById = productService.getProductById(id);
+        if (productById == null) throw new NotFoundException("Id Not Found");
+        return productById;
     }
+
+    @GetMapping("/getByName/{name}")
+    public ProductEntity getProductByName(@PathVariable String name) {
+        ProductEntity productByName = productService.getProductByName(name);
+        if (productByName == null) throw new NotFoundException("Id Not Found") ;
+        return productByName;
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleNotFoundException(NotFoundException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(exception.getMessage());
+    }
+
 }
 

@@ -3,35 +3,28 @@ package com.gftraining.microserviceProduct.controllers;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microserviceProduct.model.CategoryEntity;
 import com.gftraining.microserviceProduct.model.ProductDTO;
 import com.gftraining.microserviceProduct.model.ProductEntity;
 import com.gftraining.microserviceProduct.services.ProductService;
-import io.swagger.v3.core.util.Json;
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
-
-import org.mockito.Mock;
-
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.webjars.NotFoundException;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
@@ -45,6 +38,9 @@ class ProductControllerTest {
             new ProductEntity(1L, "Playmobil", new CategoryEntity(1L, "Juguetes", 20), "juguetes de plástico", 40.00, 100)
             , new ProductEntity(2L, "Espaguetis", new CategoryEntity(4L, "Comida", 25), "pasta italiana elaborada con harina de grano duro y agua", 2.00, 220)
     );
+
+    ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
+            new CategoryEntity(1L,"Juguetes",20),"pelota futbol",19.99,24);
 
     @Test
     void testGetAll() throws Exception {
@@ -79,12 +75,9 @@ class ProductControllerTest {
     }
 
     @Test
-    void getProductById_Test() throws Exception {
+    void getProductById() throws Exception {
 
-        ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
-                new CategoryEntity(1L,"Juguetes",20),"pelota futbol",19.99,24);
-
-        when(productService.getProductById(anyLong())).thenReturn(productEntity);
+        when(productService.getProductById(1398L)).thenReturn(productEntity);
 
         mockmvc.perform(get("/products/{id}",1398L))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -92,7 +85,34 @@ class ProductControllerTest {
                         ",\"description\":\"pelota futbol\",\"price\":19.99,\"stock\":24}"));
     }
 
+    @Test
+    void getProductById_ThrowsNotFound() throws Exception {
 
+        when(productService.getProductById(anyLong())).thenReturn(null);
+
+        mockmvc.perform(get("/products/{id}",2L))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    void getProductByName() throws Exception {
+
+        when(productService.getProductByName("Pelota")).thenReturn(productEntity);
+
+        mockmvc.perform(get("/products/getByName/{name}","Pelota"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().json("{\"id\":1398,\"name\":\"Pelota\",\"category\":{\"id\":1,\"name\":\"Juguetes\",\"discount\":20}" +
+                        ",\"description\":\"pelota futbol\",\"price\":19.99,\"stock\":24}"));
+    }
+
+    @Test
+    void getProductByName_ThrowsNotFound() throws Exception {
+
+        when(productService.getProductByName(anyString())).thenReturn(null);
+
+        mockmvc.perform(get("/products/getByName/{name}","Pera"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
 
     public static String asJsonString(final Object obj) {
         try {
