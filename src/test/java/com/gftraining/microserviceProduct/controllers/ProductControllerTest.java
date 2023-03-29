@@ -74,7 +74,7 @@ class ProductControllerTest {
         mockmvc.perform(MockMvcRequestBuilders.post("/products/newProduct")
                         .content(asJsonString(product))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json"));
     }
 
