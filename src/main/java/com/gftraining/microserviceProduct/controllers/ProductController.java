@@ -33,6 +33,11 @@ private ProductService productService;
         return new ProductDTO(productService.saveProduct(product));
     }
 
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductEntity getProductById(@PathVariable Long id){
 
+        return productService.getProductById(id);
+    }
 }
 

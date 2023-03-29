@@ -33,6 +33,4 @@ public class ProductEntity {
     @JsonProperty
     private Integer stock;
 
-
-
 }

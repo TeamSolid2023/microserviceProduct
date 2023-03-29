@@ -58,4 +58,15 @@ class ProductServiceTest {
         when(repository.findById(anyLong())).thenReturn(Optional.of(productEntity));
         assertThat(service.getProductById(1398L)).isEqualToComparingFieldByFieldRecursively(productEntity);
     }
+
+    @Test
+    void getProductById() {
+        ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
+                new CategoryEntity(1L,"Juguetes",20),"pelota futbol",19.99,24);
+
+        when(repository.findById(anyLong())).thenReturn(Optional.of(productEntity));
+        assertThat(service.getProductById(1398L)).isEqualToComparingFieldByFieldRecursively(productEntity);
+
+
+    }
 }
