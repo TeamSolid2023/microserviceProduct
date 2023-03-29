@@ -1,7 +1,9 @@
 package com.gftraining.microserviceProduct.controllers;
 
+import com.gftraining.microserviceProduct.model.ProductDTO;
 import com.gftraining.microserviceProduct.services.ProductService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.gftraining.microserviceProduct.model.ProductEntity;
 import com.gftraining.microserviceProduct.services.ProductService;
@@ -26,6 +28,10 @@ private ProductService productService;
         productService.deleteProductById(id);
 
 }
+    @PostMapping(value = "/newProduct")
+    public ProductDTO addProduct(@RequestBody ProductDTO product){
+        return new ProductDTO(productService.saveProduct(product));
+    }
 
 
 }
