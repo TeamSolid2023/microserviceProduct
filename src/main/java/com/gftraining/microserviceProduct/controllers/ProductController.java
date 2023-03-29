@@ -49,7 +49,7 @@ private ProductService productService;
         return productById;
     }
 
-    @GetMapping("/getByName/{name}")
+    @GetMapping("/name/{name}")
     public ProductEntity getProductByName(@PathVariable String name) {
         ProductEntity productByName = productService.getProductByName(name);
         if (productByName == null) throw new NotFoundException("Id Not Found") ;
