@@ -67,9 +67,7 @@ class ProductControllerTest {
                 .andExpect(content().json("{\"id\":1398,\"name\":\"Pelota\",\"category\":{\"id\":1,\"name\":\"Juguetes\",\"discount\":20}" +
                         ",\"description\":\"pelota futbol\",\"price\":19.99,\"stock\":24}"));
     }
-
-
-
+    
 
 
     public static String asJsonString(final Object obj) {
