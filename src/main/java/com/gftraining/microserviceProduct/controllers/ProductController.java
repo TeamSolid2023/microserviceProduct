@@ -27,6 +27,11 @@ private ProductService productService;
 
 }
 
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductEntity getProductById(@PathVariable Long id){
 
+        return productService.getProductById(id);
+    }
 }
 
