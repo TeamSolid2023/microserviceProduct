@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,18 +26,26 @@ public class ProductService {
     }
 
     public List<ProductEntity> allProducts() {
-        return productRepository.findAll();
+        List<ProductEntity> products = productRepository.findAll();
+        for (ProductEntity product : products) {
+            product.setFinalPrice(calculateFinalPrice(product.getPrice(),product.getCategory().getDiscount()));
+        }
+        return products;
     }
 
     public void deleteProductById(Long id) {
         productRepository.deleteById(id);
     }
     public ProductEntity getProductById(Long id) {
-        return productRepository.findById(id).orElse( null);
+        ProductEntity product = productRepository.findById(id).orElse(null);
+        product.setFinalPrice(calculateFinalPrice(product.getPrice(),product.getCategory().getDiscount()));
+        return product;
     }
 
     public ProductEntity getProductByName(String name) {
-        return productRepository.findByName(name);
+        ProductEntity product = productRepository.findByName(name);
+        product.setFinalPrice(calculateFinalPrice(product.getPrice(),product.getCategory().getDiscount()));
+        return product;
     }
     public @NonNull Long saveProduct(ProductDTO productDTO){
         ProductEntity product = new ProductEntity();
@@ -65,5 +77,10 @@ public class ProductService {
             product.setStock(newProduct.getStock());
             return productRepository.save(product);
         });
+    }
+
+    public BigDecimal calculateFinalPrice(BigDecimal price, int discount){
+        return price.subtract(price.multiply(BigDecimal.valueOf(discount)).divide(new BigDecimal("100")))
+                .round(new MathContext(4, RoundingMode.HALF_UP));
     }
 }

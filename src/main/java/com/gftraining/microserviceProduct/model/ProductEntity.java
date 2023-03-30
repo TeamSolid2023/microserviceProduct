@@ -33,6 +33,7 @@ public class ProductEntity {
     @NonNull
     @JsonProperty
     private Integer stock;
-
-
+    @Transient
+    @JsonProperty
+    private BigDecimal finalPrice;
 }
