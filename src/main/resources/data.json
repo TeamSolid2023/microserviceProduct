@@ -1,18 +1,1003 @@
 [
   {
-    "id": 1,
-    "name": "camiseta",
-    "category": "ropa",
-    "description" : "hecha de seda",
-    "price": 20.05,
-    "stock": 90
-  },
-  {
-    "id": 2,
-    "name": "pantalones",
-    "category":"ropa",
-    "description" : "negros",
-    "price": 15.95,
+    "name": "Anthiathia",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Accidental poisoning by aromatic analgesics, not elsewhere classified",
+    "price": 93.35,
+    "stock": 1
+  }, {
+    "name": "Elias",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Club hand, acquired",
+    "price": 39.45,
+    "stock": 2
+  }, {
+    "name": "Fredric",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Diaper or napkin rash",
+    "price": 91.27,
+    "stock": 3
+  }, {
+    "name": "Clo",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Biliary atresia",
+    "price": 26.43,
+    "stock": 4
+  }, {
+    "name": "Fifi",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Wound botulism",
+    "price": 25.56,
+    "stock": 5
+  }, {
+    "name": "Kermie",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Acute gastrojejunal ulcer with hemorrhage and perforation, with obstruction",
+    "price": 99.81,
+    "stock": 6
+  }, {
+    "name": "Redford",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Hereditary disease in family possibly affecting fetus, affecting management of mother, antepartum condition or complication",
+    "price": 83.43,
+    "stock": 7
+  }, {
+    "name": "Tallou",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Personal history of malaria",
+    "price": 21.09,
+    "stock": 8
+  }, {
+    "name": "Isis",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Other phlebitis and thrombosis complicating pregnancy and the puerperium, delivered, with mention of postpartum complication",
+    "price": 75.59,
+    "stock": 9
+  }, {
+    "name": "Lucais",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Semicircular canal fistula",
+    "price": 71.37,
+    "stock": 10
+  }, {
+    "name": "Clarey",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "One eye: moderate vision impairment; other eye: normal vision",
+    "price": 82.94,
+    "stock": 11
+  }, {
+    "name": "Madlin",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Other specified hypoglycemia",
+    "price": 16.69,
+    "stock": 12
+  }, {
+    "name": "Germaine",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Endometriosis of intestine",
+    "price": 62.87,
+    "stock": 13
+  }, {
+    "name": "Chuck",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Primary pulmonary hypertension",
+    "price": 56.41,
+    "stock": 14
+  }, {
+    "name": "Storm",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Closed fracture of pubis",
+    "price": 77.0,
+    "stock": 15
+  }, {
+    "name": "Ellerey",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Legally induced abortion, without mention of complication, incomplete",
+    "price": 89.97,
+    "stock": 16
+  }, {
+    "name": "Veronique",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Dysmenorrhea",
+    "price": 86.27,
+    "stock": 17
+  }, {
+    "name": "Conway",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Human immunodeficiency virus (HIV) counseling",
+    "price": 47.22,
+    "stock": 18
+  }, {
+    "name": "Wells",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Injury to median nerve",
+    "price": 55.4,
+    "stock": 19
+  }, {
+    "name": "Maura",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Acute hepatitis C without mention of hepatic coma",
+    "price": 91.48,
+    "stock": 20
+  }, {
+    "name": "Hermy",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Miliary tuberculosis, unspecified, tubercle bacilli not found by bacteriological or histological examination, but tuberculosis confirmed by other methods [inoculation of animals]",
+    "price": 42.53,
+    "stock": 21
+  }, {
+    "name": "Ardene",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Syphilitic myocarditis",
+    "price": 98.26,
+    "stock": 22
+  }, {
+    "name": "Dulcinea",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Relapsing fever, tick-borne",
+    "price": 28.92,
+    "stock": 23
+  }, {
+    "name": "Byran",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Effusion of joint, forearm",
+    "price": 28.34,
+    "stock": 24
+  }, {
+    "name": "Candida",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Paratyphoid fever A",
+    "price": 57.68,
+    "stock": 25
+  }, {
+    "name": "Roseann",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Unspecified polyarthropathy or polyarthritis, pelvic region and thigh",
+    "price": 79.53,
+    "stock": 26
+  }, {
+    "name": "Benny",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Hypertensive heart and chronic kidney disease, malignant, without heart failure and with chronic kidney disease stage V or end stage renal disease",
+    "price": 41.14,
+    "stock": 27
+  }, {
+    "name": "Durant",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Benign neoplasm of lacrimal duct",
+    "price": 93.33,
+    "stock": 28
+  }, {
+    "name": "Nathalie",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Crushing injury of finger(s)",
+    "price": 31.48,
+    "stock": 29
+  }, {
+    "name": "Karine",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Spina bifida with hydrocephalus, dorsal (thoracic) region",
+    "price": 21.59,
+    "stock": 30
+  }, {
+    "name": "Kally",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Generally contracted pelvis, unspecified as to episode of care or not applicable",
+    "price": 93.17,
+    "stock": 31
+  }, {
+    "name": "Bernie",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Other open skull fracture with intracranial injury of other and unspecified nature, with concussion, unspecified",
+    "price": 48.08,
+    "stock": 32
+  }, {
+    "name": "Dorey",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Venomous snakes and lizards causing poisoning and toxic reactions",
+    "price": 54.54,
+    "stock": 33
+  }, {
+    "name": "Angele",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Other dystrophy of vulva",
+    "price": 44.06,
+    "stock": 34
+  }, {
+    "name": "Annemarie",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Sensorineural hearing loss, unilateral",
+    "price": 65.44,
+    "stock": 35
+  }, {
+    "name": "Regan",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Lesion of ulnar nerve",
+    "price": 21.08,
+    "stock": 36
+  }, {
+    "name": "Natalina",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Other, multiple and ill-defined fractures of lower limb, closed",
+    "price": 8.72,
+    "stock": 37
+  }, {
+    "name": "Lynne",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Other major puerperal infection, unspecified as to episode of care or not applicable",
+    "price": 64.72,
+    "stock": 38
+  }, {
+    "name": "Lockwood",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Open wound of multiple sites of nose, complicated",
+    "price": 51.32,
+    "stock": 39
+  }, {
+    "name": "Roarke",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Accidental poisoning from other specified foods",
+    "price": 32.03,
     "stock": 40
+  }, {
+    "name": "Asa",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Blood vessel replaced by other means",
+    "price": 13.26,
+    "stock": 41
+  }, {
+    "name": "Britt",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Central giant cell (reparative) granuloma",
+    "price": 39.98,
+    "stock": 42
+  }, {
+    "name": "Darin",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Other accidental submersion or drowning in water transport accident, occupant of military watercraft, any type",
+    "price": 14.81,
+    "stock": 43
+  }, {
+    "name": "Kilian",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Railway accident involving collision with rolling stock and injuring pedal cyclist",
+    "price": 46.86,
+    "stock": 44
+  }, {
+    "name": "Dalton",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Unspecified abortion, complicated by embolism, complete",
+    "price": 13.82,
+    "stock": 45
+  }, {
+    "name": "Charmion",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Acute venous embolism and thrombosis of other specified veins",
+    "price": 53.99,
+    "stock": 46
+  }, {
+    "name": "Lorri",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Other specified hemiplegia and hemiparesis affecting unspecified side",
+    "price": 32.77,
+    "stock": 47
+  }, {
+    "name": "Nicolais",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Open wound of upper arm, with tendon involvement",
+    "price": 67.03,
+    "stock": 48
+  }, {
+    "name": "Maxine",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Acute bronchospasm",
+    "price": 76.0,
+    "stock": 49
+  }, {
+    "name": "Carly",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Ankylosis of joint, lower leg",
+    "price": 38.08,
+    "stock": 50
+  }, {
+    "name": "John",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Other specified pulmonary tuberculosis, tubercle bacilli not found by bacteriological examination, but tuberculosis confirmed histologically",
+    "price": 18.12,
+    "stock": 51
+  }, {
+    "name": "Chevalier",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Deep necrosis of underlying tissues [deep third degree] with loss of a body part, of eye (with other parts of face, head, and neck)",
+    "price": 58.21,
+    "stock": 52
+  }, {
+    "name": "Rog",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Fecal urgency",
+    "price": 27.86,
+    "stock": 53
+  }, {
+    "name": "Lamond",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Personal history of malignant neoplasm of prostate",
+    "price": 98.55,
+    "stock": 54
+  }, {
+    "name": "Atlanta",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Open fracture of base of skull with other and unspecified intracranial hemorrhage, with prolonged [more than 24 hours] loss of consciousness, without return to pre-existing conscious level",
+    "price": 27.81,
+    "stock": 55
+  }, {
+    "name": "Poul",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Abdominal rigidity, right upper quadrant",
+    "price": 59.03,
+    "stock": 56
+  }, {
+    "name": "Ulrick",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Allergic bronchopulmonary aspergillosis",
+    "price": 16.02,
+    "stock": 57
+  }, {
+    "name": "Virge",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Other conditions due to sex chromosome anomalies",
+    "price": 58.44,
+    "stock": 58
+  }, {
+    "name": "Laurene",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Open fracture of vault of skull without mention of intracranial injury, with concussion, unspecified",
+    "price": 89.51,
+    "stock": 59
+  }, {
+    "name": "Kandy",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Urinary tract infection, site not specified",
+    "price": 91.06,
+    "stock": 60
+  }, {
+    "name": "Edgard",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Amphetamine and other psychostimulant dependence, in remission",
+    "price": 6.97,
+    "stock": 61
+  }, {
+    "name": "Arv",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Burn [any degree] involving 70-79 percent of body surface with third degree burn, 30-39%",
+    "price": 51.41,
+    "stock": 62
+  }, {
+    "name": "Alika",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Activities involving grilling and smoking food",
+    "price": 64.07,
+    "stock": 63
+  }, {
+    "name": "Nataniel",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Disorders of mitochondrial metabolism",
+    "price": 13.93,
+    "stock": 64
+  }, {
+    "name": "Margalo",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Tuberculous peritonitis, bacteriological or histological examination unknown (at present)",
+    "price": 7.75,
+    "stock": 65
+  }, {
+    "name": "Dieter",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Malignant neoplasm of posterior wall of nasopharynx",
+    "price": 10.45,
+    "stock": 66
+  }, {
+    "name": "Nelie",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Dengue",
+    "price": 19.36,
+    "stock": 67
+  }, {
+    "name": "Lalo",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Open fracture of vault of skull with cerebral laceration and contusion, with brief [less than one hour] loss of consciousness",
+    "price": 78.26,
+    "stock": 68
+  }, {
+    "name": "Anni",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Alcohol withdrawal delirium",
+    "price": 32.91,
+    "stock": 69
+  }, {
+    "name": "Kyla",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Iatrogenic pulmonary embolism and infarction",
+    "price": 61.89,
+    "stock": 70
+  }, {
+    "name": "Darcy",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Adhesive middle ear disease, unspecified as to involvement",
+    "price": 67.57,
+    "stock": 71
+  }, {
+    "name": "Jethro",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Solitary pulmonary nodule",
+    "price": 79.39,
+    "stock": 72
+  }, {
+    "name": "Waldemar",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Closed fracture of T7-T12 level with central cord syndrome",
+    "price": 46.72,
+    "stock": 73
+  }, {
+    "name": "Debra",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Tuberculosis of lung with cavitation, tubercle bacilli found (in sputum) by microscopy",
+    "price": 54.07,
+    "stock": 74
+  }, {
+    "name": "Tonie",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Nonpurulent mastitis associated with childbirth, antepartum condition or complication",
+    "price": 65.02,
+    "stock": 75
+  }, {
+    "name": "Avril",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Slowing of urinary stream",
+    "price": 92.63,
+    "stock": 76
+  }, {
+    "name": "Duffie",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Fecal smearing",
+    "price": 93.31,
+    "stock": 77
+  }, {
+    "name": "Margette",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Other specified congenital anomalies of nervous system",
+    "price": 77.67,
+    "stock": 78
+  }, {
+    "name": "Madelyn",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Intrinsic asthma with status asthmaticus",
+    "price": 91.11,
+    "stock": 79
+  }, {
+    "name": "Jard",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Congenital cystic disease of liver",
+    "price": 68.34,
+    "stock": 80
+  }, {
+    "name": "Kira",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Hirschsprung's disease and other congenital functional disorders of colon",
+    "price": 54.22,
+    "stock": 81
+  }, {
+    "name": "Melisent",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Injury by jumping or lying before moving object, undetermined whether accidentally or purposely inflicted",
+    "price": 29.71,
+    "stock": 82
+  }, {
+    "name": "Petrina",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Open wound of back, complicated",
+    "price": 73.21,
+    "stock": 83
+  }, {
+    "name": "Madel",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Spontaneous abortion, complicated by delayed or excessive hemorrhage, unspecified",
+    "price": 25.82,
+    "stock": 84
+  }, {
+    "name": "Jenny",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Open dislocation, thoracic vertebra",
+    "price": 94.84,
+    "stock": 85
+  }, {
+    "name": "Charmain",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Grand multiparity, delivered, with or without mention of antepartum condition",
+    "price": 75.5,
+    "stock": 86
+  }, {
+    "name": "Bond",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Other dentofacial functional abnormalities",
+    "price": 97.98,
+    "stock": 87
+  }, {
+    "name": "Xaviera",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Taeniasis, unspecified",
+    "price": 27.0,
+    "stock": 88
+  }, {
+    "name": "Betty",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Deep necrosis of underlying tissues [deep third degree] without mention of loss of a body part, of multiple sites of lower limb(s)",
+    "price": 39.95,
+    "stock": 89
+  }, {
+    "name": "Demetra",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Counseling for victim of child abuse",
+    "price": 56.05,
+    "stock": 90
+  }, {
+    "name": "Randy",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Calculus of gallbladder and bile duct without cholecystitis, without mention of obstruction",
+    "price": 95.97,
+    "stock": 91
+  }, {
+    "name": "Tabitha",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Endometriosis of ovary",
+    "price": 34.59,
+    "stock": 92
+  }, {
+    "name": "Stanton",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Unspecified gastritis and gastroduodenitis, without mention of hemorrhage",
+    "price": 56.13,
+    "stock": 93
+  }, {
+    "name": "Mufinella",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Calculus of ureter",
+    "price": 72.15,
+    "stock": 94
+  }, {
+    "name": "Caty",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Deep necrosis of underlying tissues [deep third degree] with loss of a body part, of toe(s) (nail)",
+    "price": 42.59,
+    "stock": 95
+  }, {
+    "name": "Salomi",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Sedative, hypnotic or anxiolytic abuse, continuous",
+    "price": 84.53,
+    "stock": 96
+  }, {
+    "name": "Gannie",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Intussusception",
+    "price": 24.69,
+    "stock": 97
+  }, {
+    "name": "Kelsy",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Poisoning by other and unspecified hormones and synthetic substitutes",
+    "price": 31.94,
+    "stock": 98
+  }, {
+    "name": "Cherish",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Unspecified infection of bone, forearm",
+    "price": 62.44,
+    "stock": 99
+  }, {
+    "name": "Janela",
+    "category": {
+      "id": 1,
+      "name": "ropa",
+      "discount": 20
+    },
+    "description": "Polydactyly, unspecified digits",
+    "price": 9.43,
+    "stock": 100
   }
 ]

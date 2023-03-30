@@ -12,11 +12,3 @@ server:
 springdoc:
   api-docs:
     path: /api-docs
-variables:
-  category:
-    - {name: Juguetes, discount: 20}
-    - {name: Libros, discount: 15}
-    - {name: Deportes, discount: 5}
-    - {name: Comida, discount: 25}
-    - {name: Ropa, discount: 35}
-    - {name: Otros, discount: 0}
