@@ -35,6 +35,8 @@ class ProductControllerTest {
     @MockBean
     ProductService productService;
 
+    String path = "C:\\Files\\data.sql";
+
     List<ProductEntity> productList = Arrays.asList(
             new ProductEntity(1L, "Playmobil", new CategoryEntity(1L, "Juguetes", 20), "juguetes de plástico", new BigDecimal(40.00), 100)
             , new ProductEntity(2L, "Espaguetis", new CategoryEntity(4L, "Comida", 25), "pasta italiana elaborada con harina de grano duro y agua", new BigDecimal(2.00), 220)
@@ -104,10 +106,10 @@ class ProductControllerTest {
     @Test
     void updateProductsFromJson() throws Exception {
 
-        mockmvc.perform(MockMvcRequestBuilders.post("/products/JSON_load"))
+        mockmvc.perform(MockMvcRequestBuilders.post("/products/JSON_load/path?=C%3A%5CFiles%5Cdata.json"))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
-        verify(productService,times(1)).updateProductsFromJson();
+        verify(productService,times(1)).updateProductsFromJson(path);
     }
 
 
