@@ -77,7 +77,7 @@ class ProductServiceTest {
 
     @Test
     void updateDatabase() throws IOException {
-        service.updateProductsFromJson("C:\\Files\\data.sql");
+        service.updateProductsFromJson("C:\\Files\\data.json");
 
         verify(repository,times(1)).deleteAll();
         verify(repository,times(1)).saveAll(any());

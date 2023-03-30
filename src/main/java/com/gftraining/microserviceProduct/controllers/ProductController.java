@@ -62,7 +62,7 @@ private ProductService productService;
 
     @PostMapping("/JSON_load")
     @ResponseStatus(HttpStatus.CREATED)
-    public void updateProductsFromJson(@RequestParam String path) throws IOException {
+    public void updateProductsFromJson(@RequestParam("path") String path) throws IOException {
             productService.updateProductsFromJson(path);
     }
 
