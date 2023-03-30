@@ -65,5 +65,10 @@ private ProductService productService;
     public void updateProductsFromJson() throws IOException {
             productService.updateProductsFromJson();
     }
+
+    @PutMapping("/{id}")
+    public void putProductById(@PathVariable Long id, @RequestBody ProductEntity newProduct) {
+        productService.putProductById(newProduct, id);
+    }
 }
 

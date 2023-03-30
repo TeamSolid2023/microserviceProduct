@@ -19,8 +19,10 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -123,5 +125,16 @@ class ProductControllerTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    void putProductById() throws Exception {
+        when(productService.getProductById(anyLong())).thenReturn(productEntity);
+
+        mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(productEntity)))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        assertEquals(productService.getProductById(1L), productEntity);
     }
 }

@@ -54,5 +54,16 @@ public class ProductService {
 
     }
 
-
+    public void putProductById(ProductEntity newProduct, Long id) {
+        productRepository.findById(id).map(product ->
+        {
+            product.setName(newProduct.getName());
+            product.setId(id);
+            product.setCategory(newProduct.getCategory());
+            product.setDescription(newProduct.getDescription());
+            product.setPrice(newProduct.getPrice());
+            product.setStock(newProduct.getStock());
+            return productRepository.save(product);
+        });
+    }
 }

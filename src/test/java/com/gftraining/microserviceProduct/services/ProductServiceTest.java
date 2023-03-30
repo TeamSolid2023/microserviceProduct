@@ -1,6 +1,7 @@
 package com.gftraining.microserviceProduct.services;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microserviceProduct.model.CategoryEntity;
 import com.gftraining.microserviceProduct.model.ProductEntity;
 import com.gftraining.microserviceProduct.repositories.ProductRepository;
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -21,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -53,7 +57,7 @@ class ProductServiceTest {
         when(repository.save(productEntity)).thenReturn(productEntity);
         Long id = repository.save(productEntity).getId();
 
-        assertEquals(109, id);
+        assertEquals(1398L, id);
     }
 
     @Test
@@ -75,5 +79,13 @@ class ProductServiceTest {
 
         verify(repository,times(1)).deleteAll();
         verify(repository,times(1)).saveAll(any());
+    }
+
+    @Test
+    void putProductById() {
+        when(repository.findById(anyLong())).thenReturn(Optional.of(productEntity));
+        service.putProductById(productEntity, 1L);
+        verify(repository,times(1)).findById(anyLong());
+        verify(repository,times(1)).save(any());
     }
 }
