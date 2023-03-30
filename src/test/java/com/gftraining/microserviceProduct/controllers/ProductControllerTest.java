@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigDecimal;
+import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.List;
 
@@ -64,12 +65,10 @@ class ProductControllerTest {
 
     @Test
     void addNewProduct() throws Exception {
-        ProductEntity product = new ProductEntity(109L,"A", new CategoryEntity(1L, "Libros", 20),"B", new BigDecimal(2), 25);
-
-        when(productService.saveProduct(any(ProductDTO.class))).thenReturn(product.getId());
+        when(productService.saveProduct(any(ProductDTO.class))).thenReturn(productEntity.getId());
 
         mockmvc.perform(MockMvcRequestBuilders.post("/products/newProduct")
-                        .content(asJsonString(product))
+                        .content(asJsonString(productEntity))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json"));
@@ -103,11 +102,11 @@ class ProductControllerTest {
 
     @Test
     void updateProductsFromJson() throws Exception {
-
-        mockmvc.perform(MockMvcRequestBuilders.post("/products/JSON_load"))
+        mockmvc.perform(MockMvcRequestBuilders.post("/products/JSON_load")
+                        .param("path", "C:\\Files\\data.json"))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
-        verify(productService,times(1)).updateProductsFromJson();
+        verify(productService,times(1)).updateProductsFromJson("C:\\Files\\data.json");
     }
 
 
