@@ -8,10 +8,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 
+import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -72,7 +76,7 @@ class ProductServiceTest {
 
     @Test
     void updateDatabase() throws IOException {
-        service.updateProductsFromJson();
+        service.updateProductsFromJson("C:\\Files\\data.json");
 
         verify(repository,times(1)).deleteAll();
         verify(repository,times(1)).saveAll(any());

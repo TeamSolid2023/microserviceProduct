@@ -46,10 +46,10 @@ public class ProductService {
 
         return productRepository.save(product).getId();
     }
-    public void updateProductsFromJson() throws IOException {
-       productRepository.deleteAll();
+    public void updateProductsFromJson(String path) throws IOException {
+        productRepository.deleteAll();
         ObjectMapper objectMapper = new ObjectMapper();
-        List<ProductEntity> products = objectMapper.readValue(new File("src/main/resources/data.json"), new TypeReference<List<ProductEntity>>(){});
+        List<ProductEntity> products = objectMapper.readValue(new File(path), new TypeReference<List<ProductEntity>>(){});
         productRepository.saveAll(products);
 
     }
