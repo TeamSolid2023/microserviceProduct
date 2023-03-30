@@ -1,12 +1,10 @@
 package com.gftraining.microserviceProduct.model;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-
 import javax.persistence.*;
 import java.util.List;
 

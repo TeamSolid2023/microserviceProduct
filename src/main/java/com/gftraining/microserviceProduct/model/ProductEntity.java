@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Table(name = "product")
 @Entity
@@ -28,9 +29,10 @@ public class ProductEntity {
     private String description;
     @NonNull
     @JsonProperty
-    private double price;
+    private BigDecimal price;
     @NonNull
     @JsonProperty
     private Integer stock;
+
 
 }
