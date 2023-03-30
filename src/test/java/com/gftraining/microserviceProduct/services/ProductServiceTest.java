@@ -50,10 +50,8 @@ class ProductServiceTest {
 
     @Test
     void saveProduct() {
-        ProductEntity product = new ProductEntity(109L,"A", new CategoryEntity(1L, "Libros", 20),"B", new BigDecimal(2), 25);
-
-        when(repository.save(product)).thenReturn(product);
-        Long id = repository.save(product).getId();
+        when(repository.save(productEntity)).thenReturn(productEntity);
+        Long id = repository.save(productEntity).getId();
 
         assertEquals(109, id);
     }
