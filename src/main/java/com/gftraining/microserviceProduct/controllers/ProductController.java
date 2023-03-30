@@ -36,6 +36,7 @@ private ProductService productService;
 
 }
     @PostMapping(value = "/newProduct")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Long> addProduct(@RequestBody ProductDTO product){
         return new ResponseEntity<>(productService.saveProduct(product), HttpStatus.CREATED);
     }
