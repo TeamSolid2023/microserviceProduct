@@ -88,4 +88,12 @@ class ProductServiceTest {
         verify(repository,times(1)).findById(anyLong());
         verify(repository,times(1)).save(any());
     }
+
+    @Test
+    void calculateFinalPrice(){
+        BigDecimal realParam = new BigDecimal("23.85");
+        BigDecimal expectedParam = new BigDecimal("21.47");
+
+        assertThat(service.calculateFinalPrice(realParam, 10)).isEqualByComparingTo(expectedParam);
+    }
 }

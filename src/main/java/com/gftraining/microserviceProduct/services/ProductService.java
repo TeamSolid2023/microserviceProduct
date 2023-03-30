@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.List;
 
 
@@ -65,5 +68,10 @@ public class ProductService {
             product.setStock(newProduct.getStock());
             return productRepository.save(product);
         });
+    }
+
+    public BigDecimal calculateFinalPrice(BigDecimal price, int discount){
+        return price.subtract(price.multiply(BigDecimal.valueOf(discount)).divide(new BigDecimal("100")))
+                .round(new MathContext(4, RoundingMode.HALF_UP));
     }
 }
