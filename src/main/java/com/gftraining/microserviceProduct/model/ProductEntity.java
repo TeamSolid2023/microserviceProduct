@@ -22,7 +22,6 @@ public class ProductEntity {
     @JsonProperty
     private String name;
     @NonNull
-    @JoinColumn(name="category_id", nullable=false)
     @Value("${Category}")
     private String category;
     @NonNull

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Configuration
 @EnableConfigurationProperties
-@ConfigurationProperties("Variables")
+@ConfigurationProperties("variables")
 public class YAMLConfig {
     private List<CategoryEntity> category;
 
