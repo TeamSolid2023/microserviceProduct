@@ -1,23 +1,12 @@
 package com.gftraining.microserviceProduct.controllers;
 
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microserviceProduct.model.CategoryEntity;
 import com.gftraining.microserviceProduct.model.ProductDTO;
 import com.gftraining.microserviceProduct.model.ProductEntity;
 import com.gftraining.microserviceProduct.services.ProductService;
 import org.junit.jupiter.api.Test;
-
-import org.mockito.Mockito;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,15 +14,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import java.util.*;
 
 import java.math.BigDecimal;
-
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @WebMvcTest(ProductController.class)
@@ -50,7 +39,7 @@ class ProductControllerTest {
     );
 
     ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
-            new CategoryEntity(1L,"Juguetes",20),"pelota futbol",19.99,24);
+            new CategoryEntity(1L,"Juguetes",20),"pelota futbol",new BigDecimal(19.99),24);
 
     @Test
     void testGetAll() throws Exception {

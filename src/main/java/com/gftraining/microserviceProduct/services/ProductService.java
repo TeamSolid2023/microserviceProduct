@@ -8,11 +8,8 @@ import com.gftraining.microserviceProduct.repositories.ProductRepository;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
-import org.webjars.NotFoundException;
-
 import java.io.File;
 import java.io.IOException;
-
 import java.util.List;
 
 

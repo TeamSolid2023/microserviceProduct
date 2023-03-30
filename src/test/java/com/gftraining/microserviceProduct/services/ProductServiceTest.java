@@ -10,8 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-
-
 import java.io.IOException;
 import java.math.BigDecimal;
 
@@ -36,7 +34,7 @@ class ProductServiceTest {
             new ProductEntity(2L, "Espaguetis", new CategoryEntity(4L, "Comida", 25), "pasta italiana elaborada con harina de grano duro y agua", new BigDecimal(20.00), 220)
     );
     ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
-            new CategoryEntity(1L,"Juguetes",20),"pelota futbol",19.99,24);
+            new CategoryEntity(1L,"Juguetes",20),"pelota futbol",new BigDecimal(19.99),24);
 
     @Test
     void testGetAll() {
