@@ -90,7 +90,7 @@ class ProductControllerTest {
     void getProductByName() throws Exception {
         when(productService.getProductByName("Pelota")).thenReturn(productEntity);
 
-        mockmvc.perform(get("/products/getByName/{name}","Pelota"))
+        mockmvc.perform(get("/products/name/{name}","Pelota"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().json(asJsonString(productEntity)));
     }
@@ -100,7 +100,7 @@ class ProductControllerTest {
 
         when(productService.getProductByName(anyString())).thenReturn(null);
 
-        mockmvc.perform(get("/products/getByName/{name}","Pera"))
+        mockmvc.perform(get("/products/name/{name}","Pera"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 

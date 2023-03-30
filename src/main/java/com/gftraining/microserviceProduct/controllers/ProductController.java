@@ -44,16 +44,14 @@ private ProductService productService;
 
     @GetMapping("/{id}")
     public ProductEntity getProductById(@PathVariable Long id){
-        ProductEntity productById = productService.getProductById(id);
-        if (productById == null) throw new NotFoundException("Id Not Found");
-        return productById;
+        return Optional.ofNullable(productService.getProductById(id))
+                .orElseThrow(() -> new NotFoundException("Id Not Found"));
     }
 
     @GetMapping("/name/{name}")
     public ProductEntity getProductByName(@PathVariable String name) {
-        ProductEntity productByName = productService.getProductByName(name);
-        if (productByName == null) throw new NotFoundException("Id Not Found") ;
-        return productByName;
+        return Optional.ofNullable(productService.getProductByName(name))
+                .orElseThrow(() -> new NotFoundException("Id Not Found"));
     }
 
     @ExceptionHandler(NotFoundException.class)
