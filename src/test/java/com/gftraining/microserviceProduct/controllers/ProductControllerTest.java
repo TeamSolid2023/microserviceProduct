@@ -2,6 +2,7 @@ package com.gftraining.microserviceProduct.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gftraining.microserviceProduct.model.CategoryEntity;
 import com.gftraining.microserviceProduct.model.ProductDTO;
 import com.gftraining.microserviceProduct.model.ProductEntity;
 import com.gftraining.microserviceProduct.services.ProductService;
@@ -36,12 +37,12 @@ class ProductControllerTest {
     ProductService productService;
 
     List<ProductEntity> productList = Arrays.asList(
-            new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
-            , new ProductEntity(2L, "Espaguetis", "Comida", "pasta italiana elaborada con harina de grano duro y agua", new BigDecimal(2.00), 220)
+            new ProductEntity(1L, "Playmobil", new CategoryEntity(1L, "Juguetes", 20), "juguetes de plástico", new BigDecimal(40.00), 100)
+            , new ProductEntity(2L, "Espaguetis", new CategoryEntity(4L, "Comida", 25), "pasta italiana elaborada con harina de grano duro y agua", new BigDecimal(2.00), 220)
     );
 
     ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
-            "Juguetes","pelota futbol",new BigDecimal(19.99),24);
+            new CategoryEntity(1L,"Juguetes",20),"pelota futbol",new BigDecimal(19.99),24);
 
     @Test
     void testGetAll() throws Exception {
@@ -55,6 +56,7 @@ class ProductControllerTest {
 
     @Test
     void deleteProductById() throws Exception {
+
         mockmvc.perform(MockMvcRequestBuilders.delete("/products/{id}",1l))
                                                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
