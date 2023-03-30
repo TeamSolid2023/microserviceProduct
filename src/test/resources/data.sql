@@ -1,10 +1,3 @@
-insert into CATEGORY (name, discount) values ('Juguetes', 20);
-insert into CATEGORY (name, discount) values ('Libros', 15);
-insert into CATEGORY (name, discount) values ('Deportes', 5);
-insert into CATEGORY (name, discount) values ('Comida', 25);
-insert into CATEGORY (name, discount) values ('Ropa', 35);
-insert into CATEGORY (name, discount) values ('Otros', 0);
-
 insert into product (name, description, price, stock, category_id) values ('Klarika', 'Other superficial bite of left great toe, subs encntr', 93, 68, 4);
 insert into product (name, description, price, stock, category_id) values ('Shepard', 'Injury of nerves at ankle and foot level, left leg, sequela', 4, 465, 4);
 insert into product (name, description, price, stock, category_id) values ('Evelin', 'Animal-rider injured in collision w ped/anml, subs', 81, 4, 5);

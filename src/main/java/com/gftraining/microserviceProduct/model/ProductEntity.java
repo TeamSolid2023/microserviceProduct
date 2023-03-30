@@ -2,6 +2,7 @@ package com.gftraining.microserviceProduct.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -21,9 +22,9 @@ public class ProductEntity {
     @JsonProperty
     private String name;
     @NonNull
-    @ManyToOne
     @JoinColumn(name="category_id", nullable=false)
-    private CategoryEntity category;
+    @Value("${Category}")
+    private String category;
     @NonNull
     @JsonProperty
     private String description;

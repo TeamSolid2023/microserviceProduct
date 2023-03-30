@@ -1,33 +1,26 @@
 package com.gftraining.microserviceProduct.model;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import javax.persistence.*;
-import java.util.List;
+import org.springframework.stereotype.Component;
 
-@Table(name = "category")
-@Entity
-@Data
-@NoArgsConstructor
-@RequiredArgsConstructor
+@Component
 public class CategoryEntity {
-
-    @Id
-    @NonNull
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @NonNull
-    @JsonProperty
     private String name;
-    @NonNull
-    @JsonProperty
-    private Integer discount;
+    private int discount;
 
-    @JsonIgnore
-    @OneToMany(mappedBy="category")
-    private List<ProductEntity> products;
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
+    }
 }

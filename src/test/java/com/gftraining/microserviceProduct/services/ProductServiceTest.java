@@ -1,8 +1,6 @@
 package com.gftraining.microserviceProduct.services;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gftraining.microserviceProduct.model.CategoryEntity;
 import com.gftraining.microserviceProduct.model.ProductEntity;
 import com.gftraining.microserviceProduct.repositories.ProductRepository;
 import org.junit.jupiter.api.Test;
@@ -10,8 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -34,11 +30,12 @@ class ProductServiceTest {
     ProductRepository repository;
 
     List<ProductEntity> productList = Arrays.asList(
-            new ProductEntity(1L, "Playmobil", new CategoryEntity(1L, "Juguetes", 20), "juguetes de plástico", new BigDecimal(40.00), 100),
-            new ProductEntity(2L, "Espaguetis", new CategoryEntity(4L, "Comida", 25), "pasta italiana elaborada con harina de grano duro y agua", new BigDecimal(20.00), 220)
+            new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
+            , new ProductEntity(2L, "Espaguetis", "Comida", "pasta italiana elaborada con harina de grano duro y agua", new BigDecimal(2.00), 220)
     );
+
     ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
-            new CategoryEntity(1L,"Juguetes",20),"pelota futbol",new BigDecimal(19.99),24);
+            "Juguetes","pelota futbol",new BigDecimal(19.99),24);
 
     @Test
     void testGetAll() {
