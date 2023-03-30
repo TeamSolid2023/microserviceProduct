@@ -10,7 +10,7 @@ tags:
   - name: Products
     description: Everything about your products
 paths:
-  /products:
+  /products/getAll:
     get:
       tags:
         - Products
@@ -36,7 +36,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Error'
               example:
-                msg: "Error: wrong Id"
+                msg: "Error: No products found"
                 error_code: 404
         '500':
           description: Error response
@@ -49,22 +49,38 @@ paths:
               example:
                 msg: "Error: response failed"
                 error_code: 500
-    post:
+                
+  /products/name/{name_product}:
+    get:
       tags:
         - Products
-      summary: add a new  product
-      description: new product is created
-      operationId: createProduct
-      requestBody:
-        description: product data required to create a product
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Product'
+      summary: returns a product by name
+      description: return details of a product given its name
+      operationId: getProductByName
+      parameters:
+        - name: name_product
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
-        '201':
-          description: New product is created
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Error'
+              example:
+                msg: "Error: Id not found"
+                error_code: 404
         '500':
           description: Error response
           content:
@@ -76,12 +92,13 @@ paths:
               example:
                 msg: "Error: response failed"
                 error_code: 500
+                
           
-  /products/{id_product}:
+  /products/id/{id_product}:
     get:
       tags:
         - Products
-      summary: returns a product
+      summary: returns a product by id
       description: return details of a product given its id
       operationId: getProductByID
       parameters:
@@ -120,6 +137,8 @@ paths:
               example:
                 msg: "Error: response failed"
                 error_code: 500
+                
+  /products/{id_product}:
     put:
       tags:
         - Products
@@ -196,38 +215,28 @@ paths:
               example:
                 msg: "Error: sohow not found"
                 error_code: 404
-      
-  /products/{name_product}:
-    get:
+  /products:
+    post:
       tags:
         - Products
-      summary: returns a product
-      description: return details of a product given its name
-      operationId: getProductByName
-      parameters:
-        - name: name_product
-          in: path
-          required: true
-          schema:
-            type: string
+      summary: add a new  product
+      description: new product is created
+      operationId: createProduct
+      requestBody:
+        description: product data required to create a product
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
       responses:
-        '200':
-          description: Ok
+        '201':
+          description: New product is created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
-        '404':
-          description: Product not found
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Error'
-              example:
-                msg: "Error: Id not found"
-                error_code: 404
+                type: integer
+              example: 101
         '500':
           description: Error response
           content:
@@ -238,7 +247,8 @@ paths:
                   $ref: '#/components/schemas/Error'
               example:
                 msg: "Error: response failed"
-                error_code: 500        
+                error_code: 500
+                
   /products/JSON_load:
     post:
       tags:
@@ -256,6 +266,7 @@ paths:
       responses:
         '201':
           description: Products created.
+
 
 components:
   schemas:
@@ -298,19 +309,11 @@ components:
         category:
           type: object
           properties:
-            id:
-              type: integer
-              format: int64
-              example: 1
             name:
               type: string
-              example: Juguetes
-            discount:
-              type: number
-              format: double
-              example: 20
+              example: Jugetes
           required:
-            - id
+            - name
           description: Product category
           
         description:
