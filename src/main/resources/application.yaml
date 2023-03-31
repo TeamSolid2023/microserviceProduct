@@ -1,4 +1,7 @@
 spring:
+  output:
+    ansi:
+      enabled: ALWAYS
   jpa:
     defer-datasource-initialization: true
     database-platform: org.hibernate.dialect.H2Dialect
@@ -12,3 +15,8 @@ server:
 springdoc:
   api-docs:
     path: /api-docs
+logging:
+  level:
+    org.springframework.web: "DEBUG"
+    org.hibernate: "WARN"
+    tomcat: "DEBUG"
