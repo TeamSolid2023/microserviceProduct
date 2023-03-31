@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
-@Log4j2
 public class ProductController {
 
 private ProductService productService;
@@ -44,22 +43,12 @@ private ProductService productService;
 
     @GetMapping("/{id}")
     public ProductEntity getProductById(@PathVariable Long id){
-        return Optional.ofNullable(productService.getProductById(id))
-                .orElseThrow(() -> new NotFoundException("Id Not Found"));
+        return productService.getProductById(id);
     }
 
     @GetMapping("/name/{name}")
     public List<ProductEntity> getProductByName(@PathVariable String name) {
-        return Optional.ofNullable(productService.getProductByName(name))
-                .orElseThrow(() -> new NotFoundException("Id Not Found"));
-    }
-
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> handleNotFoundException(NotFoundException exception) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
+        return productService.getProductByName(name);
     }
 
     @PostMapping("/JSON_load")

@@ -8,6 +8,7 @@ import com.gftraining.microservice_product.repositories.ProductRepository;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -36,13 +37,16 @@ public class ProductService {
         productRepository.deleteById(id);
     }
     public ProductEntity getProductById(Long id) {
-        ProductEntity product = productRepository.findById(id).orElse(null);
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product with id: "+id+" not found."));
         product.setFinalPrice(calculateFinalPrice(product.getPrice(),product.getCategory().getDiscount()));
         return product;
     }
 
     public List<ProductEntity> getProductByName(String name) {
         List<ProductEntity> products = productRepository.findAllByName(name);
+        if (products.isEmpty()) throw new EntityNotFoundException("Products with name: "+name+" not found.");
+
         for (ProductEntity product: products){
             product.setFinalPrice(calculateFinalPrice(product.getPrice(),product.getCategory().getDiscount()));
         }
