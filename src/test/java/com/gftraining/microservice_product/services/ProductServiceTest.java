@@ -1,11 +1,11 @@
 package com.gftraining.microservice_product.services;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gftraining.microserviceProduct.configuration.Categories;
-import com.gftraining.microserviceProduct.model.ProductDTO;
-import com.gftraining.microserviceProduct.model.ProductEntity;
-import com.gftraining.microserviceProduct.repositories.ProductRepository;
+import com.gftraining.microservice_product.configuration.Categories;
+
+import com.gftraining.microservice_product.model.ProductDTO;
+import com.gftraining.microservice_product.model.ProductEntity;
+import com.gftraining.microservice_product.repositories.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

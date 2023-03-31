@@ -1,7 +1,7 @@
-package com.gftraining.microserviceProduct;
+package com.gftraining.microservice_product;
 
 import lombok.extern.slf4j.Slf4j;
-import com.gftraining.microserviceProduct.configuration.Categories;
+import com.gftraining.microservice_product.configuration.Categories;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

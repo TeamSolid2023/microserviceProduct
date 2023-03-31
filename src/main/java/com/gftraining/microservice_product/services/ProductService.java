@@ -1,20 +1,23 @@
-package com.gftraining.microserviceProduct.services;
+package com.gftraining.microservice_product.services;
+
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gftraining.microserviceProduct.model.ProductDTO;
-import com.gftraining.microserviceProduct.model.ProductEntity;
-import com.gftraining.microserviceProduct.repositories.ProductRepository;
+
+import com.gftraining.microservice_product.configuration.Categories;
+import com.gftraining.microservice_product.model.ProductDTO;
+import com.gftraining.microservice_product.model.ProductEntity;
+import com.gftraining.microservice_product.repositories.ProductRepository;
 import lombok.NonNull;
-import org.springframework.data.domain.Sort;
+
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.List;
 
 

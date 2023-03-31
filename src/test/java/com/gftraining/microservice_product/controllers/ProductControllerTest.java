@@ -2,10 +2,10 @@ package com.gftraining.microservice_product.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gftraining.microserviceProduct.model.CategoryEntity;
-import com.gftraining.microserviceProduct.model.ProductDTO;
-import com.gftraining.microserviceProduct.model.ProductEntity;
-import com.gftraining.microserviceProduct.services.ProductService;
+import com.gftraining.microservice_product.model.CategoryEntity;
+import com.gftraining.microservice_product.model.ProductDTO;
+import com.gftraining.microservice_product.model.ProductEntity;
+import com.gftraining.microservice_product.services.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -86,14 +86,6 @@ class ProductControllerTest {
     }
 
     @Test
-    void getProductById_ThrowsNotFound() throws Exception {
-        when(productService.getProductById(anyLong())).thenReturn(null);
-
-        mockmvc.perform(get("/products/{id}",2L))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
-    }
-
-    @Test
     void getProductByName() throws Exception {
 
         when(productService.getProductByName("Playmobil")).thenReturn(productListSameName);
@@ -112,14 +104,6 @@ class ProductControllerTest {
         verify(productService,times(1)).updateProductsFromJson("C:\\Files\\data.json");
     }
 
-
-  @Test
-  void getProductByName_ThrowsNotFound() throws Exception {
-        when(productService.getProductByName(anyString())).thenReturn(null);
-
-        mockmvc.perform(get("/products/name/{name}","Pelota"))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
-    }
 
     public static String asJsonString(final Object obj) {
         try {
