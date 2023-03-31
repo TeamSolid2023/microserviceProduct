@@ -3,6 +3,7 @@ package com.gftraining.microserviceProduct.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microserviceProduct.model.CategoryEntity;
+import com.gftraining.microserviceProduct.model.ProductDTO;
 import com.gftraining.microserviceProduct.model.ProductEntity;
 import com.gftraining.microserviceProduct.repositories.ProductRepository;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,10 @@ class ProductServiceTest {
             new ProductEntity(1L, "Playmobil", new CategoryEntity(1L, "Juguetes", 20), "juguetes de plástico", new BigDecimal(40.00), 100),
             new ProductEntity(2L, "Espaguetis", new CategoryEntity(4L, "Comida", 25), "pasta italiana elaborada con harina de grano duro y agua", new BigDecimal(20.00), 220)
     );
+    List<ProductEntity> productListSameName = Arrays.asList(
+            new ProductEntity(1L, "Playmobil", new CategoryEntity(1L, "Juguetes", 20), "juguetes de plástico", new BigDecimal(40.00), 100),
+            new ProductEntity(2L, "Playmobil", new CategoryEntity(1L, "Juguetes", 20), "juguetes de plástico", new BigDecimal(40.00), 100)
+    );
     ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
             new CategoryEntity(1L,"Juguetes",20),"pelota futbol",new BigDecimal(19.99),24);
 
@@ -71,8 +76,9 @@ class ProductServiceTest {
 
     @Test
     void getProductByName() {
-        when(repository.findByName("Pelota")).thenReturn(productEntity);
-        assertThat(service.getProductByName("Pelota")).isEqualToComparingFieldByFieldRecursively(productEntity);
+
+        when(repository.findAllByName("Playmobil")).thenReturn(productListSameName);
+        assertThat(service.getProductByName("Playmobil")).isEqualTo(productListSameName);
     }
 
     @Test
@@ -86,7 +92,7 @@ class ProductServiceTest {
     @Test
     void putProductById() {
         when(repository.findById(anyLong())).thenReturn(Optional.of(productEntity));
-        service.putProductById(productEntity, 1L);
+        service.putProductById(new ProductDTO(productEntity), 1L);
         verify(repository,times(1)).findById(anyLong());
         verify(repository,times(1)).save(any());
     }

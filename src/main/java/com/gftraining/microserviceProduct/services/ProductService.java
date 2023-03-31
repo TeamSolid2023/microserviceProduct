@@ -6,6 +6,7 @@ import com.gftraining.microserviceProduct.model.ProductDTO;
 import com.gftraining.microserviceProduct.model.ProductEntity;
 import com.gftraining.microserviceProduct.repositories.ProductRepository;
 import lombok.NonNull;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -42,10 +43,12 @@ public class ProductService {
         return product;
     }
 
-    public ProductEntity getProductByName(String name) {
-        ProductEntity product = productRepository.findByName(name);
-        product.setFinalPrice(calculateFinalPrice(product.getPrice(),product.getCategory().getDiscount()));
-        return product;
+    public List<ProductEntity> getProductByName(String name) {
+        List<ProductEntity> products = productRepository.findAllByName(name);
+        for (ProductEntity product: products){
+            product.setFinalPrice(calculateFinalPrice(product.getPrice(),product.getCategory().getDiscount()));
+        }
+        return products;
     }
     public @NonNull Long saveProduct(ProductDTO productDTO){
         ProductEntity product = new ProductEntity();
@@ -66,7 +69,7 @@ public class ProductService {
 
     }
 
-    public void putProductById(ProductEntity newProduct, Long id) {
+    public void putProductById(ProductDTO newProduct, Long id) {
         productRepository.findById(id).map(product ->
         {
             product.setName(newProduct.getName());
