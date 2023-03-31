@@ -15,6 +15,15 @@ server:
 springdoc:
   api-docs:
     path: /api-docs
+
+my:
+  category:
+    Juguetes: 20
+    Libros: 15
+    Deportes: 5
+    Comida: 25
+    Ropa: 35
+    Otros: 0
 logging:
   level:
     org.springframework.web: "DEBUG"

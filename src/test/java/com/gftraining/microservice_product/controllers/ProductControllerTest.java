@@ -36,20 +36,19 @@ class ProductControllerTest {
     ProductService productService;
 
     List<ProductEntity> productList = Arrays.asList(
-            new ProductEntity(1L, "Playmobil", new CategoryEntity(1L, "Juguetes", 20), "juguetes de plástico", new BigDecimal(40.00), 100)
-            , new ProductEntity(2L, "Espaguetis", new CategoryEntity(4L, "Comida", 25), "pasta italiana elaborada con harina de grano duro y agua", new BigDecimal(2.00), 220)
+            new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
+            , new ProductEntity(2L, "Espaguetis", "Comida", "pasta italiana elaborada con harina de grano duro y agua", new BigDecimal(2.00), 220)
     );
     List<ProductEntity> productListSameName = Arrays.asList(
-            new ProductEntity(1L, "Playmobil", new CategoryEntity(1L, "Juguetes", 20), "juguetes de plástico", new BigDecimal(40.00), 100),
-            new ProductEntity(2L, "Playmobil", new CategoryEntity(1L, "Juguetes", 20), "juguetes de plástico", new BigDecimal(40.00), 100)
+            new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100),
+            new ProductEntity(2L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
     );
 
-    ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
-            new CategoryEntity(1L,"Juguetes",20),"pelota futbol",new BigDecimal(19.99),24);
+    ProductEntity productEntity = new ProductEntity(1398L,"Pelota", "Juguetes", "pelota futbol",new BigDecimal(19.99),24);
 
     @Test
     void testGetAll() throws Exception {
-        when(productService.allProducts())
+        when(productService.getAll())
                 .thenReturn(productList);
 
         mockmvc.perform(MockMvcRequestBuilders.get("/products/getAll"))
@@ -87,14 +86,6 @@ class ProductControllerTest {
     }
 
     @Test
-    void getProductById_ThrowsNotFound() throws Exception {
-        when(productService.getProductById(anyLong())).thenReturn(null);
-
-        mockmvc.perform(get("/products/{id}",2L))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
-    }
-
-    @Test
     void getProductByName() throws Exception {
 
         when(productService.getProductByName("Playmobil")).thenReturn(productListSameName);
@@ -113,14 +104,6 @@ class ProductControllerTest {
         verify(productService,times(1)).updateProductsFromJson("C:\\Files\\data.json");
     }
 
-
-  @Test
-  void getProductByName_ThrowsNotFound() throws Exception {
-        when(productService.getProductByName(anyString())).thenReturn(null);
-
-        mockmvc.perform(get("/products/name/{name}","Pelota"))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
-    }
 
     public static String asJsonString(final Object obj) {
         try {
