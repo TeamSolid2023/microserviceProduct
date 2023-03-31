@@ -40,6 +40,10 @@ class ProductControllerTest {
             new ProductEntity(1L, "Playmobil", new CategoryEntity(1L, "Juguetes", 20), "juguetes de plástico", new BigDecimal(40.00), 100)
             , new ProductEntity(2L, "Espaguetis", new CategoryEntity(4L, "Comida", 25), "pasta italiana elaborada con harina de grano duro y agua", new BigDecimal(2.00), 220)
     );
+    List<ProductEntity> productListSameName = Arrays.asList(
+            new ProductEntity(1L, "Playmobil", new CategoryEntity(1L, "Juguetes", 20), "juguetes de plástico", new BigDecimal(40.00), 100),
+            new ProductEntity(2L, "Playmobil", new CategoryEntity(1L, "Juguetes", 20), "juguetes de plástico", new BigDecimal(40.00), 100)
+    );
 
     ProductEntity productEntity = new ProductEntity(1398L,"Pelota",
             new CategoryEntity(1L,"Juguetes",20),"pelota futbol",new BigDecimal(19.99),24);
@@ -93,11 +97,12 @@ class ProductControllerTest {
 
     @Test
     void getProductByName() throws Exception {
-        when(productService.getProductByName("Pelota")).thenReturn(productEntity);
 
-        mockmvc.perform(get("/products/name/{name}","Pelota"))
+        when(productService.getProductByName("Playmobil")).thenReturn(productListSameName);
+
+        mockmvc.perform(get("/products/name/{name}","Playmobil"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(content().json(asJsonString(productEntity)));
+                .andExpect(content().json(asJsonString(productListSameName)));
     }
 
     @Test
@@ -114,7 +119,7 @@ class ProductControllerTest {
   void getProductByName_ThrowsNotFound() throws Exception {
         when(productService.getProductByName(anyString())).thenReturn(null);
 
-        mockmvc.perform(get("/products/name/{name}","Pera"))
+        mockmvc.perform(get("/products/name/{name}","Pelota"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
