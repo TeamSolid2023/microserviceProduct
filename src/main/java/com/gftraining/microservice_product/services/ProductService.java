@@ -2,7 +2,6 @@ package com.gftraining.microserviceProduct.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gftraining.microserviceProduct.configuration.Categories;
 import com.gftraining.microserviceProduct.model.ProductDTO;
 import com.gftraining.microserviceProduct.model.ProductEntity;
 import com.gftraining.microserviceProduct.repositories.ProductRepository;
@@ -41,13 +40,16 @@ public class ProductService {
         productRepository.deleteById(id);
     }
     public ProductEntity getProductById(Long id) {
-        ProductEntity product = productRepository.findById(id).orElse(null);
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product with id: "+id+" not found."));
         product.setFinalPrice(calculateFinalPrice(product.getPrice(), getDiscount(product)));
         return product;
     }
 
     public List<ProductEntity> getProductByName(String name) {
         List<ProductEntity> products = productRepository.findAllByName(name);
+        if (products.isEmpty()) throw new EntityNotFoundException("Products with name: "+name+" not found.");
+
         for (ProductEntity product: products){
             product.setFinalPrice(calculateFinalPrice(product.getPrice(), getDiscount(product)));
         }

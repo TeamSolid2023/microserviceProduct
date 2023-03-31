@@ -1,6 +1,7 @@
-package com.gftraining.microserviceProduct.services;
+package com.gftraining.microservice_product.services;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microserviceProduct.configuration.Categories;
 import com.gftraining.microserviceProduct.model.ProductDTO;
 import com.gftraining.microserviceProduct.model.ProductEntity;

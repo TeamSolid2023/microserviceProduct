@@ -1,4 +1,7 @@
 spring:
+  output:
+    ansi:
+      enabled: ALWAYS
   jpa:
     defer-datasource-initialization: true
     database-platform: org.hibernate.dialect.H2Dialect
@@ -12,6 +15,7 @@ server:
 springdoc:
   api-docs:
     path: /api-docs
+
 my:
   category:
     Juguetes: 20
@@ -20,3 +24,8 @@ my:
     Comida: 25
     Ropa: 35
     Otros: 0
+logging:
+  level:
+    org.springframework.web: "DEBUG"
+    org.hibernate: "WARN"
+    tomcat: "DEBUG"

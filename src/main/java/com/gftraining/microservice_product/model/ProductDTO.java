@@ -1,4 +1,4 @@
-package com.gftraining.microserviceProduct.model;
+package com.gftraining.microservice_product.model;
 
 import com.sun.istack.NotNull;
 import lombok.Data;

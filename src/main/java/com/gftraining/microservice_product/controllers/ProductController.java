@@ -1,17 +1,17 @@
-package com.gftraining.microserviceProduct.controllers;
+package com.gftraining.microservice_product.controllers;
 
-import com.gftraining.microserviceProduct.model.ProductDTO;
-import com.gftraining.microserviceProduct.model.ProductEntity;
-import com.gftraining.microserviceProduct.services.ProductService;
+import com.gftraining.microservice_product.model.ProductDTO;
+import com.gftraining.microservice_product.model.ProductEntity;
+import com.gftraining.microservice_product.services.ProductService;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-
 
 @RestController
 @RequestMapping("/products")
@@ -33,6 +33,7 @@ private ProductService productService;
     public void deleteProductById(@PathVariable Long id){
         productService.deleteProductById(id);
 
+
 }
     @PostMapping(value = "/newProduct")
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,22 +43,12 @@ private ProductService productService;
 
     @GetMapping("/{id}")
     public ProductEntity getProductById(@PathVariable Long id){
-        return Optional.ofNullable(productService.getProductById(id))
-                .orElseThrow(() -> new NotFoundException("Id Not Found"));
+        return productService.getProductById(id);
     }
 
     @GetMapping("/name/{name}")
     public List<ProductEntity> getProductByName(@PathVariable String name) {
-        return Optional.ofNullable(productService.getProductByName(name))
-                .orElseThrow(() -> new NotFoundException("Id Not Found"));
-    }
-
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> handleNotFoundException(NotFoundException exception) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(exception.getMessage());
+        return productService.getProductByName(name);
     }
 
     @PostMapping("/JSON_load")
