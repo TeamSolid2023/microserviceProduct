@@ -3,6 +3,7 @@ package com.gftraining.microserviceProduct.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microserviceProduct.model.CategoryEntity;
+import com.gftraining.microserviceProduct.model.ProductDTO;
 import com.gftraining.microserviceProduct.model.ProductEntity;
 import com.gftraining.microserviceProduct.repositories.ProductRepository;
 import org.junit.jupiter.api.Test;
@@ -86,7 +87,7 @@ class ProductServiceTest {
     @Test
     void putProductById() {
         when(repository.findById(anyLong())).thenReturn(Optional.of(productEntity));
-        service.putProductById(productEntity, 1L);
+        service.putProductById(new ProductDTO(productEntity), 1L);
         verify(repository,times(1)).findById(anyLong());
         verify(repository,times(1)).save(any());
     }

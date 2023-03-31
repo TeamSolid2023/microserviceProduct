@@ -67,7 +67,7 @@ private ProductService productService;
     }
 
     @PutMapping("/{id}")
-    public void putProductById(@PathVariable Long id, @RequestBody ProductEntity newProduct) {
+    public void putProductById(@PathVariable Long id, @RequestBody ProductDTO newProduct) {
         productService.putProductById(newProduct, id);
     }
 }
