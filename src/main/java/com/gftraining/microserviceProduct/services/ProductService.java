@@ -66,7 +66,7 @@ public class ProductService {
 
     }
 
-    public void putProductById(ProductEntity newProduct, Long id) {
+    public void putProductById(ProductDTO newProduct, Long id) {
         productRepository.findById(id).map(product ->
         {
             product.setName(newProduct.getName());
