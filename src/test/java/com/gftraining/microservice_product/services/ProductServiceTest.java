@@ -1,24 +1,19 @@
-package com.gftraining.microserviceProduct.services;
+package com.gftraining.microservice_product.services;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gftraining.microserviceProduct.model.CategoryEntity;
-import com.gftraining.microserviceProduct.model.ProductDTO;
-import com.gftraining.microserviceProduct.model.ProductEntity;
-import com.gftraining.microserviceProduct.repositories.ProductRepository;
+import com.gftraining.microservice_product.model.CategoryEntity;
+import com.gftraining.microservice_product.model.ProductDTO;
+import com.gftraining.microservice_product.model.ProductEntity;
+import com.gftraining.microservice_product.repositories.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
