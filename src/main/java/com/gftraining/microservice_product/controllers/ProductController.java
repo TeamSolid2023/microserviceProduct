@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
-@Log4j2
 public class ProductController {
 
 private ProductService productService;

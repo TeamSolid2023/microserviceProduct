@@ -1,4 +1,4 @@
-package com.gftraining.microserviceProduct.exception;
+package com.gftraining.microservice_product.exception;
 
 import java.util.Date;
 import java.util.List;
