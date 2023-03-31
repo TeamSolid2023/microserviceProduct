@@ -47,7 +47,7 @@ private ProductService productService;
     }
 
     @GetMapping("/name/{name}")
-    public ProductEntity getProductByName(@PathVariable String name) {
+    public List<ProductEntity> getProductByName(@PathVariable String name) {
         return Optional.ofNullable(productService.getProductByName(name))
                 .orElseThrow(() -> new NotFoundException("Id Not Found"));
     }
@@ -71,4 +71,3 @@ private ProductService productService;
         productService.putProductById(newProduct, id);
     }
 }
-
