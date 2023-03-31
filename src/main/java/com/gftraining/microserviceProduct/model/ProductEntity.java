@@ -21,9 +21,8 @@ public class ProductEntity {
     @JsonProperty
     private String name;
     @NonNull
-    @ManyToOne
-    @JoinColumn(name="category_id", nullable=false)
-    private CategoryEntity category;
+    @JsonProperty
+    private String category;
     @NonNull
     @JsonProperty
     private String description;

@@ -1,16 +1,12 @@
 package com.gftraining.microserviceProduct.configuration;
 
-import com.gftraining.microserviceProduct.model.CategoryEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
-
-
 
 @Configuration
 @EnableConfigurationProperties
@@ -27,5 +23,4 @@ public class Variables {
         private String name;
         private int discount;
     }
-
 }

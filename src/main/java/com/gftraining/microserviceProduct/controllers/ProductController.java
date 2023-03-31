@@ -25,7 +25,7 @@ private ProductService productService;
 }
     @GetMapping("/getAll")
     public List<ProductEntity> getAll() {
-        return productService.allProducts();
+        return productService.getAll();
     }
 
     @DeleteMapping("/{id}")

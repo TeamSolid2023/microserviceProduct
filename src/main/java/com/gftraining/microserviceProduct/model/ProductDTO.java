@@ -16,7 +16,7 @@ public class ProductDTO {
     @NotNull
     private String name;
     @NonNull
-    private CategoryEntity category;
+    private String category;
     @NonNull
     private String description;
     @NonNull
