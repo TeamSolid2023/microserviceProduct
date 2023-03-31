@@ -1,5 +1,38 @@
 [
   {
+    "name": "Lego",
+    "category": {
+      "id": 1,
+      "name": "Juguetes",
+      "discount": 20
+    },
+    "description": "Lego City",
+    "price": 20,
+    "stock": 600
+  },
+  {
+    "name": "Lego",
+    "category": {
+      "id": 1,
+      "name": "Juguetes",
+      "discount": 20
+    },
+    "description": "El parque de bomberos de Lego",
+    "price": 29,
+    "stock": 230
+  },
+  {
+    "name": "Lego",
+    "category": {
+      "id": 1,
+      "name": "Juguetes",
+      "discount": 20
+    },
+    "description": "El Zoo de Lego",
+    "price": 15,
+    "stock": 70
+  },
+  {
     "name": "Anthiathia",
     "category": {
       "id": 1,
