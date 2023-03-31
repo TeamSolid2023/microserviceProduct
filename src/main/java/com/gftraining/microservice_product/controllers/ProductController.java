@@ -1,20 +1,21 @@
-package com.gftraining.microserviceProduct.controllers;
+package com.gftraining.microservice_product.controllers;
 
-import com.gftraining.microserviceProduct.model.ProductDTO;
-import com.gftraining.microserviceProduct.model.ProductEntity;
-import com.gftraining.microserviceProduct.services.ProductService;
+import com.gftraining.microservice_product.model.ProductDTO;
+import com.gftraining.microservice_product.model.ProductEntity;
+import com.gftraining.microservice_product.services.ProductService;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.webjars.NotFoundException;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-
 @RestController
 @RequestMapping("/products")
+@Log4j2
 public class ProductController {
 
 private ProductService productService;
@@ -32,6 +33,7 @@ private ProductService productService;
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProductById(@PathVariable Long id){
         productService.deleteProductById(id);
+
 
 }
     @PostMapping(value = "/newProduct")

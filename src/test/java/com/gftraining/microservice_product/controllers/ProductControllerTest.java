@@ -1,11 +1,11 @@
-package com.gftraining.microserviceProduct.controllers;
+package com.gftraining.microservice_product.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gftraining.microserviceProduct.model.CategoryEntity;
-import com.gftraining.microserviceProduct.model.ProductDTO;
-import com.gftraining.microserviceProduct.model.ProductEntity;
-import com.gftraining.microserviceProduct.services.ProductService;
+import com.gftraining.microservice_product.model.CategoryEntity;
+import com.gftraining.microservice_product.model.ProductDTO;
+import com.gftraining.microservice_product.model.ProductEntity;
+import com.gftraining.microservice_product.services.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigDecimal;
-import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.List;
 

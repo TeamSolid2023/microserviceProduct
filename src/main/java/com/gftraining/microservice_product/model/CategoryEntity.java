@@ -1,4 +1,4 @@
-package com.gftraining.microserviceProduct.model;
+package com.gftraining.microservice_product.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

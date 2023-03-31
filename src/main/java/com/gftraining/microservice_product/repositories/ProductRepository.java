@@ -1,6 +1,6 @@
-package com.gftraining.microserviceProduct.repositories;
+package com.gftraining.microservice_product.repositories;
 
-import com.gftraining.microserviceProduct.model.ProductEntity;
+import com.gftraining.microservice_product.model.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

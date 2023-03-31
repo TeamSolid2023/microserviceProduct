@@ -1,6 +1,5 @@
-package com.gftraining.microserviceProduct.configuration;
+package com.gftraining.microservice_product.configuration;
 
-import com.gftraining.microserviceProduct.model.CategoryEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
