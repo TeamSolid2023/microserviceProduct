@@ -81,7 +81,7 @@ class ProductServiceTest {
 
     @Test
     void updateDatabase() throws IOException {
-        service.updateProductsFromJson("C:\\Files\\data.json");
+        service.updateProductsFromJson("C:\\Files\\data-test.json");
 
         verify(repository,times(1)).deleteAll();
         verify(repository,times(1)).saveAll(any());
@@ -105,6 +105,6 @@ class ProductServiceTest {
 
     @Test
     void getDiscount(){
-        assertThat(service.getDiscount(productEntity)).isEqualTo(0);
+        assertThat(service.getDiscount(productEntity)).isZero();
     }
 }

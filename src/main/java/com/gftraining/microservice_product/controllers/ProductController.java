@@ -1,18 +1,14 @@
 package com.gftraining.microservice_product.controllers;
 
 
-
-
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.webjars.NotFoundException;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
@@ -29,20 +25,7 @@ private ProductService productService;
         return productService.getAll();
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProductById(@PathVariable Long id){
-        productService.deleteProductById(id);
-
-
-}
-    @PostMapping(value = "/newProduct")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Long> addProduct(@RequestBody ProductDTO product){
-        return new ResponseEntity<>(productService.saveProduct(product), HttpStatus.CREATED);
-    }
-
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ProductEntity getProductById(@PathVariable Long id){
         return productService.getProductById(id);
     }
@@ -52,14 +35,26 @@ private ProductService productService;
         return productService.getProductByName(name);
     }
 
-    @PostMapping("/JSON_load")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void updateProductsFromJson(@RequestParam("path") String path) throws IOException {
-            productService.updateProductsFromJson(path);
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProductById(@PathVariable Long id){
+        productService.deleteProductById(id);
     }
 
     @PutMapping("/{id}")
     public void putProductById(@PathVariable Long id, @RequestBody ProductDTO newProduct) {
         productService.putProductById(newProduct, id);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Long> addProduct(@RequestBody ProductDTO product){
+        return new ResponseEntity<>(productService.saveProduct(product), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/JSON_load")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void updateProductsFromJson(@RequestParam("path") String path) throws IOException {
+            productService.updateProductsFromJson(path);
     }
 }

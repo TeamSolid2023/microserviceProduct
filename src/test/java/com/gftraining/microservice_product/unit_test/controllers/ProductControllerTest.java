@@ -99,10 +99,10 @@ class ProductControllerTest {
     @Test
     void updateProductsFromJson() throws Exception {
         mockmvc.perform(MockMvcRequestBuilders.post("/products/JSON_load")
-                        .param("path", "C:\\Files\\data.json"))
+                        .param("path", "C:\\Files\\data-test.json"))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
-        verify(productService,times(1)).updateProductsFromJson("C:\\Files\\data.json");
+        verify(productService,times(1)).updateProductsFromJson("C:\\Files\\data-test.json");
     }
 
 

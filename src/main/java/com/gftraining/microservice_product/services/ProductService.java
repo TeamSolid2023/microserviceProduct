@@ -62,13 +62,14 @@ public class ProductService {
         ProductEntity product = new ProductEntity();
 
         product.setName(productDTO.getName());
-        product.setDescription(productDTO.getName());
+        product.setDescription(productDTO.getDescription());
         product.setPrice(productDTO.getPrice());
         product.setStock(productDTO.getStock());
         product.setCategory(productDTO.getCategory());
 
         return productRepository.save(product).getId();
     }
+
     public void updateProductsFromJson(String path) throws IOException {
         productRepository.deleteAll();
         ObjectMapper objectMapper = new ObjectMapper();

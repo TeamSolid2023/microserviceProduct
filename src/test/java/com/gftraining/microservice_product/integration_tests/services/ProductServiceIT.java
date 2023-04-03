@@ -11,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.webservices.server.WebServiceServerTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.math.BigDecimal;
