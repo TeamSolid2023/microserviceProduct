@@ -1,4 +1,4 @@
-package com.gftraining.microservice_product.services;
+package com.gftraining.microservice_product.unit_test.services;
 
 
 import com.gftraining.microservice_product.configuration.Categories;
@@ -6,6 +6,7 @@ import com.gftraining.microservice_product.configuration.Categories;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
+import com.gftraining.microservice_product.services.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
