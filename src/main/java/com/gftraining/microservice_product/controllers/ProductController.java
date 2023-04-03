@@ -7,6 +7,8 @@ import com.gftraining.microservice_product.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -48,7 +50,7 @@ private ProductService productService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Long> addProduct(@RequestBody ProductDTO product){
+    public ResponseEntity<Long> addProduct(@Valid @RequestBody ProductDTO product){
         return new ResponseEntity<>(productService.saveProduct(product), HttpStatus.CREATED);
     }
 
