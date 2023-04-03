@@ -1,4 +1,5 @@
 spring:
+
   output:
     ansi:
       enabled: ALWAYS
@@ -10,7 +11,9 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
     password: password
-server:
+  liquibase:
+    enabled: true
+  server:
   port: 8081
 springdoc:
   api-docs:
