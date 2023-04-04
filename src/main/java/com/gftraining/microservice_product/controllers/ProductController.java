@@ -7,7 +7,6 @@ import com.gftraining.microservice_product.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import javax.validation.Valid;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -43,11 +42,6 @@ private ProductService productService;
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProductById(@PathVariable Long id){
         productService.deleteProductById(id);
-    }
-
-    @PutMapping("/{id}")
-    public void putProductById(@PathVariable Long id, @RequestBody ProductDTO newProduct) {
-        productService.putProductById(newProduct, id);
     }
 
     @PostMapping
