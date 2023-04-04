@@ -2,6 +2,7 @@ package com.gftraining.microservice_product.unit_test.services;
 
 
 import com.gftraining.microservice_product.configuration.Categories;
+import com.gftraining.microservice_product.exception.GlobalExceptionHandler;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -56,7 +59,7 @@ class ProductServiceTest {
 
     @Test
     void saveProduct() {
-        when(repository.save(productEntity)).thenReturn(productEntity);
+        when(repository.save(productEntity)).thenReturn(productEntity).thenThrow();
         Long id = repository.save(productEntity).getId();
 
         assertEquals(1L, id);
@@ -78,7 +81,8 @@ class ProductServiceTest {
 
     @Test
     void updateDatabase() throws IOException {
-        service.updateProductsFromJson("C:\\Files\\data-test.json");
+        //Put your own path
+        service.updateProductsFromJson("C:\\Files\\data_test.json");
 
         verify(repository,times(1)).deleteAll();
         verify(repository,times(1)).saveAll(any());

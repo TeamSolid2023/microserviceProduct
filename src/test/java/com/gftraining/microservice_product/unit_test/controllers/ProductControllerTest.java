@@ -97,20 +97,12 @@ class ProductControllerTest {
 
     @Test
     void updateProductsFromJson() throws Exception {
+        //Put your own path
         mockmvc.perform(MockMvcRequestBuilders.post("/products/JSON_load")
-                        .param("path", "C:\\Files\\data-test.json"))
+                        .param("path", "C:\\Files\\data_test.json"))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
-        verify(productService,times(1)).updateProductsFromJson("C:\\Files\\data-test.json");
-    }
-
-
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        verify(productService,times(1)).updateProductsFromJson("C:\\Files\\data_test.json");
     }
 
     @Test
@@ -123,4 +115,15 @@ class ProductControllerTest {
 
         assertEquals(productService.getProductById(1L), productEntity);
     }
+
+
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
+
+

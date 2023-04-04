@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
 
-private ProductService productService;
+    private ProductService productService;
 
     public ProductController(ProductService productService) {
         super();
