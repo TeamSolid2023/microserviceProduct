@@ -95,13 +95,23 @@ class ProductServiceTest {
 
     @Test
     void putProductById() {
-        Map<String, Integer> cat = new HashMap<String, Integer>();
+        Map<String, Integer> cat = new HashMap<>();
         cat.put("Juguetes", 20);
 
         when(repository.findById(1L)).thenReturn(Optional.of(productEntity));
         when(yaml.getCategory()).thenReturn(cat);
 
         service.putProductById(productDTO, 1L);
+
+        verify(repository,times(1)).findById(anyLong());
+        verify(repository,times(1)).save(any());
+    }
+
+    @Test
+    void updateStock() {
+        when(repository.findById(1L)).thenReturn(Optional.of(productEntity));
+
+        service.updateStock(100, 1L);
 
         verify(repository,times(1)).findById(anyLong());
         verify(repository,times(1)).save(any());
