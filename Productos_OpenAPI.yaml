@@ -54,8 +54,8 @@ paths:
     get:
       tags:
         - Products
-      summary: returns a product by name
-      description: return details of a product given its name
+      summary: returns list of products by name
+      description: returns list of product given its name
       operationId: getProductByName
       parameters:
         - name: name_product
@@ -69,7 +69,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
         '404':
           description: Product not found
           content:
@@ -253,16 +255,14 @@ paths:
     post:
       tags:
         - Products
-      summary: Here you can load products from JSON.
-      description: The JSON needs to match the Products schema.
+      summary: Here you can load products from a JSON file given a path.
+      description: The JSON needs to match the Products schema. The products table will be overwritten by this file content.
       operationId: loadJSONProducts
-      requestBody:
-        description: list of Products in JSON format.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Product'
+        - in: query
+          name: path
+          schema:
+            type: string
+          description: The path of the JSON file with the products.
       responses:
         '201':
           description: Products created.
