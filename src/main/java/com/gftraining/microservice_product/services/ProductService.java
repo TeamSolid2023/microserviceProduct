@@ -3,12 +3,10 @@ package com.gftraining.microservice_product.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.gftraining.microservice_product.configuration.Categories;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
-
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
