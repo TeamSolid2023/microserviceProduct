@@ -9,10 +9,11 @@ import com.gftraining.microservice_product.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.webjars.NotFoundException;
+
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
@@ -23,7 +24,8 @@ private ProductService productService;
     public ProductController(ProductService productService) {
         super();
         this.productService = productService;
-}
+    }
+
     @GetMapping("/getAll")
     public List<ProductEntity> getAll() {
         return productService.getAll();
@@ -33,13 +35,17 @@ private ProductService productService;
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProductById(@PathVariable Long id){
         productService.deleteProductById(id);
+    }
 
-
-}
     @PostMapping(value = "/newProduct")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Long> addProduct(@RequestBody ProductDTO product){
-        return new ResponseEntity<>(productService.saveProduct(product), HttpStatus.CREATED);
+    public ResponseEntity<String> addProduct(@Valid @RequestBody ProductDTO product){
+        try {
+            Long id = productService.saveProduct(product);
+            return new ResponseEntity<>("Added new product with id: " + id, HttpStatus.CREATED);
+        } catch (ConstraintViolationException e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/{id}")
@@ -59,7 +65,12 @@ private ProductService productService;
     }
 
     @PutMapping("/{id}")
-    public void putProductById(@PathVariable Long id, @RequestBody ProductDTO newProduct) {
-        productService.putProductById(newProduct, id);
+    public ResponseEntity<String> putProductById(@PathVariable Long id, @Valid @RequestBody ProductDTO newProduct) {
+        try {
+            productService.putProductById(newProduct, id);
+            return new ResponseEntity<>("Changed product with id: " + id, HttpStatus.CREATED);
+        } catch (ConstraintViolationException e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

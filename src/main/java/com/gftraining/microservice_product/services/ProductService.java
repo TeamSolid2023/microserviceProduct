@@ -8,7 +8,6 @@ import com.gftraining.microservice_product.configuration.Categories;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
-import lombok.NonNull;
 
 import org.springframework.stereotype.Service;
 
@@ -58,11 +57,11 @@ public class ProductService {
         }
         return products;
     }
-    public @NonNull Long saveProduct(ProductDTO productDTO){
+    public Long saveProduct(ProductDTO productDTO){
         ProductEntity product = new ProductEntity();
 
         product.setName(productDTO.getName());
-        product.setDescription(productDTO.getName());
+        product.setDescription(productDTO.getDescription());
         product.setPrice(productDTO.getPrice());
         product.setStock(productDTO.getStock());
         product.setCategory(productDTO.getCategory());
@@ -78,16 +77,21 @@ public class ProductService {
     }
 
     public void putProductById(ProductDTO newProduct, Long id) {
-        productRepository.findById(id).map(product ->
-        {
-            product.setName(newProduct.getName());
-            product.setId(id);
-            product.setCategory(newProduct.getCategory());
-            product.setDescription(newProduct.getDescription());
-            product.setPrice(newProduct.getPrice());
-            product.setStock(newProduct.getStock());
-            return productRepository.save(product);
-        });
+        if (!yaml.getCategory().containsKey(newProduct.getCategory()))
+            throw new EntityNotFoundException("Category " +newProduct.getCategory()+ " not found. Categories" +
+                    " allowed: " + yaml.getCategory().keySet());
+
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product with id: "+id+" not found."));
+
+        product.setName(newProduct.getName());
+        product.setId(id);
+        product.setCategory(newProduct.getCategory());
+        product.setDescription(newProduct.getDescription());
+        product.setPrice(newProduct.getPrice());
+        product.setStock(newProduct.getStock());
+
+        productRepository.save(product);
     }
 
     public BigDecimal calculateFinalPrice(BigDecimal price, int discount){

@@ -26,8 +26,8 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handlerException(EntityNotFoundException exception,WebRequest req){
 		ExceptionResponse res = new ExceptionResponse(new Date(),exception.getMessage(),null);
 
-		return new ResponseEntity<ExceptionResponse>(res, HttpStatus.NOT_FOUND);
-	};
+		return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+	}
 
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<ExceptionResponse> handleConstraintViolationException(ConstraintViolationException ex) {
@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
 		}
 
 		ExceptionResponse res = new ExceptionResponse(new Date(),"constraint violation", errors);
-		return new ResponseEntity<ExceptionResponse>(res, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
 	}
 
 
@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
 				.collect(Collectors.toList());
 
 		ExceptionResponse res = new ExceptionResponse(new Date(),"method argument not valid", errors);
-		return new ResponseEntity<ExceptionResponse>(res, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
 	}
 
 
@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
 
 		ExceptionResponse res = new ExceptionResponse("there is no user with that id", new Date());
 
-		return new ResponseEntity<ExceptionResponse>(res, HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
 	}
 
 }

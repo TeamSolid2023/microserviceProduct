@@ -2,7 +2,6 @@ package com.gftraining.microservice_product.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gftraining.microservice_product.model.CategoryEntity;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.services.ProductService;
@@ -119,7 +118,7 @@ class ProductControllerTest {
 
         mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productEntity)))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isCreated());
 
         assertEquals(productService.getProductById(1L), productEntity);
     }
