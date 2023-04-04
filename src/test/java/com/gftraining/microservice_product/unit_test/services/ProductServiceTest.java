@@ -59,7 +59,7 @@ class ProductServiceTest {
 
     @Test
     void saveProduct() {
-        when(repository.save(productEntity)).thenReturn(productEntity).thenThrow();
+        when(repository.save(productEntity)).thenReturn(productEntity);
         Long id = repository.save(productEntity).getId();
 
         assertEquals(1L, id);
