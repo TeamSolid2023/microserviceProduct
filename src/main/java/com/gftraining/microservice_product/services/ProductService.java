@@ -43,17 +43,9 @@ public class ProductService {
     }
 
     private void deleteCartProducts(Long id) {
-        WebClient webClient = WebClient
-                .builder()
-                .baseUrl("http://localhost:8080")
-                .build();
-
-        webClient.delete()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/products/{id}")
-                        .build(id))
-                .retrieve()
-                .bodyToMono(String.class);
+        CartWebClient webClient = new CartWebClient();
+        webClient.deleteResource(id)
+                .block();
     }
 
     public ProductEntity getProductById(Long id) {
