@@ -38,6 +38,8 @@ public class ProductService {
     }
 
     public void deleteProductById(Long id) {
+        productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product with id: "+id+" not found."));
         productRepository.deleteById(id);
         deleteCartProducts(id);
     }
