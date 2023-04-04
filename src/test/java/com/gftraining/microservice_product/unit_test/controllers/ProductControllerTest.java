@@ -14,11 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -44,7 +42,7 @@ class ProductControllerTest {
             new ProductEntity(2L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
     );
 
-    ProductEntity productEntity = new ProductEntity(1398L,"Pelota", "Juguetes", "pelota futbol",new BigDecimal(19.99),24);
+    ProductEntity productEntity = new ProductEntity(1L,"Pelota", "Juguetes", "pelota futbol",new BigDecimal(19.99),24);
 
     @Test
     void testGetAll() throws Exception {
@@ -69,7 +67,7 @@ class ProductControllerTest {
     void addNewProduct() throws Exception {
         when(productService.saveProduct(any(ProductDTO.class))).thenReturn(productEntity.getId());
 
-        mockmvc.perform(MockMvcRequestBuilders.post("/products/newProduct")
+        mockmvc.perform(MockMvcRequestBuilders.post("/products")
                         .content(asJsonString(productEntity))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -78,9 +76,9 @@ class ProductControllerTest {
 
     @Test
     void getProductById() throws Exception {
-        when(productService.getProductById(1398L)).thenReturn(productEntity);
+        when(productService.getProductById(1L)).thenReturn(productEntity);
 
-        mockmvc.perform(get("/products/{id}",1398L))
+        mockmvc.perform(get("/products/id/{id}",1L))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().json(asJsonString(productEntity)));
     }

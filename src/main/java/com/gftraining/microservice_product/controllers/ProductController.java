@@ -7,8 +7,8 @@ import com.gftraining.microservice_product.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.List;
 

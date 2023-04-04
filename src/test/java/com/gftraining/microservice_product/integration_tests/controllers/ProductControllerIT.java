@@ -29,9 +29,9 @@ class ProductControllerIT {
     @Autowired
     private MockMvc mockmvc;
 
-    ProductDTO productEntity = new ProductDTO(new ProductEntity(4L, "Pelota",
-            "Juguetes","pelota de futbol",new BigDecimal(19.99),24));
-
+    ProductEntity productEntity = new ProductEntity(4L, "Pelota",
+            "Juguetes","pelota de futbol",new BigDecimal(19.99),24);
+    ProductDTO productDTO = new ProductDTO(productEntity.getName(), productEntity.getCategory(), productEntity.getDescription(), productEntity.getPrice(), productEntity.getStock());
 
     @Test
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
@@ -66,7 +66,7 @@ class ProductControllerIT {
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
     void putProductById() throws Exception {
         mockmvc.perform(put("/products/{id}",1).contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(productEntity)))
+                        .content(new ObjectMapper().writeValueAsString(productDTO)))
                 .andExpect(status().isOk());
 
     }
@@ -91,7 +91,7 @@ class ProductControllerIT {
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
     void addNewProduct() throws Exception {
         mockmvc.perform(MockMvcRequestBuilders.post("/products/newProduct")
-                        .content(asJsonString(productEntity))
+                        .content(asJsonString(productDTO))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json"))

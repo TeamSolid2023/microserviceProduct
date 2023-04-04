@@ -1,6 +1,5 @@
 package com.gftraining.microservice_product.integration_tests.services;
 
-
 import com.gftraining.microservice_product.configuration.Categories;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
@@ -11,8 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.webservices.server.WebServiceServerTest;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -53,8 +50,8 @@ class ProductServiceIT {
 
     @Test
     void deleteProductById() {
-       service.deleteProductById(1L);
-       verify(repository,times(1)).deleteById(anyLong());
+        service.deleteProductById(1L);
+        verify(repository, times(1)).deleteById(anyLong());
     }
 
     @Test
@@ -82,8 +79,8 @@ class ProductServiceIT {
     void updateDatabase() throws IOException {
         service.updateProductsFromJson("C:\\Files\\data-test.json");
 
-        verify(repository,times(1)).deleteAll();
-        verify(repository,times(1)).saveAll(any());
+        verify(repository, times(1)).deleteAll();
+        verify(repository, times(1)).saveAll(any());
     }
 
     @Test
@@ -101,7 +98,7 @@ class ProductServiceIT {
     }
 
     @Test
-    void calculateFinalPrice(){
+    void calculateFinalPrice() {
         BigDecimal realParam = new BigDecimal("23.85");
         BigDecimal expectedParam = new BigDecimal("21.47");
 
