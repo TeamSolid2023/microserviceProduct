@@ -120,7 +120,7 @@ class ProductControllerTest {
 
         mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productEntity)))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isCreated());
 
         assertEquals(productService.getProductById(1L), productEntity);
     }

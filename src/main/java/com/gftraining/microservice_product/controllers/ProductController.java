@@ -7,7 +7,8 @@ import com.gftraining.microservice_product.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import javax.validation.Valid;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -21,7 +22,8 @@ private ProductService productService;
     public ProductController(ProductService productService) {
         super();
         this.productService = productService;
-}
+    }
+
     @GetMapping("/getAll")
     public List<ProductEntity> getAll() {
         return productService.getAll();
@@ -50,13 +52,28 @@ private ProductService productService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Long> addProduct(@Valid @RequestBody ProductDTO product){
-        return new ResponseEntity<>(productService.saveProduct(product), HttpStatus.CREATED);
+    public ResponseEntity<String> addProduct(@Valid @RequestBody ProductDTO product){
+        try {
+            Long id = productService.saveProduct(product);
+            return new ResponseEntity<>("Added new product with id: " + id, HttpStatus.CREATED);
+        } catch (ConstraintViolationException e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/JSON_load")
     @ResponseStatus(HttpStatus.CREATED)
     public void updateProductsFromJson(@RequestParam("path") String path) throws IOException {
             productService.updateProductsFromJson(path);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> putProductById(@PathVariable Long id, @Valid @RequestBody ProductDTO newProduct) {
+        try {
+            productService.putProductById(newProduct, id);
+            return new ResponseEntity<>("Changed product with id: " + id, HttpStatus.CREATED);
+        } catch (ConstraintViolationException e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

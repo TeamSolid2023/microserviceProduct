@@ -1,34 +1,33 @@
 package com.gftraining.microservice_product.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
+
 
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ProductDTO {
 
-    @NotNull(message = "name cannot be null")
-    @NonNull private String name;
-    @NotNull(message = "category cannot be null")
-    @NonNull private String category;
-    @NotNull(message = "description cannot be null")
-    @NonNull private String description;
-    @NotNull(message = "price cannot be null")
-    @NonNull private BigDecimal price;
-    @NotNull(message = "stock cannot be null")
-    @NonNull private Integer stock;
-
-    public ProductDTO(ProductEntity product) {
-        this.name = product.getName();
-        this.category = product.getCategory();
-        this.description = product.getDescription();
-        this.price = product.getPrice();
-        this.stock = product.getStock();
-    }
+    @NotNull(message = "cannot be null.")
+    @Pattern(message = "add a name", regexp = "^(?!string$).+$")
+    @Schema(example = "string", description = "")
+    private String name;
+    @NotNull(message = "cannot be null.")
+    @Pattern(message = "add a category", regexp = "^(?!string$).+$")
+    @Schema(example = "string", description = "")
+    private String category;
+    @NotBlank(message = "cannot be null.")
+    @Pattern(message = "add a description", regexp = "^(?!string$).+$")
+    @Schema(example = "string", description = "")
+    private String description;
+    @NotNull(message = "cannot be null.")
+    @Positive(message = "should be greater than 0.")
+    private BigDecimal price;
+    @NotNull(message = "cannot be null.")
+    @PositiveOrZero(message = "should be positive or 0.")
+    private Integer stock;
 }
