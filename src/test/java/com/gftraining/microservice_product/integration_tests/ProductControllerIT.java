@@ -1,4 +1,4 @@
-package com.gftraining.microservice_product.integration_tests.controllers;
+package com.gftraining.microservice_product.integration_tests;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,8 +29,7 @@ class ProductControllerIT {
     @Autowired
     private MockMvc mockmvc;
 
-    ProductEntity productEntity = new ProductEntity(4L, "Pelota",
-            "Juguetes","pelota de futbol",new BigDecimal(19.99),24);
+    ProductEntity productEntity = new ProductEntity(4L, "Pelota", "Juguetes","pelota de futbol",new BigDecimal(19.99),24);
     ProductDTO productDTO = new ProductDTO(productEntity.getName(), productEntity.getCategory(), productEntity.getDescription(), productEntity.getPrice(), productEntity.getStock());
 
     @Test
@@ -47,7 +46,7 @@ class ProductControllerIT {
     @Test
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
     void getProductById() throws Exception {
-        mockmvc.perform(get("/products/{id}",1))
+        mockmvc.perform(get("/products/id/{id}",1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json("{id: 1, name: Wonder, stock: 90}"));
@@ -67,7 +66,7 @@ class ProductControllerIT {
     void putProductById() throws Exception {
         mockmvc.perform(put("/products/{id}",1).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productDTO)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
     }
 
@@ -90,12 +89,12 @@ class ProductControllerIT {
     @Test
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
     void addNewProduct() throws Exception {
-        mockmvc.perform(MockMvcRequestBuilders.post("/products/newProduct")
+        mockmvc.perform(MockMvcRequestBuilders.post("/products")
                         .content(asJsonString(productDTO))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(content().json("4"));
+                .andExpect(content().string("Added new product with id: 4"));
     }
 
 
