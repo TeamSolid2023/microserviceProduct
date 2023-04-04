@@ -8,6 +8,7 @@ import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.File;
@@ -37,8 +38,18 @@ public class ProductService {
     }
 
     public void deleteProductById(Long id) {
+        productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product with id: "+id+" not found."));
         productRepository.deleteById(id);
+        deleteCartProducts(id);
     }
+
+    private void deleteCartProducts(Long id) {
+        CartWebClient webClient = new CartWebClient();
+        webClient.deleteResource(id)
+                .block();
+    }
+
     public ProductEntity getProductById(Long id) {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product with id: "+id+" not found."));
@@ -70,7 +81,8 @@ public class ProductService {
     public void updateProductsFromJson(String path) throws IOException {
         productRepository.deleteAll();
         ObjectMapper objectMapper = new ObjectMapper();
-        List<ProductEntity> products = objectMapper.readValue(new File(path), new TypeReference<List<ProductEntity>>(){});
+        List<ProductEntity> products = objectMapper.readValue(new File(path), new TypeReference<>() {
+        });
         productRepository.saveAll(products);
 
     }
