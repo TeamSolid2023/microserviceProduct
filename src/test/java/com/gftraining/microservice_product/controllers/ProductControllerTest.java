@@ -1,11 +1,13 @@
 package com.gftraining.microservice_product.controllers;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.services.ProductService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -13,15 +15,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,7 +42,8 @@ class ProductControllerTest {
             new ProductEntity(2L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
     );
 
-    ProductEntity productEntity = new ProductEntity(1398L,"Pelota", "Juguetes", "pelota futbol",new BigDecimal(19.99),24);
+    ProductEntity productEntity = new ProductEntity(1L,"Pelota", "Juguetes", "pelota futbol",new BigDecimal(19.99),24);
+    ProductEntity productEntity2 = new ProductEntity(1L,"Pelota", "Juguetes", "pelota futbol",new BigDecimal(19.99),20);
 
     @Test
     void testGetAll() throws Exception {
@@ -77,9 +77,9 @@ class ProductControllerTest {
 
     @Test
     void getProductById() throws Exception {
-        when(productService.getProductById(1398L)).thenReturn(productEntity);
+        when(productService.getProductById(1L)).thenReturn(productEntity);
 
-        mockmvc.perform(get("/products/{id}",1398L))
+        mockmvc.perform(get("/products/{id}",1L))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().json(asJsonString(productEntity)));
     }
@@ -116,10 +116,24 @@ class ProductControllerTest {
     void putProductById() throws Exception {
         when(productService.getProductById(anyLong())).thenReturn(productEntity);
 
-        mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
+        mockmvc.perform(put("/products/{id}",1L)
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productEntity)))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .andExpect(MockMvcResultMatchers.status().isOk());
 
         assertEquals(productService.getProductById(1L), productEntity);
+    }
+
+    @Test
+    void updateStock() throws Exception {
+        when(productService.getProductById(anyLong())).thenReturn(productEntity);
+        doNothing().when(productService).updateStock(4, 1L);
+
+        mockmvc.perform(patch("/products/updateStock/{id}",1L)
+                .param("id", "1").contentType(MediaType.APPLICATION_JSON)
+                        .content("5"))
+                        .andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(productService, Mockito.times(1)).updateStock(5, 1L);
     }
 }
