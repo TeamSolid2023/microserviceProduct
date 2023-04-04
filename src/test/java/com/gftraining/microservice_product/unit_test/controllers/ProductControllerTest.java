@@ -3,7 +3,6 @@ package com.gftraining.microservice_product.unit_test.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microservice_product.controllers.ProductController;
-import com.gftraining.microservice_product.model.CategoryEntity;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.services.ProductService;
@@ -45,7 +44,7 @@ class ProductControllerTest {
             new ProductEntity(2L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
     );
 
-    ProductEntity productEntity = new ProductEntity(1398L,"Pelota", "Juguetes", "pelota futbol",new BigDecimal(19.99),24);
+    ProductEntity productEntity = new ProductEntity(1L,"Pelota", "Juguetes", "pelota futbol",new BigDecimal(19.99),24);
 
     @Test
     void testGetAll() throws Exception {
@@ -70,7 +69,7 @@ class ProductControllerTest {
     void addNewProduct() throws Exception {
         when(productService.saveProduct(any(ProductDTO.class))).thenReturn(productEntity.getId());
 
-        mockmvc.perform(MockMvcRequestBuilders.post("/products/newProduct")
+        mockmvc.perform(MockMvcRequestBuilders.post("/products")
                         .content(asJsonString(productEntity))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -79,9 +78,9 @@ class ProductControllerTest {
 
     @Test
     void getProductById() throws Exception {
-        when(productService.getProductById(1398L)).thenReturn(productEntity);
+        when(productService.getProductById(1L)).thenReturn(productEntity);
 
-        mockmvc.perform(get("/products/{id}",1398L))
+        mockmvc.perform(get("/products/id/{id}",1L))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().json(asJsonString(productEntity)));
     }
@@ -120,7 +119,7 @@ class ProductControllerTest {
 
         mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productEntity)))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isCreated());
 
         assertEquals(productService.getProductById(1L), productEntity);
     }
