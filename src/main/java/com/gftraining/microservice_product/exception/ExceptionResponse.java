@@ -1,9 +1,9 @@
 package com.gftraining.microservice_product.exception;
 
+import lombok.Data;
+
 import java.util.Date;
 import java.util.List;
-
-import lombok.Data;
 
 
 @Data

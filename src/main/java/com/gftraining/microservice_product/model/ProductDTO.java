@@ -1,34 +1,35 @@
 package com.gftraining.microservice_product.model;
 
-import com.sun.istack.NotNull;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
+
 
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ProductDTO {
 
-    @NotNull
+    @NotNull(message = "cannot be null.")
+    @Pattern(message = "add a name", regexp = "^(?!string$).+$")
+    @Schema(example = "string", description = "")
     private String name;
-    @NonNull
+    @NotNull(message = "cannot be null.")
+    @Pattern(message = "add a category", regexp = "^(?!string$).+$")
+    @Schema(example = "string", description = "")
     private String category;
-    @NonNull
+    @NotBlank(message = "cannot be null.")
+    @Pattern(message = "add a description", regexp = "^(?!string$).+$")
+    @Schema(example = "string", description = "")
     private String description;
-    @NonNull
+    @NotNull(message = "cannot be null.")
+    @Positive(message = "should be greater than 0.")
     private BigDecimal price;
-    @NonNull
+    @NotNull(message = "cannot be null.")
+    @PositiveOrZero(message = "should be positive or 0.")
     private Integer stock;
-
-    public ProductDTO(ProductEntity product) {
-        this.name = product.getName();
-        this.category = product.getCategory();
-        this.description = product.getDescription();
-        this.price = product.getPrice();
-        this.stock = product.getStock();
-    }
 }

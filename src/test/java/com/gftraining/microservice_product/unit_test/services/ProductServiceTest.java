@@ -1,11 +1,11 @@
-package com.gftraining.microservice_product.services;
+package com.gftraining.microservice_product.unit_test.services;
 
 
 import com.gftraining.microservice_product.configuration.Categories;
-
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
+import com.gftraining.microservice_product.services.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,16 +14,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -42,7 +38,9 @@ class ProductServiceTest {
             new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100),
             new ProductEntity(2L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
     );
-    ProductEntity productEntity = new ProductEntity(1398L,"Pelota", "Juguetes","pelota futbol",new BigDecimal(19.99),24);
+    ProductEntity productEntity = new ProductEntity(1L,"Pelota", "Juguetes","pelota futbol",new BigDecimal(19.99),24);
+
+    ProductDTO productDTO = new ProductDTO(productEntity.getName(), productEntity.getCategory(), productEntity.getDescription(), productEntity.getPrice(), productEntity.getStock());
 
     @Test
     void testGetAll() {
@@ -61,26 +59,26 @@ class ProductServiceTest {
         when(repository.save(productEntity)).thenReturn(productEntity);
         Long id = repository.save(productEntity).getId();
 
-        assertEquals(1398L, id);
+        assertEquals(1L, id);
     }
 
     @Test
     void getProductById() {
-        when(repository.findById(1398L)).thenReturn(Optional.of(productEntity));
+        when(repository.findById(1L)).thenReturn(Optional.of(productEntity));
 
-        assertThat(service.getProductById(1398L)).isEqualToComparingFieldByFieldRecursively(productEntity);
+        assertThat(service.getProductById(1L)).isEqualToComparingFieldByFieldRecursively(productEntity);
     }
 
     @Test
     void getProductByName() {
-
         when(repository.findAllByName("Playmobil")).thenReturn(productListSameName);
+
         assertThat(service.getProductByName("Playmobil")).isEqualTo(productListSameName);
     }
 
    /* @Test
     void updateDatabase() throws IOException {
-        service.updateProductsFromJson("C:\\Files\\data.json");
+        service.updateProductsFromJson("C:\\Files\\data-test.json");
 
         verify(repository,times(1)).deleteAll();
         verify(repository,times(1)).saveAll(any());
@@ -88,8 +86,14 @@ class ProductServiceTest {
 
     @Test
     void putProductById() {
-        when(repository.findById(anyLong())).thenReturn(Optional.of(productEntity));
-        service.putProductById(new ProductDTO(productEntity), 1L);
+        Map<String, Integer> cat = new HashMap<String, Integer>();
+        cat.put("Juguetes", 20);
+
+        when(repository.findById(1L)).thenReturn(Optional.of(productEntity));
+        when(yaml.getCategory()).thenReturn(cat);
+
+        service.putProductById(productDTO, 1L);
+
         verify(repository,times(1)).findById(anyLong());
         verify(repository,times(1)).save(any());
     }
@@ -104,6 +108,6 @@ class ProductServiceTest {
 
     @Test
     void getDiscount(){
-        assertThat(service.getDiscount(productEntity)).isEqualTo(0);
+        assertThat(service.getDiscount(productEntity)).isZero();
     }
 }
