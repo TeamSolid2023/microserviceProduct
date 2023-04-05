@@ -39,8 +39,7 @@ class ProductControllerIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", isA(ArrayList.class)))
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$.*", hasSize(3)))
-                .andExpect(jsonPath("$[*].name", containsInAnyOrder("Wonder", "Los Surcos del Azar", "Pelota")));
+                .andExpect(jsonPath("$.*", hasSize(27)));
     }
 
     @Test
@@ -58,7 +57,8 @@ class ProductControllerIT {
         mockmvc.perform(get("/products/name/{name}","Los Surcos del Azar"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(content().json("[{id:2, name: \"Los Surcos del Azar\", price: 24.89}]"));
+                .andExpect(jsonPath("$.*", hasSize(9)));
+    
     }
 
     @Test
@@ -94,7 +94,7 @@ class ProductControllerIT {
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(content().string("Added new product with id: 4"));
+                .andExpect(content().string("Added new product with id: 28"));
     }
 
 

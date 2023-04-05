@@ -14,7 +14,7 @@ create table Product(
     name varchar(45) not null,
     category varchar(45),
     description varchar(255) not null,
-    price decimal(5,2) not null,
+    price decimal(10,2) not null,
     stock int not null,
 
     primary key (id),
