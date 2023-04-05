@@ -121,9 +121,9 @@ class ProductControllerTest {
         doNothing().when(productService).updateStock(4, 1L);
 
         mockmvc.perform(patch("/products/updateStock/{id}",1L)
-                        .param("id", "1").contentType(MediaType.APPLICATION_JSON)
+                .param("id", "1").contentType(MediaType.APPLICATION_JSON)
                         .content("5"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                        .andExpect(MockMvcResultMatchers.status().isOk());
 
         verify(productService, Mockito.times(1)).updateStock(5, 1L);
     }

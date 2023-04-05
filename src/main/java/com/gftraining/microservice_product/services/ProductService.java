@@ -37,19 +37,6 @@ public class ProductService {
 		return products;
 	}
 
-	public BigDecimal calculateFinalPrice(BigDecimal price, int discount) {
-		return price.subtract(price.multiply(BigDecimal.valueOf(discount)).divide(new BigDecimal("100")))
-				.round(new MathContext(4, RoundingMode.HALF_UP));
-	}
-
-	public int getDiscount(ProductEntity product) {
-		if (yaml.getCategory().get(product.getCategory()) == null) {
-			return 0;
-		} else {
-			return yaml.getCategory().get(product.getCategory());
-		}
-	}
-
 	public void deleteProductById(Long id) {
 		productRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Product with id: " + id + " not found."));
@@ -128,5 +115,18 @@ public class ProductService {
         product.setStock(units);
 
         productRepository.save(product);
+    }
+
+    public BigDecimal calculateFinalPrice(BigDecimal price, int discount){
+        return price.subtract(price.multiply(BigDecimal.valueOf(discount)).divide(new BigDecimal("100")))
+                .round(new MathContext(4, RoundingMode.HALF_UP));
+    }
+
+    public int getDiscount(ProductEntity product) {
+        if (yaml.getCategory().get(product.getCategory()) == null) {
+            return 0;
+        } else {
+            return yaml.getCategory().get(product.getCategory());
+        }
     }
 }
