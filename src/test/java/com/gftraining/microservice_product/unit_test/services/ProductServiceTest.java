@@ -6,6 +6,7 @@ import com.gftraining.microservice_product.exception.GlobalExceptionHandler;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
+import com.gftraining.microservice_product.services.CartWebClient;
 import com.gftraining.microservice_product.services.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +33,8 @@ class ProductServiceTest {
     ProductRepository repository;
     @Mock
     Categories yaml;
+    @Mock
+    CartWebClient cartWebClient;
 
     List<ProductEntity> productList = Arrays.asList(
             new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100),
@@ -53,7 +56,9 @@ class ProductServiceTest {
 
     @Test
     void deleteProductById() {
+        when(repository.findById(anyLong())).thenReturn(Optional.of(productEntity));
        service.deleteProductById(1L);
+       verify(repository,times(1)).findById(anyLong());
        verify(repository,times(1)).deleteById(anyLong());
     }
 
@@ -61,7 +66,7 @@ class ProductServiceTest {
     void saveProduct() {
         when(repository.save(productEntity)).thenReturn(productEntity);
         Long id = repository.save(productEntity).getId();
-
+        verify(repository,times(1)).save(any());
         assertEquals(1L, id);
     }
 
@@ -82,7 +87,7 @@ class ProductServiceTest {
     @Test
     void updateDatabase() throws IOException {
         //Put your own path
-        service.updateProductsFromJson("C:\\Files\\data_test.json");
+        service.updateProductsFromJson("C:\\Files\\data.json");
 
         verify(repository,times(1)).deleteAll();
         verify(repository,times(1)).saveAll(any());

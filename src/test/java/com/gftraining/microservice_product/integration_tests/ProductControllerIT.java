@@ -73,7 +73,7 @@ class ProductControllerIT {
     @Test
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
     void deleteProductById() throws Exception {
-        mockmvc.perform(delete("/products/{id}",1))
+        mockmvc.perform(delete("/products/{id}",18))
                 .andExpect(status().isNoContent());
     }
 
@@ -82,7 +82,7 @@ class ProductControllerIT {
     void updateProductsFromJson() throws Exception {
         //Put your own path
         mockmvc.perform(MockMvcRequestBuilders.post("/products/JSON_load")
-                        .param("path", "C:\\Files\\data_test.json"))
+                        .param("path", "C:\\Files\\data.json"))
                 .andExpect(status().isCreated());
     }
 
