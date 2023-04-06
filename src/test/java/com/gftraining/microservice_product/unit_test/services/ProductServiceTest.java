@@ -2,28 +2,30 @@ package com.gftraining.microservice_product.unit_test.services;
 
 
 import com.gftraining.microservice_product.configuration.Categories;
-import com.gftraining.microservice_product.exception.GlobalExceptionHandler;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
 import com.gftraining.microservice_product.services.CartWebClient;
 import com.gftraining.microservice_product.services.ProductService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
+import org.mockito.BDDMockito;
+
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -32,7 +34,7 @@ class ProductServiceTest {
     @Mock
     ProductRepository repository;
     @Mock
-    Categories yaml;
+    Categories categories;
     @Mock
     CartWebClient cartWebClient;
 
@@ -50,36 +52,42 @@ class ProductServiceTest {
 
     @Test
     void testGetAll() {
-        when(repository.findAll()).thenReturn(productList);
+        given(repository.findAll()).willReturn(productList);
         assertThat(service.getAll()).isEqualTo(productList);
     }
 
     @Test
+    @DisplayName("given a product id, when delete product by id, then the product is deleted")
     void deleteProductById() {
-        when(repository.findById(anyLong())).thenReturn(Optional.of(productEntity));
+        //given
+        given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
+        
+        //when
        service.deleteProductById(1L);
-       verify(repository,times(1)).findById(anyLong());
-       verify(repository,times(1)).deleteById(anyLong());
+       
+       //then
+       verify(repository).findById(anyLong());
+       verify(repository).deleteById(anyLong());
     }
 
     @Test
     void saveProduct() {
-        when(repository.save(productEntity)).thenReturn(productEntity);
+        given(repository.save(productEntity)).willReturn(productEntity);
         Long id = repository.save(productEntity).getId();
-        verify(repository,times(1)).save(any());
+        verify(repository).save(any());
         assertEquals(1L, id);
     }
 
     @Test
     void getProductById() {
-        when(repository.findById(1L)).thenReturn(Optional.of(productEntity));
+        given(repository.findById(1L)).willReturn(Optional.of(productEntity));
 
         assertThat(service.getProductById(1L)).isEqualToComparingFieldByFieldRecursively(productEntity);
     }
 
     @Test
     void getProductByName() {
-        when(repository.findAllByName("Playmobil")).thenReturn(productListSameName);
+        given(repository.findAllByName("Playmobil")).willReturn(productListSameName);
 
         assertThat(service.getProductByName("Playmobil")).isEqualTo(productListSameName);
     }
@@ -89,8 +97,8 @@ class ProductServiceTest {
         //Put your own path
         service.updateProductsFromJson("C:\\Files\\data.json");
 
-        verify(repository,times(1)).deleteAll();
-        verify(repository,times(1)).saveAll(any());
+        verify(repository).deleteAll();
+        verify(repository).saveAll(any());
     }
 
     @Test
@@ -98,13 +106,13 @@ class ProductServiceTest {
         Map<String, Integer> cat = new HashMap<>();
         cat.put("Juguetes", 20);
 
-        when(repository.findById(1L)).thenReturn(Optional.of(productEntity));
-        when(yaml.getCategory()).thenReturn(cat);
+        given(repository.findById(1L)).willReturn(Optional.of(productEntity));
+        given(categories.getCategories()).willReturn(cat);
 
         service.putProductById(productDTO, 1L);
 
-        verify(repository,times(1)).findById(anyLong());
-        verify(repository,times(1)).save(any());
+        verify(repository).findById(anyLong());
+        verify(repository).save(any());
     }
 
     @Test
