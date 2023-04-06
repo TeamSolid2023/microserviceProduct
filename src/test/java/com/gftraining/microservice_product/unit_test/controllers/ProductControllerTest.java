@@ -19,7 +19,9 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -48,8 +50,8 @@ class ProductControllerTest {
 
     @Test
     void testGetAll() throws Exception {
-        when(productService.getAll())
-                .thenReturn(productList);
+        given(productService.getAll())
+                .willReturn(productList);
 
         mockmvc.perform(MockMvcRequestBuilders.get("/products/getAll"))
                 .andExpect(content().json(new ObjectMapper().writeValueAsString(productList)))
@@ -62,12 +64,12 @@ class ProductControllerTest {
         mockmvc.perform(MockMvcRequestBuilders.delete("/products/{id}",1l))
                                                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
-        verify(productService,times(1)).deleteProductById(anyLong());
+        verify(productService).deleteProductById(anyLong());
     }
 
     @Test
     void addNewProduct() throws Exception {
-        when(productService.saveProduct(any(ProductDTO.class))).thenReturn(productEntity.getId());
+        given(productService.saveProduct(any(ProductDTO.class))).willReturn(productEntity.getId());
 
         mockmvc.perform(MockMvcRequestBuilders.post("/products")
                         .content(asJsonString(productEntity))
@@ -78,7 +80,7 @@ class ProductControllerTest {
 
     @Test
     void getProductById() throws Exception {
-        when(productService.getProductById(1L)).thenReturn(productEntity);
+        given(productService.getProductById(1L)).willReturn(productEntity);
 
         mockmvc.perform(get("/products/id/{id}",1L))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -88,7 +90,7 @@ class ProductControllerTest {
     @Test
     void getProductByName() throws Exception {
 
-        when(productService.getProductByName("Playmobil")).thenReturn(productListSameName);
+        given(productService.getProductByName("Playmobil")).willReturn(productListSameName);
 
         mockmvc.perform(get("/products/name/{name}","Playmobil"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -102,18 +104,18 @@ class ProductControllerTest {
                         .param("path", "C:\\Files\\data_test.json"))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
-        verify(productService,times(1)).updateProductsFromJson("C:\\Files\\data_test.json");
+        verify(productService).updateProductsFromJson("C:\\Files\\data_test.json");
     }
 
     @Test
     void putProductById() throws Exception {
-        when(productService.getProductById(anyLong())).thenReturn(productEntity);
+        given(productService.getProductById(anyLong())).willReturn(productEntity);
 
         mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productEntity)))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
-        assertEquals(productService.getProductById(1L), productEntity);
+        assertThat(productService.getProductById(1L)).isEqualTo(productEntity);
     }
 
 
@@ -125,5 +127,3 @@ class ProductControllerTest {
         }
     }
 }
-
-

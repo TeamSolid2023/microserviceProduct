@@ -1,5 +1,6 @@
 package com.gftraining.microservice_product.exception;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +26,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler
 	public ResponseEntity<ExceptionResponse> handlerException(EntityNotFoundException exception){
-		ExceptionResponse res = new ExceptionResponse(new Date(),exception.getMessage(), null);
+		ExceptionResponse res = new ExceptionResponse(LocalDate.now(),exception.getMessage(), null);
 
 		return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
 	}
@@ -39,7 +40,7 @@ public class GlobalExceptionHandler {
 			errors.add(violation.getPropertyPath() + ": " + violation.getMessage());
 		}
 
-		ExceptionResponse res = new ExceptionResponse(new Date(),"constraint violation", errors);
+		ExceptionResponse res = new ExceptionResponse(LocalDate.now(),"constraint violation", errors);
 		return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
 	}
 
@@ -53,7 +54,7 @@ public class GlobalExceptionHandler {
 				.map(error -> error.getField() + ": " + error.getDefaultMessage())
 				.collect(Collectors.toList());
 
-		ExceptionResponse res = new ExceptionResponse(new Date(),"method argument not valid", errors);
+		ExceptionResponse res = new ExceptionResponse(LocalDate.now(),"method argument not valid", errors);
 		return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
 	}
 
@@ -61,7 +62,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(ResponseStatusException.class)
 	public ResponseEntity<ExceptionResponse> handleResponseStatusException(ResponseStatusException ex) {
 
-		ExceptionResponse res = new ExceptionResponse("there is no user with that id", new Date());
+		ExceptionResponse res = new ExceptionResponse("there is no user with that id", LocalDate.now());
 
 		return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
 	}
