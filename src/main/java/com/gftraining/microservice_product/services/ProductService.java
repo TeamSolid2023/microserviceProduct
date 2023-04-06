@@ -7,7 +7,6 @@ import com.gftraining.microservice_product.configuration.Categories;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
-import com.gftraining.microservice_product.services.CartWebClient;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -16,6 +15,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,7 +34,7 @@ public class ProductService{
 
 	public List<ProductEntity> getAll() {
 		List<ProductEntity> products = productRepository.findAll();
-		return addFinalPriceToFinalProduct(products);
+		return addFinalPriceToProductsList(products);
 	}
 	
 	public BigDecimal calculateFinalPrice(BigDecimal price, int discount) {
@@ -43,13 +43,11 @@ public class ProductService{
 	}
 	
 	public int getDiscount(ProductEntity product) {
-		return Optional.of(categories.getCategories().get(product.getCategory())).orElse(0);
-		
+		return Optional.ofNullable(categories.getCategories().get(product.getCategory())).orElse(0);
 	}
 	
 	public void deleteProductById(Long id) {
-		productRepository.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException("Product with id: " + id + " not found."));
+		getProductById(id);
 		productRepository.deleteById(id);
 		deleteCartProducts(id);
 	}
@@ -63,15 +61,14 @@ public class ProductService{
 	public ProductEntity getProductById(Long id) {
 		ProductEntity product = productRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Product with id: " + id + " not found."));
-		product.setFinalPrice(calculateFinalPrice(product.getPrice(), getDiscount(product)));
-		return product;
+		return addFinalPriceToProductsList(Arrays.asList(product)).get(0);
 	}
 
 	public List<ProductEntity> getProductByName(String name) {
 		List<ProductEntity> products = productRepository.findAllByName(name);
 		if (products.isEmpty()) throw new EntityNotFoundException("Products with name: " + name + " not found.");
 		
-		return addFinalPriceToFinalProduct(products);
+		return addFinalPriceToProductsList(products);
 	}
 	
 	public Long saveProduct(ProductDTO productDTO) {
@@ -99,9 +96,8 @@ public class ProductService{
 		if (!categories.getCategories().containsKey(newProduct.getCategory()))
 			throw new EntityNotFoundException("Category " + newProduct.getCategory() + " not found. Categories" +
 					" allowed: " + categories.getCategories().keySet());
-		
-		ProductEntity product = productRepository.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException("Product with id: " + id + " not found."));
+
+		ProductEntity product = getProductById(id);
 
 		product.setName(newProduct.getName());
 		product.setId(id);
@@ -112,8 +108,8 @@ public class ProductService{
 
 		productRepository.save(product);
 	}
-  
-	private List<ProductEntity> addFinalPriceToFinalProduct(List<ProductEntity> products) {
+
+	private List<ProductEntity> addFinalPriceToProductsList(List<ProductEntity> products) {
 		return products.stream()
 				.map(product -> {
 					product.setFinalPrice(calculateFinalPrice(product.getPrice(), getDiscount(product)));
@@ -121,15 +117,12 @@ public class ProductService{
 				})
 				.collect(Collectors.toList());
 	}
-}
 
     public void updateStock(Integer units, Long id) {
-        ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Product with id: "+id+" not found."));
+        ProductEntity product = getProductById(id);
 
         Integer newStock = product.getStock()-units;
-
-        product.setStock(units);
+        product.setStock(newStock);
 
         productRepository.save(product);
     }

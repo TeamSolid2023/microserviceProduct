@@ -79,15 +79,17 @@ class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("given a product id, when finding a product on the repository, then the product is returned")
     void getProductById() {
-        given(repository.findById(1L)).willReturn(Optional.of(productEntity));
+        given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
 
         assertThat(service.getProductById(1L)).isEqualToComparingFieldByFieldRecursively(productEntity);
     }
 
     @Test
+    @DisplayName("given a product name, when finding products on the repository by name, then a list of products with that name is returned")
     void getProductByName() {
-        given(repository.findAllByName("Playmobil")).willReturn(productListSameName);
+        given(repository.findAllByName(anyString())).willReturn(productListSameName);
 
         assertThat(service.getProductByName("Playmobil")).isEqualTo(productListSameName);
     }

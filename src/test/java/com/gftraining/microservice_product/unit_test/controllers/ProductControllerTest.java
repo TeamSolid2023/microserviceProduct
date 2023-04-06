@@ -7,6 +7,7 @@ import com.gftraining.microservice_product.controllers.ProductController;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.services.ProductService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("given a product id, when calling service to find products by id, then the product is returned")
     void getProductById() throws Exception {
         given(productService.getProductById(1L)).willReturn(productEntity);
 
@@ -87,6 +89,7 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("given a product name, when calling service to find products by name, then a list of products with that name is returned")
     void getProductByName() throws Exception {
 
         given(productService.getProductByName("Playmobil")).willReturn(productListSameName);
