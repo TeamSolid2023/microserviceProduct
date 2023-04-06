@@ -31,7 +31,7 @@ public class ProductService{
 		this.productRepository = productRepository;
 		this.categories = categories;
 	}
-	
+
 	public List<ProductEntity> getAll() {
 		List<ProductEntity> products = productRepository.findAll();
 		return addFinalPriceToFinalProduct(products);
@@ -53,20 +53,20 @@ public class ProductService{
 		productRepository.deleteById(id);
 		deleteCartProducts(id);
 	}
-	
+
 	private void deleteCartProducts(Long id) {
 		CartWebClient webClient = new CartWebClient();
 		webClient.deleteResource(id)
 				.block();
 	}
-	
+
 	public ProductEntity getProductById(Long id) {
 		ProductEntity product = productRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Product with id: " + id + " not found."));
 		product.setFinalPrice(calculateFinalPrice(product.getPrice(), getDiscount(product)));
 		return product;
 	}
-	
+
 	public List<ProductEntity> getProductByName(String name) {
 		List<ProductEntity> products = productRepository.findAllByName(name);
 		if (products.isEmpty()) throw new EntityNotFoundException("Products with name: " + name + " not found.");
@@ -74,29 +74,27 @@ public class ProductService{
 		return addFinalPriceToFinalProduct(products);
 	}
 	
-	
-	
 	public Long saveProduct(ProductDTO productDTO) {
 		ProductEntity product = new ProductEntity();
-		
+
 		product.setName(productDTO.getName());
 		product.setDescription(productDTO.getDescription());
 		product.setPrice(productDTO.getPrice());
 		product.setStock(productDTO.getStock());
 		product.setCategory(productDTO.getCategory());
-		
+
 		return productRepository.save(product).getId();
 	}
-	
+
 	public void updateProductsFromJson(String path) throws IOException {
 		productRepository.deleteAll();
 		ObjectMapper objectMapper = new ObjectMapper();
 		List<ProductEntity> products = objectMapper.readValue(new File(path), new TypeReference<>() {
 		});
 		productRepository.saveAll(products);
-		
+
 	}
-	
+
 	public void putProductById(ProductDTO newProduct, Long id) {
 		if (!categories.getCategories().containsKey(newProduct.getCategory()))
 			throw new EntityNotFoundException("Category " + newProduct.getCategory() + " not found. Categories" +
@@ -104,16 +102,17 @@ public class ProductService{
 		
 		ProductEntity product = productRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Product with id: " + id + " not found."));
-		
+
 		product.setName(newProduct.getName());
 		product.setId(id);
 		product.setCategory(newProduct.getCategory());
 		product.setDescription(newProduct.getDescription());
 		product.setPrice(newProduct.getPrice());
 		product.setStock(newProduct.getStock());
-		
+
 		productRepository.save(product);
 	}
+  
 	private List<ProductEntity> addFinalPriceToFinalProduct(List<ProductEntity> products) {
 		return products.stream()
 				.map(product -> {
@@ -122,4 +121,16 @@ public class ProductService{
 				})
 				.collect(Collectors.toList());
 	}
+}
+
+    public void updateStock(Integer units, Long id) {
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product with id: "+id+" not found."));
+
+        Integer newStock = product.getStock()-units;
+
+        product.setStock(units);
+
+        productRepository.save(product);
+    }
 }

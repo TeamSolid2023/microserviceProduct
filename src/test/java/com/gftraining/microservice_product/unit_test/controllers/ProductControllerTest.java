@@ -1,12 +1,14 @@
 package com.gftraining.microservice_product.unit_test.controllers;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microservice_product.controllers.ProductController;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.services.ProductService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -14,17 +16,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -118,6 +117,18 @@ class ProductControllerTest {
         assertThat(productService.getProductById(1L)).isEqualTo(productEntity);
     }
 
+    @Test
+    void updateStock() throws Exception {
+        when(productService.getProductById(anyLong())).thenReturn(productEntity);
+        doNothing().when(productService).updateStock(4, 1L);
+
+        mockmvc.perform(patch("/products/updateStock/{id}",1L)
+                .param("id", "1").contentType(MediaType.APPLICATION_JSON)
+                        .content("5"))
+                        .andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(productService, Mockito.times(1)).updateStock(5, 1L);
+    }
 
     public static String asJsonString(final Object obj) {
         try {
