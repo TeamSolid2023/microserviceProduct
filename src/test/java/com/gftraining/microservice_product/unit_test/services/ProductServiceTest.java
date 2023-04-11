@@ -67,8 +67,8 @@ class ProductServiceTest {
             new ProductEntity(2L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
     );
     ProductEntity productEntity = new ProductEntity(1L,"Pelota", "Juguetes","pelota futbol",new BigDecimal(19.99),24);
-
     ProductDTO productDTO = new ProductDTO(productEntity.getName(), productEntity.getCategory(), productEntity.getDescription(), productEntity.getPrice(), productEntity.getStock());
+    String cartsChanged = "{cartsChanged=1}";
 
     @Test
     void testGetAll() {
@@ -81,24 +81,28 @@ class ProductServiceTest {
     void deleteProductById() {
         //given
         given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
-        
+        given(webClientMock.delete()).willReturn(requestHeadersUriSpecMock);
+        given(requestHeadersUriSpecMock.uri(anyString(),anyLong())).willReturn(requestHeadersSpecMock);
+        given(requestHeadersSpecMock.retrieve()).willReturn(responseSpecMock);
+        given(responseSpecMock.bodyToMono(
+                ArgumentMatchers.<Class<Object>>notNull())).willReturn(Mono.just(cartsChanged));
         //when
        service.deleteProductById(1L);
-       
+
        //then
        verify(repository).findById(anyLong());
        verify(repository).deleteById(anyLong());
+       verify(webClientMock).delete();
     }
 
     @Test
     @DisplayName("given a product id, when calling cart api to delete product, then returns Ok and number of carts affected.")
     void deleteProductFromCarts_returnCartsChanged(){
-        String carts = "{cartsChanged=1}";
-        when(webClientMock.delete()).thenReturn(requestHeadersUriSpecMock);
-        when(requestHeadersUriSpecMock.uri(anyString(),anyLong())).thenReturn(requestHeadersSpecMock);
-        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
-        when(responseSpecMock.bodyToMono(
-                ArgumentMatchers.<Class<Object>>notNull())).thenReturn(Mono.just(carts));
+        given(webClientMock.delete()).willReturn(requestHeadersUriSpecMock);
+        given(requestHeadersUriSpecMock.uri(anyString(),anyLong())).willReturn(requestHeadersSpecMock);
+        given(requestHeadersSpecMock.retrieve()).willReturn(responseSpecMock);
+        given(responseSpecMock.bodyToMono(
+                ArgumentMatchers.<Class<Object>>notNull())).willReturn(Mono.just(cartsChanged));
 
         Object response = service.deleteProductFromCarts(7L);
         assertEquals("{cartsChanged=1}", response.toString());
@@ -153,7 +157,7 @@ class ProductServiceTest {
 
     @Test
     void updateStock() {
-        when(repository.findById(1L)).thenReturn(Optional.of(productEntity));
+        given(repository.findById(1L)).willReturn(Optional.of(productEntity));
 
         service.updateStock(100, 1L);
 
