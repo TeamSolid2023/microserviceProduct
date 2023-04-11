@@ -1,7 +1,7 @@
 drop table if exists Product;
 drop table if exists Category;
 
-create table Category(
+create table Category (
     id bigInt not null AUTO_INCREMENT,
     name varchar(45) not null,
     discount int not null,
@@ -20,7 +20,6 @@ create table Product(
     primary key (id),
     foreign key (category) references Category(name) on delete cascade
 );
-
 
 insert into Category (name, discount) values ('Juguetes', 20);
 insert into Category (name, discount) values ('Libros', 15);
