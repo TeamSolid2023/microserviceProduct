@@ -28,6 +28,7 @@ public class ProductController {
     }
 
     @GetMapping("/getAll")
+    @ResponseStatus(HttpStatus.OK)
     public List<ProductEntity> getAll() {
         return productService.getAll();
     }
@@ -69,9 +70,17 @@ public class ProductController {
     public ResponseEntity<Object> putProductById(@PathVariable Long id, @Valid @RequestBody ProductDTO newProduct) {
         try {
             productService.putProductById(newProduct, id);
+
             return ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED,id);
+
         } catch (ConstraintViolationException e) {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PatchMapping("/updateStock/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateStock(@PathVariable Long id, @RequestBody Integer units) {
+        productService.updateStock(units, id);
     }
 }
