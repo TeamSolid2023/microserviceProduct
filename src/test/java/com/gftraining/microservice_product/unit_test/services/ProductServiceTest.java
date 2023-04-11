@@ -5,25 +5,26 @@ import com.gftraining.microservice_product.configuration.CategoriesConfig;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
-import com.gftraining.microservice_product.services.CartWebClient;
 import com.gftraining.microservice_product.services.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -34,7 +35,24 @@ class ProductServiceTest {
     @Mock
     CategoriesConfig categoriesConfig;
     @Mock
-    CartWebClient cartWebClient;
+    private WebClient.RequestBodyUriSpec requestBodyUriSpecMock;
+
+    @Mock
+    private WebClient.RequestBodySpec requestBodySpecMock;
+
+    @SuppressWarnings("rawtypes")
+    @Mock
+    private WebClient.RequestHeadersSpec requestHeadersSpecMock;
+
+    @SuppressWarnings("rawtypes")
+    @Mock
+    private WebClient.RequestHeadersUriSpec requestHeadersUriSpecMock;
+
+    @Mock
+    private WebClient.ResponseSpec responseSpecMock;
+
+    @Mock
+    private Mono<Object> deleteResponseMock;
 
     List<ProductEntity> productList = Arrays.asList(
             new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100),
@@ -45,6 +63,8 @@ class ProductServiceTest {
             new ProductEntity(2L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
     );
     ProductEntity productEntity = new ProductEntity(1L,"Pelota", "Juguetes","pelota futbol",new BigDecimal(19.99),24);
+
+    ProductDTO productDTO = new ProductDTO(productEntity.getName(), productEntity.getCategory(), productEntity.getDescription(), productEntity.getPrice(), productEntity.getStock());
 
     @Test
     @DisplayName("When calling getAll, Then a list of Products is returned")
@@ -81,19 +101,6 @@ class ProductServiceTest {
         assertThat(id).isEqualTo(1L);
     }
 
-    /*@Test
-    @DisplayName("Given a product id, When delete product by id, Then the product is deleted")
-    void deleteProductById() {
-        //given
-        given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
-        
-        //when
-       service.deleteProductById(1L);
-       
-       //then
-       verify(repository).findById(anyLong());
-       verify(repository).deleteById(anyLong());
-    }*/
 
     @Test
     @DisplayName("Given a product id, When finding a product on the repository, Then the product is returned")
