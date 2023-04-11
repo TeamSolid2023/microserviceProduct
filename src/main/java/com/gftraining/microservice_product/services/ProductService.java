@@ -29,13 +29,13 @@ import java.util.stream.Collectors;
 public class ProductService{
 	private ProductRepository productRepository;
 	private Categories categories;
-    private WebClient cartWebClient;
+    private WebClient webClient;
 	
 	public ProductService(ProductRepository productRepository, Categories categories, WebClient webClient) {
 		super();
 		this.productRepository = productRepository;
 		this.categories = categories;
-        this.cartWebClient = webClient;
+		this.webClient = webClient;
 	}
 
 	public List<ProductEntity> getAll() {
@@ -60,8 +60,8 @@ public class ProductService{
 	}
 
     public Object deleteProductFromCarts(Long id) {
-        return cartWebClient.delete()
-                .uri("/products/{id}", id)
+        return webClient.delete()
+                .uri("http://localhost:8080/products/{id}", id)
                 .retrieve()
                 .bodyToMono(Object.class)
                 .onErrorResume(error -> {

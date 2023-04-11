@@ -1,27 +1,18 @@
 package com.gftraining.microservice_product.unit_test.services;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microservice_product.configuration.Categories;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
-import com.gftraining.microservice_product.services.CartWebClientConfig;
 import com.gftraining.microservice_product.services.ProductService;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -30,12 +21,10 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -112,7 +101,7 @@ class ProductServiceTest {
                 ArgumentMatchers.<Class<Object>>notNull())).thenReturn(Mono.just(carts));
 
         Object response = service.deleteProductFromCarts(7L);
-        assertEquals("{cartsChanged=1}", response);
+        assertEquals("{cartsChanged=1}", response.toString());
     }
 
     @Test
