@@ -5,7 +5,7 @@ import com.gftraining.microservice_product.configuration.Categories;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
-import com.gftraining.microservice_product.services.CartWebClient;
+import com.gftraining.microservice_product.services.CartWebClientConfig;
 import com.gftraining.microservice_product.services.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import org.mockito.BDDMockito;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -36,7 +35,7 @@ class ProductServiceTest {
     @Mock
     Categories categories;
     @Mock
-    CartWebClient cartWebClient;
+    CartWebClientConfig cartWebClientConfig;
 
     List<ProductEntity> productList = Arrays.asList(
             new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100),

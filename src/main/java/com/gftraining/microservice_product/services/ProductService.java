@@ -8,6 +8,9 @@ import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
+import reactor.core.publisher.Mono;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.File;
@@ -15,6 +18,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -25,11 +29,13 @@ import java.util.stream.Collectors;
 public class ProductService{
 	private ProductRepository productRepository;
 	private Categories categories;
+    private WebClient cartWebClient;
 	
-	public ProductService(ProductRepository productRepository, Categories categories) {
+	public ProductService(ProductRepository productRepository, Categories categories, WebClient webClient) {
 		super();
 		this.productRepository = productRepository;
 		this.categories = categories;
+        this.cartWebClient = webClient;
 	}
 
 	public List<ProductEntity> getAll() {
@@ -49,16 +55,26 @@ public class ProductService{
 	public void deleteProductById(Long id) {
 		getProductById(id);
 		productRepository.deleteById(id);
-		deleteCartProducts(id);
+        //deleteProductFromCarts(id).subscribe(result -> System.out.println(result.intValue()));
+		deleteProductFromCarts(id);
 	}
 
-	private void deleteCartProducts(Long id) {
-		CartWebClient webClient = new CartWebClient();
-		webClient.deleteResource(id)
+    private Object deleteProductFromCarts(Long id) {
+        return cartWebClient.delete()
+                .uri("/products/{id}", id)
+                .retrieve()
+                .bodyToMono(Object.class)
+                .onErrorResume(error -> {
+                    if (error instanceof WebClientException && error.getCause() instanceof ConnectException) {
+                        // Handle connection error
+                        return Mono.error(new Exception("Error deleting product from carts: Error connecting to cart service."));
+                    }
+                    return Mono.error(error);
+                })
 				.block();
-	}
+    }
 
-	public ProductEntity getProductById(Long id) {
+    public ProductEntity getProductById(Long id) {
 		ProductEntity product = productRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Product with id: " + id + " not found."));
 		return addFinalPriceToProductsList(Arrays.asList(product)).get(0);
