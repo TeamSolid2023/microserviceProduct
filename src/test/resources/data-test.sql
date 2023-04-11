@@ -1,5 +1,6 @@
 drop table if exists Product;
 drop table if exists Category;
+
 create table Category (
     id bigInt not null AUTO_INCREMENT,
     name varchar(45) not null,
