@@ -55,7 +55,6 @@ public class ProductService{
 	public void deleteProductById(Long id) {
 		getProductById(id);
 		productRepository.deleteById(id);
-        //deleteProductFromCarts(id).subscribe(result -> System.out.println(result.intValue()));
 		deleteProductFromCarts(id);
 	}
 
