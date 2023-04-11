@@ -59,7 +59,7 @@ public class ProductService{
 		deleteProductFromCarts(id);
 	}
 
-    private Object deleteProductFromCarts(Long id) {
+    public Object deleteProductFromCarts(Long id) {
         return cartWebClient.delete()
                 .uri("/products/{id}", id)
                 .retrieve()
