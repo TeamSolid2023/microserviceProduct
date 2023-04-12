@@ -4,6 +4,7 @@ package com.gftraining.microservice_product.services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microservice_product.configuration.CategoriesConfig;
+import com.gftraining.microservice_product.configuration.MicroserviceStatusConfig;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
@@ -27,6 +28,7 @@ public class ProductService{
 	private ProductRepository productRepository;
 	private CategoriesConfig categoriesConfig;
 	private ModelMapper modelMapper;
+	private MicroserviceStatusConfig microserviceStatus;
 	
 	public ProductService(ProductRepository productRepository, CategoriesConfig categoriesConfig, ModelMapper modelMapper) {
 		super();
@@ -52,13 +54,24 @@ public class ProductService{
 	public void deleteProductById(Long id) {
 		getProductById(id);
 		productRepository.deleteById(id);
-		deleteCartProducts(id);
+		/*if (microserviceStatus.isCart()) {
+			deleteCartProducts(id);
+		} else {
+
+		}*/
+		if (microserviceStatus.isUser() == true) {
+			deleteUserProducts(id);
+		} else {
+		}
 	}
 
 	private void deleteCartProducts(Long id) {
 		CartWebClient webClient = new CartWebClient();
 		webClient.deleteResource(id)
 				.block();
+	}
+
+	private void deleteUserProducts(Long id) {
 	}
 
 	public ProductEntity getProductById(Long id) {
