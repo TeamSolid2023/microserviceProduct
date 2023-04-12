@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
