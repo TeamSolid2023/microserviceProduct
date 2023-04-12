@@ -1,14 +1,11 @@
 package com.gftraining.microservice_product.controllers;
 
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.model.ResponseHandler;
 import com.gftraining.microservice_product.services.ProductService;
-import io.swagger.v3.core.util.Json;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
