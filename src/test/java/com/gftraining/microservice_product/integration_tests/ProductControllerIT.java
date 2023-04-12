@@ -78,7 +78,7 @@ class ProductControllerIT {
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
     @DisplayName("Given an id, When perform delete request /products/{id}, Then is expected to have status of 204")
     void deleteProductById() throws Exception {
-        mockmvc.perform(delete("/products/{id}",18))
+        mockmvc.perform(delete("/products/{id}",7))
                 .andExpect(status().isNoContent());
     }
 
