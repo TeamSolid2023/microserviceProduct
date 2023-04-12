@@ -7,6 +7,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Table(name = "product")
@@ -14,7 +15,7 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class ProductEntity {
+public class ProductEntity implements Serializable {
 
     @Id
     @NonNull
