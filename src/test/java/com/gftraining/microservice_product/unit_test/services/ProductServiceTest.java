@@ -5,26 +5,27 @@ import com.gftraining.microservice_product.configuration.Categories;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
+import com.gftraining.microservice_product.services.CartWebClient;
 import com.gftraining.microservice_product.services.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
+import org.mockito.BDDMockito;
+
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -34,29 +35,8 @@ class ProductServiceTest {
     ProductRepository repository;
     @Mock
     Categories categories;
-
     @Mock
-    private WebClient webClientMock;
-
-    @Mock
-    private WebClient.RequestBodyUriSpec requestBodyUriSpecMock;
-
-    @Mock
-    private WebClient.RequestBodySpec requestBodySpecMock;
-
-    @SuppressWarnings("rawtypes")
-    @Mock
-    private WebClient.RequestHeadersSpec requestHeadersSpecMock;
-
-    @SuppressWarnings("rawtypes")
-    @Mock
-    private WebClient.RequestHeadersUriSpec requestHeadersUriSpecMock;
-
-    @Mock
-    private WebClient.ResponseSpec responseSpecMock;
-
-    @Mock
-    private Mono<Object> deleteResponseMock;
+    CartWebClient cartWebClient;
 
     List<ProductEntity> productList = Arrays.asList(
             new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100),
@@ -88,20 +68,6 @@ class ProductServiceTest {
        //then
        verify(repository).findById(anyLong());
        verify(repository).deleteById(anyLong());
-    }
-
-    @Test
-    @DisplayName("given a product id, when calling cart api to delete product, then returns Ok and number of carts affected.")
-    void deleteProductFromCarts_returnCartsChanged(){
-        String carts = "{cartsChanged=1}";
-        when(webClientMock.delete()).thenReturn(requestHeadersUriSpecMock);
-        when(requestHeadersUriSpecMock.uri(anyString(),anyLong())).thenReturn(requestHeadersSpecMock);
-        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
-        when(responseSpecMock.bodyToMono(
-                ArgumentMatchers.<Class<Object>>notNull())).thenReturn(Mono.just(carts));
-
-        Object response = service.deleteProductFromCarts(7L);
-        assertEquals("{cartsChanged=1}", response.toString());
     }
 
     @Test
