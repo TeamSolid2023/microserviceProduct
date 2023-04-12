@@ -13,11 +13,11 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class ProductDTO {
 
-    @NotNull(message = "cannot be null.")
+    @NotBlank(message = "cannot be null.")
     @Pattern(message = "add a name", regexp = "^(?!string$).+$")
     @Schema(example = "string", description = "")
     private String name;
-    @NotNull(message = "cannot be null.")
+    @NotBlank(message = "cannot be null.")
     @Pattern(message = "add a category", regexp = "^(?!string$).+$")
     @Schema(example = "string", description = "")
     private String category;

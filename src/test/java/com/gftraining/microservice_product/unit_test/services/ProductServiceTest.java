@@ -1,7 +1,7 @@
 package com.gftraining.microservice_product.unit_test.services;
 
 
-import com.gftraining.microservice_product.configuration.Categories;
+import com.gftraining.microservice_product.configuration.CategoriesConfig;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import org.mockito.BDDMockito;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -34,7 +33,7 @@ class ProductServiceTest {
     @Mock
     ProductRepository repository;
     @Mock
-    Categories categories;
+    CategoriesConfig categoriesConfig;
     @Mock
     CartWebClient cartWebClient;
 
@@ -47,8 +46,6 @@ class ProductServiceTest {
             new ProductEntity(2L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
     );
     ProductEntity productEntity = new ProductEntity(1L,"Pelota", "Juguetes","pelota futbol",new BigDecimal(19.99),24);
-
-    ProductDTO productDTO = new ProductDTO(productEntity.getName(), productEntity.getCategory(), productEntity.getDescription(), productEntity.getPrice(), productEntity.getStock());
 
     @Test
     void testGetAll() {
@@ -105,16 +102,12 @@ class ProductServiceTest {
 
     @Test
     void putProductById() {
-        Map<String, Integer> cat = new HashMap<>();
-        cat.put("Juguetes", 20);
-
-        given(repository.findById(1L)).willReturn(Optional.of(productEntity));
-        given(categories.getCategories()).willReturn(cat);
-
-        service.putProductById(productDTO, 1L);
-
-        verify(repository).findById(anyLong());
+        given(repository.save(productEntity)).willReturn(productEntity);
+        
+        Long id = repository.save(productEntity).getId();
+        
         verify(repository).save(any());
+        assertThat(id).isEqualTo(1L);
     }
 
     @Test

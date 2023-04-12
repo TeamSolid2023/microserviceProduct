@@ -29,8 +29,7 @@ class ProductControllerIT {
     @Autowired
     private MockMvc mockmvc;
 
-    ProductEntity productEntity = new ProductEntity(4L, "Pelota", "Juguetes","pelota de futbol",new BigDecimal(19.99),24);
-    ProductDTO productDTO = new ProductDTO(productEntity.getName(), productEntity.getCategory(), productEntity.getDescription(), productEntity.getPrice(), productEntity.getStock());
+    ProductDTO productDTO = new ProductDTO("Pelota", "Juguetes","pelota de futbol",new BigDecimal(19.99),24);
 
     @Test
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
