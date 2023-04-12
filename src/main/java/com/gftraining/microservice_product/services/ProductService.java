@@ -4,6 +4,7 @@ package com.gftraining.microservice_product.services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microservice_product.configuration.Categories;
+import com.gftraining.microservice_product.configuration.ServicesUrl;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
@@ -29,39 +30,41 @@ import java.util.stream.Collectors;
 public class ProductService{
 	private ProductRepository productRepository;
 	private Categories categories;
+	private ServicesUrl servicesUrl;
     private WebClient webClient;
-	
-	public ProductService(ProductRepository productRepository, Categories categories, WebClient webClient) {
+
+	public ProductService(ProductRepository productRepository, Categories categories, ServicesUrl servicesUrl, WebClient.Builder webClientBuilder) {
 		super();
 		this.productRepository = productRepository;
 		this.categories = categories;
-		this.webClient = webClient;
+        this.servicesUrl = servicesUrl;
+		this.webClient = webClientBuilder.build();
 	}
 
 	public List<ProductEntity> getAll() {
 		List<ProductEntity> products = productRepository.findAll();
 		return addFinalPriceToProductsList(products);
 	}
-	
+
 	public BigDecimal calculateFinalPrice(BigDecimal price, int discount) {
 		return price.subtract(price.multiply(BigDecimal.valueOf(discount)).divide(new BigDecimal("100")))
 				.round(new MathContext(4, RoundingMode.HALF_UP));
 	}
-	
+
 	public int getDiscount(ProductEntity product) {
 		return Optional.ofNullable(categories.getCategories().get(product.getCategory())).orElse(0);
 	}
-	
+
 	public void deleteProductById(Long id) {
 		getProductById(id);
 		productRepository.deleteById(id);
-        //deleteProductFromCarts(id).subscribe(result -> System.out.println(result.intValue()));
+        // async -> deleteProductFromCarts(id).subscribe(result -> System.out.println(result.intValue()));
 		deleteProductFromCarts(id);
 	}
 
     public Object deleteProductFromCarts(Long id) {
         return webClient.delete()
-                .uri("http://localhost:8080/products/{id}", id)
+                .uri("${}/products/${}",servicesUrl.getCartUrl(),id)
                 .retrieve()
                 .bodyToMono(Object.class)
                 .onErrorResume(error -> {
@@ -83,10 +86,10 @@ public class ProductService{
 	public List<ProductEntity> getProductByName(String name) {
 		List<ProductEntity> products = productRepository.findAllByName(name);
 		if (products.isEmpty()) throw new EntityNotFoundException("Products with name: " + name + " not found.");
-		
+
 		return addFinalPriceToProductsList(products);
 	}
-	
+
 	public Long saveProduct(ProductDTO productDTO) {
 		ProductEntity product = new ProductEntity();
 
