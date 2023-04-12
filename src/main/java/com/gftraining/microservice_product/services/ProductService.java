@@ -4,12 +4,16 @@ package com.gftraining.microservice_product.services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microservice_product.configuration.CategoriesConfig;
+import com.gftraining.microservice_product.configuration.ServicesUrl;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientException;
+import reactor.core.publisher.Mono;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.File;
@@ -17,6 +21,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +34,7 @@ public class ProductService{
 	private CategoriesConfig categoriesConfig;
 	private ModelMapper modelMapper;
 
-	
+
 	public ProductService(ProductRepository productRepository, CategoriesConfig categoriesConfig,
 						  ModelMapper modelMapper) {
 		super();
@@ -42,26 +47,37 @@ public class ProductService{
 		List<ProductEntity> products = productRepository.findAll();
 		return addFinalPriceToProductsList(products);
 	}
-	
+
 	public BigDecimal calculateFinalPrice(BigDecimal price, int discount) {
 		return price.subtract(price.multiply(BigDecimal.valueOf(discount)).divide(new BigDecimal("100")))
 				.round(new MathContext(4, RoundingMode.HALF_UP));
 	}
-	
+
 	public int getDiscount(ProductEntity product) {
 		return Optional.ofNullable(categoriesConfig.getCategories().get(product.getCategory())).orElse(0);
 	}
-	
+
 	public void deleteProductById(Long id) {
 		getProductById(id);
 		productRepository.deleteById(id);
+        // async -> deleteProductFromCarts(id).subscribe(result -> System.out.println(result.intValue()));
+		deleteProductFromCarts(id);
 	}
 
-	public void deleteCartProducts(Long id) {
-		CartWebClient webClient = new CartWebClient();
-		webClient.deleteResource(id)
+    public Object deleteProductFromCarts(Long id) {
+        return webClient.delete()
+                .uri("${}/products/${}",servicesUrl.getCartUrl(),id)
+                .retrieve()
+                .bodyToMono(Object.class)
+                .onErrorResume(error -> {
+                    if (error instanceof WebClientException && error.getCause() instanceof ConnectException) {
+                        // Handle connection error
+                        return Mono.error(new Exception("Error deleting product from carts: Error connecting to cart service."));
+                    }
+                    return Mono.error(error);
+                })
 				.block();
-	}
+    }
 
 	public void deleteUserProducts(Long id) {
 	}
@@ -75,10 +91,10 @@ public class ProductService{
 	public List<ProductEntity> getProductByName(String name) {
 		List<ProductEntity> products = productRepository.findAllByName(name);
 		if (products.isEmpty()) throw new EntityNotFoundException("Products with name: " + name + " not found.");
-		
+
 		return addFinalPriceToProductsList(products);
 	}
-	
+
 	public Long saveProduct(ProductDTO productDTO) {
 		if (!categoriesConfig.getCategories().containsKey(productDTO.getCategory()))
 			throw new EntityNotFoundException("Category " + productDTO.getCategory() + " not found. Categories" +
@@ -123,8 +139,6 @@ public class ProductService{
 					return product;
 				})
 				.collect(Collectors.toList());
-		
-		
 	}
 
     public void updateStock(Integer units, Long id) {
