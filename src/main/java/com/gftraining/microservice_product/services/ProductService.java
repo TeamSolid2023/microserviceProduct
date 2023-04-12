@@ -3,11 +3,13 @@ package com.gftraining.microservice_product.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gftraining.microservice_product.configuration.Categories;
+import com.gftraining.microservice_product.configuration.CategoriesConfig;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.File;
@@ -24,12 +26,14 @@ import java.util.stream.Collectors;
 @Service
 public class ProductService{
 	private ProductRepository productRepository;
-	private Categories categories;
+	private CategoriesConfig categoriesConfig;
+	private ModelMapper modelMapper;
 	
-	public ProductService(ProductRepository productRepository, Categories categories) {
+	public ProductService(ProductRepository productRepository, CategoriesConfig categoriesConfig, ModelMapper modelMapper) {
 		super();
 		this.productRepository = productRepository;
-		this.categories = categories;
+		this.categoriesConfig = categoriesConfig;
+		this.modelMapper = modelMapper;
 	}
 
 	public List<ProductEntity> getAll() {
@@ -43,7 +47,7 @@ public class ProductService{
 	}
 	
 	public int getDiscount(ProductEntity product) {
-		return Optional.ofNullable(categories.getCategories().get(product.getCategory())).orElse(0);
+		return Optional.ofNullable(categoriesConfig.getCategories().get(product.getCategory())).orElse(0);
 	}
 	
 	public void deleteProductById(Long id) {
@@ -72,13 +76,11 @@ public class ProductService{
 	}
 	
 	public Long saveProduct(ProductDTO productDTO) {
-		ProductEntity product = new ProductEntity();
+		if (!categoriesConfig.getCategories().containsKey(productDTO.getCategory()))
+			throw new EntityNotFoundException("Category " + productDTO.getCategory() + " not found. Categories" +
+					" allowed: " + categoriesConfig.getCategories().keySet());
 
-		product.setName(productDTO.getName());
-		product.setDescription(productDTO.getDescription());
-		product.setPrice(productDTO.getPrice());
-		product.setStock(productDTO.getStock());
-		product.setCategory(productDTO.getCategory());
+		ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
 
 		return productRepository.save(product).getId();
 	}
@@ -92,19 +94,13 @@ public class ProductService{
 
 	}
 
-	public void putProductById(ProductDTO newProduct, Long id) {
-		if (!categories.getCategories().containsKey(newProduct.getCategory()))
-			throw new EntityNotFoundException("Category " + newProduct.getCategory() + " not found. Categories" +
-					" allowed: " + categories.getCategories().keySet());
+	public void putProductById(ProductDTO productDTO, Long id) {
+		if (!categoriesConfig.getCategories().containsKey(productDTO.getCategory()))
+			throw new EntityNotFoundException("Category " + productDTO.getCategory() + " not found. Categories" +
+					" allowed: " + categoriesConfig.getCategories().keySet());
 
-		ProductEntity product = getProductById(id);
-
-		product.setName(newProduct.getName());
+		ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
 		product.setId(id);
-		product.setCategory(newProduct.getCategory());
-		product.setDescription(newProduct.getDescription());
-		product.setPrice(newProduct.getPrice());
-		product.setStock(newProduct.getStock());
 
 		productRepository.save(product);
 	}
