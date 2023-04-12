@@ -103,9 +103,11 @@ class ProductServiceTest {
     @Test
     void putProductById() {
         given(repository.save(productEntity)).willReturn(productEntity);
+        
         Long id = repository.save(productEntity).getId();
+        
         verify(repository).save(any());
-        assertEquals(1L, id);
+        assertThat(id).isEqualTo(1L);
     }
 
     @Test
