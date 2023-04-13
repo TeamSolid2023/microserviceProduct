@@ -162,15 +162,6 @@ class ProductControllerIT {
     }
 
     @Test
-    @DisplayName("Given a path, When perform post request /products/JSON_load, Then is expected to have status of 201")
-    void updateProductsFromJson_() throws Exception {
-        //Put your own path
-        mockmvc.perform(post("/products/JSON_load")
-                        .param("path", "C:\\Files\\data.json"))
-                .andExpect(status().isCreated());
-    }
-
-    @Test
     @DisplayName("Given a Product, When perform post request /products, Then is expected to have status of 201, be a Json and have {\"id\":14,\"message\":\"DDBB updated\",\"status\":201}")
     void addNewProduct() throws Exception {
         mockmvc.perform(post("/products")
