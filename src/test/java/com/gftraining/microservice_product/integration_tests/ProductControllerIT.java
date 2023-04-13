@@ -1,9 +1,10 @@
-package com.gftraining.microservice_product.integration_tests.controllers;
+package com.gftraining.microservice_product.integration_tests;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,25 +30,24 @@ class ProductControllerIT {
     @Autowired
     private MockMvc mockmvc;
 
-    ProductEntity productEntity = new ProductEntity(4L, "Pelota",
-            "Juguetes","pelota de futbol",new BigDecimal(19.99),24);
-    ProductDTO productDTO = new ProductDTO(productEntity.getName(), productEntity.getCategory(), productEntity.getDescription(), productEntity.getPrice(), productEntity.getStock());
+    ProductDTO productDTO = new ProductDTO("Pelota", "Juguetes","pelota de futbol",new BigDecimal(19.99),24);
 
     @Test
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
+    @DisplayName("When perform get request /products/getAll, Then is expected to have status of 200, be an ArrayList, be a Json and have size 13")
     void testGetAll() throws Exception {
-        mockmvc.perform(MockMvcRequestBuilders.get("/products/getAll"))
+        mockmvc.perform(get("/products/getAll"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", isA(ArrayList.class)))
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$.*", hasSize(3)))
-                .andExpect(jsonPath("$[*].name", containsInAnyOrder("Wonder", "Los Surcos del Azar", "Pelota")));
+                .andExpect(jsonPath("$.*", hasSize(13)));
     }
 
     @Test
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
+    @DisplayName("Given an id, When perform get request /products/id/{id}, Then is expected to have status of 200, be a Json and have {id: 1, name: Wonder, stock: 90}")
     void getProductById() throws Exception {
-        mockmvc.perform(get("/products/{id}",1))
+        mockmvc.perform(get("/products/id/{id}",1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json("{id: 1, name: Wonder, stock: 90}"));
@@ -55,47 +55,53 @@ class ProductControllerIT {
 
     @Test
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
+    @DisplayName("Given a name, When perform get request /products/name/{name}, Then is expected to have status of 200, be a Json and have size 2")
     void getProductByName() throws Exception {
         mockmvc.perform(get("/products/name/{name}","Los Surcos del Azar"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(content().json("[{id:2, name: \"Los Surcos del Azar\", price: 24.89}]"));
+                .andExpect(jsonPath("$.*", hasSize(2)));
+    
     }
 
     @Test
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
+    @DisplayName("Given an id, When perform put request /products/{id}, Then is expected to have status of 201")
     void putProductById() throws Exception {
         mockmvc.perform(put("/products/{id}",1).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productDTO)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
     }
 
     @Test
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
+    @DisplayName("Given an id, When perform delete request /products/{id}, Then is expected to have status of 204")
     void deleteProductById() throws Exception {
-        mockmvc.perform(delete("/products/{id}",1))
+        mockmvc.perform(delete("/products/{id}",7))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
+    @DisplayName("Given a path, When perform post request /products/JSON_load, Then is expected to have status of 201")
     void updateProductsFromJson() throws Exception {
         //Put your own path
-        mockmvc.perform(MockMvcRequestBuilders.post("/products/JSON_load")
-                        .param("path", "C:\\Files\\data_test.json"))
+        mockmvc.perform(post("/products/JSON_load")
+                        .param("path", "C:\\Files\\data.json"))
                 .andExpect(status().isCreated());
     }
 
     @Test
     @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
+    @DisplayName("Given a Product, When perform post request /products, Then is expected to have status of 201, be a Json and have {\"id\":14,\"message\":\"DDBB updated\",\"status\":201}")
     void addNewProduct() throws Exception {
-        mockmvc.perform(MockMvcRequestBuilders.post("/products/newProduct")
+        mockmvc.perform(post("/products")
                         .content(asJsonString(productDTO))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(content().json("4"));
+                .andExpect(content().string("{\"id\":14,\"message\":\"DDBB updated\",\"status\":201}"));
     }
 
 

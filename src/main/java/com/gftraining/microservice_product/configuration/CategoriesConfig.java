@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.Map;
 
 @Data
-@ConfigurationProperties(prefix="my")
-public class Categories {
-    private Map<String, Integer> category;
+@ConfigurationProperties(prefix="static-table")
+public class CategoriesConfig {
+    private Map<String, Integer> categories;
 }

@@ -1,29 +1,29 @@
 package com.gftraining.microservice_product.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.server.ResponseStatusException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler
-	public ResponseEntity<ExceptionResponse> handlerException(EntityNotFoundException exception,WebRequest req){
-		ExceptionResponse res = new ExceptionResponse(new Date(),exception.getMessage(),null);
+	public ResponseEntity<ExceptionResponse> handlerException(EntityNotFoundException exception){
+		ExceptionResponse res = new ExceptionResponse(LocalDate.now(),exception.getMessage(), null);
 
 		return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
 	}
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
 			errors.add(violation.getPropertyPath() + ": " + violation.getMessage());
 		}
 
-		ExceptionResponse res = new ExceptionResponse(new Date(),"constraint violation", errors);
+		ExceptionResponse res = new ExceptionResponse(LocalDate.now(),"constraint violation", errors);
 		return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
 	}
 
@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
 				.map(error -> error.getField() + ": " + error.getDefaultMessage())
 				.collect(Collectors.toList());
 
-		ExceptionResponse res = new ExceptionResponse(new Date(),"method argument not valid", errors);
+		ExceptionResponse res = new ExceptionResponse(LocalDate.now(),"method argument not valid", errors);
 		return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
 	}
 
@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(ResponseStatusException.class)
 	public ResponseEntity<ExceptionResponse> handleResponseStatusException(ResponseStatusException ex) {
 
-		ExceptionResponse res = new ExceptionResponse("there is no user with that id", new Date());
+		ExceptionResponse res = new ExceptionResponse("there is no user with that id", LocalDate.now());
 
 		return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
 	}

@@ -3,6 +3,7 @@ package com.gftraining.microservice_product.controllers;
 
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
+import com.gftraining.microservice_product.model.ResponseHandler;
 import com.gftraining.microservice_product.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +13,11 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
-
 @RestController
-@RequestMapping("/products")
+@RequestMapping(value = "/products")
 public class ProductController {
 
-private ProductService productService;
+    private ProductService productService;
 
     public ProductController(ProductService productService) {
         super();
@@ -25,6 +25,7 @@ private ProductService productService;
     }
 
     @GetMapping("/getAll")
+    @ResponseStatus(HttpStatus.OK)
     public List<ProductEntity> getAll() {
         return productService.getAll();
     }
@@ -47,10 +48,10 @@ private ProductService productService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<String> addProduct(@Valid @RequestBody ProductDTO product){
+    public ResponseEntity<Object> addProduct(@Valid @RequestBody ProductDTO product){
         try {
             Long id = productService.saveProduct(product);
-            return new ResponseEntity<>("Added new product with id: " + id, HttpStatus.CREATED);
+            return ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED,id);
         } catch (ConstraintViolationException e) {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -63,12 +64,20 @@ private ProductService productService;
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> putProductById(@PathVariable Long id, @Valid @RequestBody ProductDTO newProduct) {
+    public ResponseEntity<Object> putProductById(@PathVariable Long id, @Valid @RequestBody ProductDTO newProduct) {
         try {
             productService.putProductById(newProduct, id);
-            return new ResponseEntity<>("Changed product with id: " + id, HttpStatus.CREATED);
+
+            return ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED,id);
+
         } catch (ConstraintViolationException e) {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PatchMapping("/updateStock/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateStock(@PathVariable Long id, @RequestBody Integer units) {
+        productService.updateStock(units, id);
     }
 }
