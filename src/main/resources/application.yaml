@@ -35,3 +35,7 @@ logging:
     org.springframework.web: "DEBUG"
     org.hibernate: "WARN"
     tomcat: "DEBUG"
+
+feature-flags:
+  callUserEnabled: false
+  callCartEnabled: false
