@@ -24,6 +24,7 @@ import java.math.RoundingMode;
 import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -66,7 +67,7 @@ public class ProductService{
 
     public Object deleteProductFromCarts(Long id) {
         return webClient.delete()
-                .uri("${}/products/${}",servicesUrl.getCartUrl(),id)
+                .uri(servicesUrl.getCartUrl() + "/products/" + id)
                 .retrieve()
                 .bodyToMono(Object.class)
                 .onErrorResume(error -> {
@@ -76,7 +77,8 @@ public class ProductService{
                     }
                     return Mono.error(error);
                 })
-				.block();
+                .filter(response -> !Objects.isNull(response.toString()))
+                .block();
     }
 
 	public void deleteUserProducts(Long id) {

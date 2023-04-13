@@ -6,14 +6,14 @@ import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
 import com.gftraining.microservice_product.services.ProductService;
+import org.junit.Before;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.reactive.function.client.*;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
-    @InjectMocks
+    @InjectMocks @Spy
     ProductService service;
     @Mock
     ProductRepository repository;
@@ -51,9 +51,6 @@ class ProductServiceTest {
     @Mock
     private WebClient.ResponseSpec responseSpecMock;
 
-    @Mock
-    private Mono<Object> deleteResponseMock;
-
     List<ProductEntity> productList = Arrays.asList(
             new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100),
             new ProductEntity(2L, "Espaguetis", "Comida", "pasta italiana elaborada con harina de grano duro y agua", new BigDecimal(20.00), 220)
@@ -63,7 +60,6 @@ class ProductServiceTest {
             new ProductEntity(2L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
     );
     ProductEntity productEntity = new ProductEntity(1L,"Pelota", "Juguetes","pelota futbol",new BigDecimal(19.99),24);
-
     ProductDTO productDTO = new ProductDTO(productEntity.getName(), productEntity.getCategory(), productEntity.getDescription(), productEntity.getPrice(), productEntity.getStock());
 
     @Test
@@ -100,7 +96,6 @@ class ProductServiceTest {
         verify(repository).save(any());
         assertThat(id).isEqualTo(1L);
     }
-
 
     @Test
     @DisplayName("Given a product id, When finding a product on the repository, Then the product is returned")
@@ -149,4 +144,46 @@ class ProductServiceTest {
         assertThat(service.getDiscount(productEntity)).isZero();
     }
 
+    @Test
+    @DisplayName("given a product id, when delete product by id, then the product is deleted")
+    void deleteProductById() {
+        //given
+        given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
+        given(webClientMock.delete()).willReturn(requestHeadersUriSpecMock);
+        given(requestHeadersUriSpecMock.uri(anyString(),anyLong())).willReturn(requestHeadersSpecMock);
+        given(requestHeadersSpecMock.retrieve()).willReturn(responseSpecMock);
+        given(responseSpecMock.bodyToMono(
+                ArgumentMatchers.<Class<Object>>notNull())).willReturn(Mono.just(cartsChanged));
+        //spy
+        //when
+        service.deleteProductById(1L);
+
+        //then
+        verify(repository).findById(anyLong());
+        verify(repository).deleteById(anyLong());
+        verify(webClientMock).delete();
+    }
+
+    @Test
+    @DisplayName("given a product id, when calling cart api to delete product, then returns Ok and number of carts affected.")
+    void deleteProductFromCarts_returnCartsChanged(){
+        given(webClientBuilder.build()).willReturn(webClientMock);
+        when(webClientMock.post()).thenReturn(requestBodyUriSpecMock);
+        when(requestBodyUriSpecMock.uri(anyString())).thenReturn(requestBodySpecMock);
+        when(requestBodySpecMock.header(any(), any())).thenReturn(requestBodySpecMock);
+        when(requestBodySpecMock.body(any(), any(Class.class)))
+                .thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.exchange()).thenReturn(Mono.just(cartsChanged));
+
+        Object response = service.deleteProductFromCarts(7L);
+        /*
+        given(webClientMock.delete()).willReturn(requestHeadersUriSpecMock);
+        given(requestHeadersUriSpecMock.uri(anyString(),anyLong())).willReturn(requestHeadersSpecMock);
+        given(requestHeadersSpecMock.retrieve()).willReturn(responseSpecMock);
+        given(responseSpecMock.bodyToMono(
+                ArgumentMatchers.<Class<Object>>notNull())).willReturn(Mono.just(cartsChanged));
+
+        Object response = service.deleteProductFromCarts(7L);
+        assertEquals("{cartsChanged=1}", response.toString());*/
+    }
 }

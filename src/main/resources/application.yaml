@@ -34,9 +34,10 @@ static-table:
     Comida: 25
     Ropa: 35
     Otros: 0
+
 services-url:
-  cart-url: http://localhost:8080
-  user-url: http://localhost:8082
+  cart-url: "http://localhost:8080"
+  user-url: "http://localhost:8082"
 
 
 logging:
