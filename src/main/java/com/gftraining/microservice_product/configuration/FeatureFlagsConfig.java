@@ -4,8 +4,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
-@ConfigurationProperties(prefix="microservicestatus")
-public class MicroserviceStatusConfig {
-    private boolean user;
-    private boolean cart;
+@ConfigurationProperties(prefix="feature-flags")
+public class FeatureFlagsConfig {
+    private boolean callUserEnabled;
+    private boolean callCartEnabled;
 }

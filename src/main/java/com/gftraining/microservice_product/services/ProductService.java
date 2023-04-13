@@ -4,7 +4,6 @@ package com.gftraining.microservice_product.services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microservice_product.configuration.CategoriesConfig;
-import com.gftraining.microservice_product.configuration.MicroserviceStatusConfig;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
@@ -28,9 +27,10 @@ public class ProductService{
 	private ProductRepository productRepository;
 	private CategoriesConfig categoriesConfig;
 	private ModelMapper modelMapper;
-	private MicroserviceStatusConfig microserviceStatus;
+
 	
-	public ProductService(ProductRepository productRepository, CategoriesConfig categoriesConfig, ModelMapper modelMapper) {
+	public ProductService(ProductRepository productRepository, CategoriesConfig categoriesConfig,
+						  ModelMapper modelMapper) {
 		super();
 		this.productRepository = productRepository;
 		this.categoriesConfig = categoriesConfig;
@@ -54,24 +54,15 @@ public class ProductService{
 	public void deleteProductById(Long id) {
 		getProductById(id);
 		productRepository.deleteById(id);
-		/*if (microserviceStatus.isCart()) {
-			deleteCartProducts(id);
-		} else {
-
-		}*/
-		if (microserviceStatus.isUser() == true) {
-			deleteUserProducts(id);
-		} else {
-		}
 	}
 
-	private void deleteCartProducts(Long id) {
+	public void deleteCartProducts(Long id) {
 		CartWebClient webClient = new CartWebClient();
 		webClient.deleteResource(id)
 				.block();
 	}
 
-	private void deleteUserProducts(Long id) {
+	public void deleteUserProducts(Long id) {
 	}
 
 	public ProductEntity getProductById(Long id) {
@@ -115,6 +106,9 @@ public class ProductService{
 		product.setId(id);
 
 		productRepository.save(product);
+	}
+
+	public void putCartProducts(Long id) {
 	}
 
 	private List<ProductEntity> addFinalPriceToProductsList(List<ProductEntity> products) {

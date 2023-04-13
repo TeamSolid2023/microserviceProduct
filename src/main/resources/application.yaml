@@ -36,6 +36,6 @@ logging:
     org.hibernate: "WARN"
     tomcat: "DEBUG"
 
-microservicestatus:
-  user: false
-  cart: false
+feature-flags:
+  callUserEnabled: false
+  callCartEnabled: false
