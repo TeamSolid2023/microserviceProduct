@@ -42,3 +42,4 @@ logging:
     org.springframework.web: "DEBUG"
     org.hibernate: "WARN"
     tomcat: "DEBUG"
+    liquibase: "INFO"
