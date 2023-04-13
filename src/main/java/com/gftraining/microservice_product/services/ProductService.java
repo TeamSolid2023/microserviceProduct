@@ -98,6 +98,10 @@ public class ProductService{
 			throw new EntityNotFoundException("Category " + productDTO.getCategory() + " not found. Categories" +
 					" allowed: " + categoriesConfig.getCategories().keySet());
 
+		if (productRepository.findById(id).isEmpty()){
+			throw new EntityNotFoundException("Id " + id + " not found.");
+		}
+
 		ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
 		product.setId(id);
 
