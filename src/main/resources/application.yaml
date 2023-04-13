@@ -3,8 +3,6 @@ spring:
     ansi:
       enabled: ALWAYS
   jpa:
-    hibernate:
-      ddl-auto: create-drop
     defer-datasource-initialization: false
     database-platform: org.hibernate.dialect.H2Dialect
   datasource:
@@ -14,7 +12,7 @@ spring:
     password: password
   liquibase:
     enabled: true
-    change-log: classpath:db/migrations/db.changelog-root.xml
+    change-log: classpath:db/migrations/db.changelog-root.yaml
     default-schema: public
   server:
     profiles:

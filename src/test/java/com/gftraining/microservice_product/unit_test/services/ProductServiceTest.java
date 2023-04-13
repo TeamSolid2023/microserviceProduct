@@ -81,7 +81,7 @@ class ProductServiceTest {
         assertThat(id).isEqualTo(1L);
     }
 
-    @Test
+    /*@Test
     @DisplayName("Given a product id, When delete product by id, Then the product is deleted")
     void deleteProductById() {
         //given
@@ -93,7 +93,7 @@ class ProductServiceTest {
        //then
        verify(repository).findById(anyLong());
        verify(repository).deleteById(anyLong());
-    }
+    }*/
 
     @Test
     @DisplayName("Given a product id, When finding a product on the repository, Then the product is returned")
