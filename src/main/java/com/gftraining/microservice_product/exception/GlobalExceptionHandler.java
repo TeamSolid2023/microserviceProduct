@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
 			errors.add(violation.getPropertyPath() + ": " + violation.getMessage());
 		}
 
-		ExceptionResponse res = new ExceptionResponse(LocalDate.now(),"constraint violation", errors);
+		ExceptionResponse res = new ExceptionResponse(LocalDate.now(),"Constraint violation", errors);
 		return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
 	}
 
@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
 				.map(error -> error.getField() + ": " + error.getDefaultMessage())
 				.collect(Collectors.toList());
 
-		ExceptionResponse res = new ExceptionResponse(LocalDate.now(),"method argument not valid", errors);
+		ExceptionResponse res = new ExceptionResponse(LocalDate.now(),"Method argument not valid", errors);
 		return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
 	}
 
@@ -59,9 +59,8 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(ResponseStatusException.class)
 	public ResponseEntity<ExceptionResponse> handleResponseStatusException(ResponseStatusException ex) {
 
-		ExceptionResponse res = new ExceptionResponse("there is no user with that id", LocalDate.now());
+		ExceptionResponse res = new ExceptionResponse("There is no user with that id", LocalDate.now());
 
 		return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
 	}
-
 }

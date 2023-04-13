@@ -1,6 +1,7 @@
 package com.gftraining.microservice_product.controllers;
 
 
+import com.gftraining.microservice_product.configuration.FeatureFlagsConfig;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.model.ResponseHandler;
@@ -18,10 +19,12 @@ import java.util.List;
 public class ProductController {
 
     private ProductService productService;
+    private FeatureFlagsConfig featureFlag;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, FeatureFlagsConfig microserviceStatus) {
         super();
         this.productService = productService;
+        this.featureFlag = microserviceStatus;
     }
 
     @GetMapping("/getAll")
@@ -41,9 +44,23 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProductById(@PathVariable Long id){
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<Object> deleteProductById(@PathVariable Long id) {
         productService.deleteProductById(id);
+
+        String message = "Product with id " + id + " deleted successfully.";
+
+        if (featureFlag.isCallCartEnabled()) {
+            productService.deleteCartProducts(id);
+        } else {
+            message = message + " Feature flag to call CART is DISABLED.";
+        }
+        if (featureFlag.isCallUserEnabled()) {
+            productService.deleteUserProducts(id);
+        } else {
+            message = message + " Feature flag to call USER is DISABLED.";
+        }
+        return ResponseHandler.generateResponse( message, HttpStatus.OK, id);
     }
 
     @PostMapping
@@ -68,7 +85,15 @@ public class ProductController {
         try {
             productService.putProductById(newProduct, id);
 
-            return ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED,id);
+            String message = "Product with id " + id + " updated successfully.";
+
+            if (featureFlag.isCallCartEnabled()) {
+                productService.putCartProducts(id);
+            } else {
+                message = message + " Feature flag to call CART is DISABLED.";
+            }
+
+            return ResponseHandler.generateResponse(message,HttpStatus.CREATED,id);
 
         } catch (ConstraintViolationException e) {
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
