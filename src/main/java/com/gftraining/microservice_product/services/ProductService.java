@@ -8,6 +8,7 @@ import com.gftraining.microservice_product.configuration.ServicesUrl;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
@@ -28,19 +29,17 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class ProductService{
 	private ProductRepository productRepository;
 	private Categories categories;
 	private ServicesUrl servicesUrl;
-	private WebClient.Builder webClientBuilder;
-    private WebClient webClient;
 
-	public ProductService(ProductRepository productRepository, Categories categories, ServicesUrl servicesUrl, WebClient.Builder webClientBuilder) {
+	public ProductService(ProductRepository productRepository, Categories categories, ServicesUrl servicesUrl) {
 		super();
 		this.productRepository = productRepository;
 		this.categories = categories;
         this.servicesUrl = servicesUrl;
-		this.webClient = webClientBuilder.build();
 	}
 
 	public List<ProductEntity> getAll() {
@@ -60,24 +59,25 @@ public class ProductService{
 	public void deleteProductById(Long id) {
 		getProductById(id);
 		productRepository.deleteById(id);
-        // async -> deleteProductFromCarts(id).subscribe(result -> System.out.println(result.intValue()));
-		deleteProductFromCarts(id);
+        deleteProductFromCarts(id).subscribe(result -> log.info(result.toString()));
 	}
 
-    public Object deleteProductFromCarts(Long id) {
-        return webClient.delete()
-                .uri(servicesUrl.getCartUrl() + "/products/" + id)
+    public Mono<Object> deleteProductFromCarts(Long id) {
+		log.info("Empieza llamada asincrona a carrito");
+        return WebClient.create(servicesUrl.getCartUrl())
+				.delete()
+                .uri( "/products/{id}",id)
                 .retrieve()
                 .bodyToMono(Object.class)
                 .onErrorResume(error -> {
+					log.info("Devuelve error en llamada carrito");
                     if (error instanceof WebClientException && error.getCause() instanceof ConnectException) {
                         // Handle connection error
-                        return Mono.error(new Exception("Error deleting product from carts: Error connecting to cart service."));
+                        return Mono.error(new ConnectException("Error deleting product from carts: Error connecting to cart service."));
                     }
                     return Mono.error(error);
                 })
-                .filter(response -> !Objects.isNull(response.toString()))
-                .block();
+                .filter(response -> !Objects.isNull(response.toString()));
     }
 
     public ProductEntity getProductById(Long id) {

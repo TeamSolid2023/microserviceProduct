@@ -2,19 +2,22 @@ package com.gftraining.microservice_product.unit_test.services;
 
 
 import com.gftraining.microservice_product.configuration.Categories;
+import com.gftraining.microservice_product.configuration.ServicesUrl;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
 import com.gftraining.microservice_product.services.ProductService;
-import org.junit.Before;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.reactive.function.client.*;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -28,36 +31,27 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
+
     @InjectMocks @Spy
     ProductService service;
     @Mock
     ProductRepository repository;
     @Mock
     Categories categories;
-
     @Mock
+    private ServicesUrl servicesUrl;
+   /* @Mock
     private WebClient webClientMock;
     @Mock
-    private WebClient.Builder webClientBuilder;
+    private WebClient.RequestHeadersUriSpec requestHeadersUriSpecMock;
     @Mock
-    private ExchangeFunction exchangeFunction;
-
-    @Mock
-    private WebClient.RequestBodyUriSpec requestBodyUriSpecMock;
-
-    @Mock
-    private WebClient.RequestBodySpec requestBodySpecMock;
-
-    @SuppressWarnings("rawtypes")
+    private WebClient.RequestHeadersUriSpec requestHeadersUriMock;
     @Mock
     private WebClient.RequestHeadersSpec requestHeadersSpecMock;
-
-    @SuppressWarnings("rawtypes")
-    @Mock
-    private WebClient.RequestHeadersUriSpec requestHeadersUriSpecMock;
-
     @Mock
     private WebClient.ResponseSpec responseSpecMock;
+    @Mock
+    private WebClient.Builder webClientBuilderMock;*/
 
     List<ProductEntity> productList = Arrays.asList(
             new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100),
@@ -70,6 +64,18 @@ class ProductServiceTest {
     ProductEntity productEntity = new ProductEntity(1L,"Pelota", "Juguetes","pelota futbol",new BigDecimal(19.99),24);
     ProductDTO productDTO = new ProductDTO(productEntity.getName(), productEntity.getCategory(), productEntity.getDescription(), productEntity.getPrice(), productEntity.getStock());
     String cartsChanged = "{cartsChanged=1}";
+    public static MockWebServer mockWebServer;
+
+    @BeforeAll
+    static void setUp() throws IOException {
+        mockWebServer = new MockWebServer();
+        mockWebServer.start();
+    }
+
+    @AfterAll
+    static void tearDown() throws IOException {
+        mockWebServer.shutdown();
+    }
 
     @Test
     void testGetAll() {
@@ -82,11 +88,6 @@ class ProductServiceTest {
     void deleteProductById() {
         //given
         given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
-        given(webClientMock.delete()).willReturn(requestHeadersUriSpecMock);
-        given(requestHeadersUriSpecMock.uri(anyString(),anyLong())).willReturn(requestHeadersSpecMock);
-        given(requestHeadersSpecMock.retrieve()).willReturn(responseSpecMock);
-        given(responseSpecMock.bodyToMono(
-                ArgumentMatchers.<Class<Object>>notNull())).willReturn(Mono.just(cartsChanged));
         //spy
         //when
        service.deleteProductById(1L);
@@ -94,30 +95,35 @@ class ProductServiceTest {
        //then
        verify(repository).findById(anyLong());
        verify(repository).deleteById(anyLong());
-       verify(webClientMock).delete();
     }
 
     @Test
     @DisplayName("given a product id, when calling cart api to delete product, then returns Ok and number of carts affected.")
     void deleteProductFromCarts_returnCartsChanged(){
-        given(webClientBuilder.build()).willReturn(webClientMock);
-        when(webClientMock.post()).thenReturn(requestBodyUriSpecMock);
-        when(requestBodyUriSpecMock.uri(anyString())).thenReturn(requestBodySpecMock);
-        when(requestBodySpecMock.header(any(), any())).thenReturn(requestBodySpecMock);
-        when(requestBodySpecMock.body(any(), any(Class.class)))
+        Long productId = 7L;
+        when(servicesUrl.getCartUrl()).thenReturn("htpp://localhost:" + mockWebServer.getPort());
+
+        /*when(webClientBuilderMock.baseUrl(anyString()).build()).thenReturn(webClientMock);
+
+        when(webClientMock.delete()).thenReturn(requestHeadersUriSpecMock);
+        when(requestHeadersUriMock.uri("/products/{productId}", productId))
                 .thenReturn(requestHeadersSpecMock);
-        when(requestHeadersSpecMock.exchange()).thenReturn(Mono.just(cartsChanged));
+        when(requestHeadersSpecMock.retrieve())
+                .thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(Object.class))
+                .thenReturn(Mono.just(cartsChanged));*/
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(cartsChanged)
+                .addHeader("Content-Type", "application/json"));
 
-        Object response = service.deleteProductFromCarts(7L);
-        /*
-        given(webClientMock.delete()).willReturn(requestHeadersUriSpecMock);
-        given(requestHeadersUriSpecMock.uri(anyString(),anyLong())).willReturn(requestHeadersSpecMock);
-        given(requestHeadersSpecMock.retrieve()).willReturn(responseSpecMock);
-        given(responseSpecMock.bodyToMono(
-                ArgumentMatchers.<Class<Object>>notNull())).willReturn(Mono.just(cartsChanged));
 
-        Object response = service.deleteProductFromCarts(7L);
-        assertEquals("{cartsChanged=1}", response.toString());*/
+        Mono<Object> cartsMono = service.deleteProductFromCarts(productId);
+
+        StepVerifier.create(cartsMono)
+                .expectNextMatches(response -> response
+                        .equals(cartsChanged))
+                .verifyComplete();
     }
 
     @Test
