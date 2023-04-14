@@ -48,4 +48,4 @@ logging:
 
 feature-flags:
   callUserEnabled: false
-  callCartEnabled: true
+  callCartEnabled: false
