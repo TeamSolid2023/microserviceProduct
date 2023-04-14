@@ -3,13 +3,18 @@ spring:
     ansi:
       enabled: ALWAYS
   jpa:
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
     database-platform: org.hibernate.dialect.H2Dialect
   datasource:
-    url: jdbc:h2:mem:maindb
     driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:maindb
     username: sa
     password: password
+  liquibase:
+    enabled: true
+    change-log: classpath:db/migrations/db.changelog-root.yaml
+    default-schema: public
+  server:
     profiles:
       active: test, hsqldb
 
@@ -33,8 +38,8 @@ static-table:
 logging:
   level:
     org.springframework.web: "DEBUG"
-    org.hibernate: "WARN"
     tomcat: "DEBUG"
+    liquibase: "INFO"
 
 feature-flags:
   callUserEnabled: false

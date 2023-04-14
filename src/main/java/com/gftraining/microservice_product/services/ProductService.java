@@ -7,6 +7,7 @@ import com.gftraining.microservice_product.configuration.CategoriesConfig;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service
 public class ProductService{
 	private ProductRepository productRepository;
@@ -122,6 +123,8 @@ public class ProductService{
 					return product;
 				})
 				.collect(Collectors.toList());
+		
+		
 	}
 
     public void updateStock(Integer units, Long id) {
