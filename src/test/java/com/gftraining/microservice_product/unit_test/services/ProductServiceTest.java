@@ -9,6 +9,7 @@ import com.gftraining.microservice_product.repositories.ProductRepository;
 import com.gftraining.microservice_product.services.ProductService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -51,7 +52,10 @@ class ProductServiceTest {
     );
     ProductEntity productEntity = new ProductEntity(1L,"Pelota", "Juguetes","pelota futbol",new BigDecimal(19.99),24);
     ProductDTO productDTO = new ProductDTO(productEntity.getName(), productEntity.getCategory(), productEntity.getDescription(), productEntity.getPrice(), productEntity.getStock());
-    String cartsChanged = "{cartsChanged=1}";
+    Map<String,Integer> cartsChanged = new HashMap<>(){{
+        put("cartsChanged", 1);
+    }};
+
     public static MockWebServer mockWebServer;
 
     @BeforeAll
@@ -152,13 +156,14 @@ class ProductServiceTest {
     void deleteProductById() {
         //given
         given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
-        //spy
+
         //when
        service.deleteProductById(1L);
 
        //then
        verify(repository).findById(anyLong());
        verify(repository).deleteById(anyLong());
+       verify(service).deleteProductFromCarts(anyLong());
     }
 
     @Test
@@ -167,26 +172,15 @@ class ProductServiceTest {
         Long productId = 7L;
         when(servicesUrl.getCartUrl()).thenReturn("htpp://localhost:" + mockWebServer.getPort());
 
-        /*when(webClientBuilderMock.baseUrl(anyString()).build()).thenReturn(webClientMock);
-
-        when(webClientMock.delete()).thenReturn(requestHeadersUriSpecMock);
-        when(requestHeadersUriMock.uri("/products/{productId}", productId))
-                .thenReturn(requestHeadersSpecMock);
-        when(requestHeadersSpecMock.retrieve())
-                .thenReturn(responseSpecMock);
-        when(responseSpecMock.bodyToMono(Object.class))
-                .thenReturn(Mono.just(cartsChanged));*/
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(200)
-                .setBody(cartsChanged)
+                .setBody(String.valueOf(new JSONObject(cartsChanged)))
                 .addHeader("Content-Type", "application/json"));
-
 
         Mono<Object> cartsMono = service.deleteProductFromCarts(productId);
 
         StepVerifier.create(cartsMono)
-                .expectNextMatches(response -> response
-                        .equals(cartsChanged))
+                .expectNext(cartsChanged)
                 .verifyComplete();
     }
 }

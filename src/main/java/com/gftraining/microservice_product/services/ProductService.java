@@ -74,7 +74,7 @@ public class ProductService{
                 .retrieve()
                 .bodyToMono(Object.class)
                 .onErrorResume(error -> {
-					log.info("Devuelve error en llamada carrito");
+					log.error("Devuelve error en llamada carrito");
                     if (error instanceof WebClientException && error.getCause() instanceof ConnectException) {
                         // Handle connection error
                         return Mono.error(new ConnectException("Error deleting product from carts: Error connecting to cart service."));
