@@ -34,14 +34,16 @@ public class ProductService{
 	private ProductRepository productRepository;
 	private CategoriesConfig categoriesConfig;
 	private ModelMapper modelMapper;
+	private ServicesUrl servicesUrl;
 
 
 	public ProductService(ProductRepository productRepository, CategoriesConfig categoriesConfig,
-						  ModelMapper modelMapper) {
+						  ModelMapper modelMapper, ServicesUrl servicesUrl) {
 		super();
 		this.productRepository = productRepository;
 		this.categoriesConfig = categoriesConfig;
 		this.modelMapper = modelMapper;
+        this.servicesUrl = servicesUrl;
 	}
 
 	public List<ProductEntity> getAll() {
@@ -61,24 +63,25 @@ public class ProductService{
 	public void deleteProductById(Long id) {
 		getProductById(id);
 		productRepository.deleteById(id);
-        // async -> deleteProductFromCarts(id).subscribe(result -> System.out.println(result.intValue()));
-		deleteProductFromCarts(id);
+        deleteProductFromCarts(id).subscribe(result -> log.info(result.toString()));
 	}
 
-    public Object deleteProductFromCarts(Long id) {
-        return webClient.delete()
-                .uri(servicesUrl.getCartUrl() + "/products/" + id)
+    public Mono<Object> deleteProductFromCarts(Long id) {
+		log.info("Empieza llamada asincrona a carrito");
+        return WebClient.create(servicesUrl.getCartUrl())
+				.delete()
+                .uri( "/products/{id}",id)
                 .retrieve()
                 .bodyToMono(Object.class)
                 .onErrorResume(error -> {
+					log.info("Devuelve error en llamada carrito");
                     if (error instanceof WebClientException && error.getCause() instanceof ConnectException) {
                         // Handle connection error
-                        return Mono.error(new Exception("Error deleting product from carts: Error connecting to cart service."));
+                        return Mono.error(new ConnectException("Error deleting product from carts: Error connecting to cart service."));
                     }
                     return Mono.error(error);
                 })
-                .filter(response -> !Objects.isNull(response.toString()))
-                .block();
+                .filter(response -> !Objects.isNull(response.toString()));
     }
 
 	public void deleteUserProducts(Long id) {
