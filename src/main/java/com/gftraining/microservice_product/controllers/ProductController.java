@@ -6,6 +6,7 @@ import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.model.ResponseHandler;
 import com.gftraining.microservice_product.services.ProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+@Slf4j
 @RestController
 @RequestMapping(value = "/products")
 public class ProductController {
@@ -51,7 +53,7 @@ public class ProductController {
         String message = "Product with id " + id + " deleted successfully.";
 
         if (featureFlag.isCallCartEnabled()) {
-            productService.deleteCartProducts(id);
+            productService.deleteCartProducts(id).subscribe(result -> log.info(result.toString()));
         } else {
             message = message + " Feature flag to call CART is DISABLED.";
         }
