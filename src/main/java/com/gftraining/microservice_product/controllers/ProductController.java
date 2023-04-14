@@ -58,7 +58,7 @@ public class ProductController {
             message = message + " Feature flag to call CART is DISABLED.";
         }
         if (featureFlag.isCallUserEnabled()) {
-            productService.deleteUserProducts(id);
+            productService.deleteUserProducts(id).subscribe(result -> log.info(result.toString()));
         } else {
             message = message + " Feature flag to call USER is DISABLED.";
         }

@@ -66,14 +66,14 @@ public class ProductService{
 	}
 
     public Mono<Object> deleteCartProducts(Long id) {
-		log.info("Empieza llamada asincrona a carrito");
+		log.info("Empieza llamada asincrona a eliminar producto carrito");
         return WebClient.create(servicesUrl.getCartUrl())
 				.delete()
                 .uri( "/products/{id}",id)
                 .retrieve()
                 .bodyToMono(Object.class)
                 .onErrorResume(error -> {
-					log.error("Devuelve error en llamada carrito");
+					log.error("Devuelve error en llamada a eliminar producto carrito");
                     if (error instanceof WebClientException && error.getCause() instanceof ConnectException) {
                         // Handle connection error
                         return Mono.error(new ConnectException("Error deleting product from carts: Error connecting to cart service."));
@@ -83,7 +83,22 @@ public class ProductService{
                 .filter(response -> !Objects.isNull(response.toString()));
     }
 
-	public void deleteUserProducts(Long id) {
+	public Mono<Object> deleteUserProducts(Long id) {
+		log.info("Empieza llamada asincrona a eliminar producto favorito usuarios");
+		return WebClient.create(servicesUrl.getUserUrl())
+				.delete()
+				.uri( "/favorite/product/{id}",id)
+				.retrieve()
+				.bodyToMono(Object.class)
+				.onErrorResume(error -> {
+					log.error("Devuelve error en llamada a eliminar producto favorito usuario");
+					if (error instanceof WebClientException && error.getCause() instanceof ConnectException) {
+						// Handle connection error
+						return Mono.error(new ConnectException("Error deleting product from users: Error connecting to user service."));
+					}
+					return Mono.error(error);
+				})
+				.filter(response -> !Objects.isNull(response.toString()));
 	}
 
 	public ProductEntity getProductById(Long id) {
