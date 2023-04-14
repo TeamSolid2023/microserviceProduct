@@ -25,7 +25,6 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -41,6 +40,7 @@ class ProductServiceTest {
     CategoriesConfig categoriesConfig;
     @Mock
     private ServicesUrl servicesUrl;
+    public static MockWebServer mockWebServer;
 
     List<ProductEntity> productList = Arrays.asList(
             new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100),
@@ -56,7 +56,6 @@ class ProductServiceTest {
         put("cartsChanged", 1);
     }};
 
-    public static MockWebServer mockWebServer;
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -163,12 +162,11 @@ class ProductServiceTest {
        //then
        verify(repository).findById(anyLong());
        verify(repository).deleteById(anyLong());
-       verify(service).deleteProductFromCarts(anyLong());
     }
 
     @Test
     @DisplayName("given a product id, when calling cart api to delete product, then returns Ok and number of carts affected.")
-    void deleteProductFromCarts_returnCartsChanged(){
+    void deleteCartProducts_returnCartsChanged(){
         Long productId = 7L;
         when(servicesUrl.getCartUrl()).thenReturn("htpp://localhost:" + mockWebServer.getPort());
 
@@ -177,7 +175,7 @@ class ProductServiceTest {
                 .setBody(String.valueOf(new JSONObject(cartsChanged)))
                 .addHeader("Content-Type", "application/json"));
 
-        Mono<Object> cartsMono = service.deleteProductFromCarts(productId);
+        Mono<Object> cartsMono = service.deleteCartProducts(productId);
 
         StepVerifier.create(cartsMono)
                 .expectNext(cartsChanged)

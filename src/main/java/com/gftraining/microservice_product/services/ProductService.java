@@ -63,10 +63,9 @@ public class ProductService{
 	public void deleteProductById(Long id) {
 		getProductById(id);
 		productRepository.deleteById(id);
-        deleteProductFromCarts(id).subscribe(result -> log.info(result.toString()));
 	}
 
-    public Mono<Object> deleteProductFromCarts(Long id) {
+    public Mono<Object> deleteCartProducts(Long id) {
 		log.info("Empieza llamada asincrona a carrito");
         return WebClient.create(servicesUrl.getCartUrl())
 				.delete()
