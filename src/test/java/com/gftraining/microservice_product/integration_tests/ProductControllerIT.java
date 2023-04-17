@@ -16,23 +16,27 @@ import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -44,17 +48,15 @@ class ProductControllerIT {
 
     private static WireMockServer wireMockServer;
 
-    private static WebClient webClient;
-
     ProductDTO productDTO = new ProductDTO("Pelota", "Juguetes","pelota de futbol",new BigDecimal(19.99),24);
     ProductDTO badProductDTO = new ProductDTO("S", "0","S",new BigDecimal(0),10);
 
     @BeforeAll
     public static void setup() {
-        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().dynamicPort());
+        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(8080));
         wireMockServer.start();
 
-        webClient = WebClient.builder().baseUrl(wireMockServer.baseUrl()).build();
+        WireMock.configureFor("localhost", 8080);
     }
 
     @AfterAll
@@ -65,7 +67,7 @@ class ProductControllerIT {
     @Test
     @DisplayName("When perform get request /products/getAll, Then is expected to have status of 200, be an ArrayList, be a Json and have size 13")
     void testGetAll() throws Exception {
-        mockmvc.perform(get("/products/getAll"))
+        mockmvc.perform(MockMvcRequestBuilders.get("/products/getAll"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", isA(ArrayList.class)))
                 .andExpect(content().contentType("application/json"))
@@ -135,28 +137,50 @@ class ProductControllerIT {
     @Test
     @DisplayName("Given an id, When perform delete request /products/{id}, Then is expected to have status of 200 and have {\"cartsChanged\": 1}")
     void deleteProductById_CartCall() throws Exception {
-        wireMockServer.givenThat(delete("/products/7").willReturn(
-                aResponse()
-                        .withStatus(HttpStatus.OK.value())
+        HttpClient httpClient = HttpClient.newHttpClient();
+
+        stubFor(get(urlPathEqualTo("/products/" + 7))
+                .willReturn(aResponse()
+                        .withStatus(200)
                         .withHeader("Content-Type", "application/json")
-                        .withBody("{\"cartsChanged\": 1}"))
-        );
+                        .withBody("{\"cartsChanged\": 1}")));
 
-        String realParam = webClient.delete()
-                .uri("/products/{id}", 7)
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + wireMockServer.port() + "/products/" + 7))
+                .GET()
+                .build();
 
-        assertThat(realParam).isEqualTo("{\"cartsChanged\": 1}");
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertThat(200).isEqualTo(response.statusCode());
+        assertThat("{\"cartsChanged\": 1}").isEqualTo(response.body());
+    }
+
+    @Test
+    @DisplayName("Given an id, When perform delete request /products/{id}, Then is expected to have status of 404 and have {\"cartsChanged\": 1}")
+    void deleteProductById_CartCall_NotFound() throws Exception {
+        HttpClient httpClient = HttpClient.newHttpClient();
+
+        stubFor(get(urlPathEqualTo("/products/" + 999))
+                .willReturn(aResponse()
+                        .withStatus(404)
+                        .withHeader("Content-Type", "application/json")));
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + wireMockServer.port() + "/products/" + 999))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertThat(404).isEqualTo(response.statusCode());
     }
 
     @Test
     @DisplayName("Given a path, When perform post request /products/JSON_load, Then is expected to have status of 201")
     void updateProductsFromJson() throws Exception {
         //Put your own path
-        mockmvc.perform(post("/products/JSON_load")
+        mockmvc.perform(MockMvcRequestBuilders.post("/products/JSON_load")
                         .param("path", "C:\\Files\\data.json"))
                 .andExpect(status().isCreated());
     }
@@ -164,7 +188,7 @@ class ProductControllerIT {
     @Test
     @DisplayName("Given a Product, When perform post request /products, Then is expected to have status of 201, be a Json and have {\"id\":14,\"message\":\"DDBB updated\",\"status\":201}")
     void addNewProduct() throws Exception {
-        mockmvc.perform(post("/products")
+        mockmvc.perform(MockMvcRequestBuilders.post("/products")
                         .content(asJsonString(productDTO))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -175,7 +199,7 @@ class ProductControllerIT {
     @Test
     @DisplayName("Given a bad Product, When perform post request /products, Then is expected to have status of 400")
     void addNewProduct_BadRequest() throws Exception {
-        mockmvc.perform(post("/products")
+        mockmvc.perform(MockMvcRequestBuilders.post("/products")
                         .content(asJsonString(badProductDTO))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
