@@ -53,12 +53,12 @@ public class ProductController {
         String message = "Product with id " + id + " deleted successfully.";
 
         if (featureFlag.isCallCartEnabled()) {
-            productService.deleteCartProducts(id).subscribe(result -> log.info(result.toString()));
+            productService.deleteCartProducts(id).subscribe(result -> log.info("Respuesta delete product from carrito: " + result.toString()));
         } else {
             message = message + " Feature flag to call CART is DISABLED.";
         }
         if (featureFlag.isCallUserEnabled()) {
-            productService.deleteUserProducts(id).subscribe(result -> log.info(result.toString()));
+            productService.deleteUserProducts(id).subscribe(result -> log.info("Respuesta delete product from user: " + result.toString()));
         } else {
             message = message + " Feature flag to call USER is DISABLED.";
         }

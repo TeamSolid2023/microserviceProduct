@@ -10,7 +10,9 @@ import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
 import reactor.core.publisher.Mono;
@@ -83,22 +85,20 @@ public class ProductService{
                 .filter(response -> !Objects.isNull(response.toString()));
     }
 
-	public Mono<Object> deleteUserProducts(Long id) {
+	public Mono<HttpStatus> deleteUserProducts(Long id) {
 		log.info("Empieza llamada asincrona a eliminar producto favorito usuarios");
 		return WebClient.create(servicesUrl.getUserUrl())
 				.delete()
 				.uri( "/favorite/product/{id}",id)
-				.retrieve()
-				.bodyToMono(Object.class)
+				.exchangeToMono(response -> Mono.just(response.statusCode()))
 				.onErrorResume(error -> {
-					log.error("Devuelve error en llamada a eliminar producto favorito usuario");
+					log.error("Devuelve error en llamada a eliminar producto favorito usuarios");
 					if (error instanceof WebClientException && error.getCause() instanceof ConnectException) {
 						// Handle connection error
 						return Mono.error(new ConnectException("Error deleting product from users: Error connecting to user service."));
 					}
 					return Mono.error(error);
-				})
-				.filter(response -> !Objects.isNull(response.toString()));
+				});
 	}
 
 	public ProductEntity getProductById(Long id) {
