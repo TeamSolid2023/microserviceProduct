@@ -138,40 +138,15 @@ class ProductControllerIT {
     @Test
     @DisplayName("Given an id, When perform delete request /products/{id}, Then is expected to have status of 200 and have {\"cartsChanged\": 1}")
     void deleteProductById_CartCall() throws Exception {
-        HttpClient httpClient = HttpClient.newHttpClient();
-
-        stubFor(delete(urlPathEqualTo("/products/" + 7))
-                .inScenario("Retry Scenario")
-                .whenScenarioStateIs(STARTED)
+        wireMockServer.givenThat(delete(urlEqualTo("/products/" + 7))
                 .willReturn(aResponse()
                         .withStatus(500)
                         .withHeader("Content-Type", "application/json")
-                        .withBody("{Server Not Found}"))
-                .willSetStateTo("Cause Success"));
+                        .withBody("{Server Not Found}")));
 
-        stubFor(delete(urlPathEqualTo("/products/" + 7))
-                .inScenario("Retry Scenario")
-                .whenScenarioStateIs("Cause Success")
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody("{\"cartsChanged\": 1}")));
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + wireMockServer.port() + "/products/" + 7))
-                .DELETE().build();
-
-
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        assertThat(500).isEqualTo(response.statusCode());
-        assertThat("{Server Not Found}").isEqualTo(response.body());
-
-
-        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        assertThat(200).isEqualTo(response.statusCode());
-        assertThat("{\"cartsChanged\": 1}").isEqualTo(response.body());
-
-        verify(exactly(2), deleteRequestedFor(urlEqualTo("/products/" + 7)));
+        mockmvc.perform(delete("/products/{id}", 7))
+                .andExpect(status().is5xxServerError())
+                .andExpect(content().string("{Server Not Found}"));
     }
 
     @Test
