@@ -48,32 +48,40 @@ public class ProductService{
 
 	public List<ProductEntity> getAll() {
 		List<ProductEntity> products = productRepository.findAll();
+		log.info("Found all products");
+
+		log.info("Adding final price to the current list");
 		return addFinalPriceToProductsList(products);
 	}
 
 	public BigDecimal calculateFinalPrice(BigDecimal price, int discount) {
+		log.info("Calculating final price");
 		return price.subtract(price.multiply(BigDecimal.valueOf(discount)).divide(new BigDecimal("100")))
 				.round(new MathContext(4, RoundingMode.HALF_UP));
 	}
 
 	public int getDiscount(ProductEntity product) {
+		log.info("Looking for discount");
 		return Optional.ofNullable(categoriesConfig.getCategories().get(product.getCategory())).orElse(0);
 	}
 
 	public void deleteProductById(Long id) {
 		getProductById(id);
+		log.info("Get products with id " + id + "to be deleted");
+
 		productRepository.deleteById(id);
 	}
 
     public Mono<Object> deleteCartProducts(Long id) {
-		log.info("Empieza llamada asincrona a carrito");
+		log.info("Starting asynchronous call to cart");
+
         return WebClient.create(servicesUrl.getCartUrl())
 				.delete()
                 .uri( "/products/{id}",id)
                 .retrieve()
                 .bodyToMono(Object.class)
                 .onErrorResume(error -> {
-					log.error("Devuelve error en llamada carrito");
+					log.error("Returning error when cart is called");
                     if (error instanceof WebClientException && error.getCause() instanceof ConnectException) {
                         // Handle connection error
                         return Mono.error(new ConnectException("Error deleting product from carts: Error connecting to cart service."));
@@ -89,13 +97,18 @@ public class ProductService{
 	public ProductEntity getProductById(Long id) {
 		ProductEntity product = productRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Product with id: " + id + " not found."));
+		log.info("Found product with id " + id);
+
+		log.info("Adding final price to the current product");
 		return addFinalPriceToProductsList(Arrays.asList(product)).get(0);
 	}
 
 	public List<ProductEntity> getProductByName(String name) {
 		List<ProductEntity> products = productRepository.findAllByName(name);
 		if (products.isEmpty()) throw new EntityNotFoundException("Products with name: " + name + " not found.");
+		log.info("Created list of product with name " + name);
 
+		log.info("Adding final price to the current list");
 		return addFinalPriceToProductsList(products);
 	}
 
@@ -103,17 +116,23 @@ public class ProductService{
 		if (!categoriesConfig.getCategories().containsKey(productDTO.getCategory()))
 			throw new EntityNotFoundException("Category " + productDTO.getCategory() + " not found. Categories" +
 					" allowed: " + categoriesConfig.getCategories().keySet());
+		log.info("Category verified");
 
 		ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
+		log.info("Copied productDTO to a new ProductEntity to add as new product");
 
 		return productRepository.save(product).getId();
 	}
 
 	public void updateProductsFromJson(String path) throws IOException {
 		productRepository.deleteAll();
+		log.info("Deleted all products");
+
 		ObjectMapper objectMapper = new ObjectMapper();
 		List<ProductEntity> products = objectMapper.readValue(new File(path), new TypeReference<>() {
 		});
+		log.info("Created a list with all products");
+
 		productRepository.saveAll(products);
 
 	}
@@ -122,13 +141,16 @@ public class ProductService{
 		if (!categoriesConfig.getCategories().containsKey(productDTO.getCategory()))
 			throw new EntityNotFoundException("Category " + productDTO.getCategory() + " not found. Categories" +
 					" allowed: " + categoriesConfig.getCategories().keySet());
+		log.info("Category verified");
 
 		if (productRepository.findById(id).isEmpty()){
 			throw new EntityNotFoundException("Id " + id + " not found.");
 		}
+		log.info("Id verified");
 
 		ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
 		product.setId(id);
+		log.info("Copied productDTO to a new ProductEntity to update product with id " + id);
 
 		productRepository.save(product);
 	}
@@ -147,9 +169,11 @@ public class ProductService{
 
     public void updateStock(Integer units, Long id) {
         ProductEntity product = getProductById(id);
+		log.info("Copied product with id " + id + "to a new ProductEntity");
 
         Integer newStock = product.getStock()-units;
         product.setStock(newStock);
+		log.info("Updated stock in the new ProductEntity to replace current product with id " + id);
 
         productRepository.save(product);
     }
