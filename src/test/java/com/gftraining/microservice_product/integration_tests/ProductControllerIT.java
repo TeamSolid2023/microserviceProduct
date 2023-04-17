@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
@@ -139,7 +140,18 @@ class ProductControllerIT {
     void deleteProductById_CartCall() throws Exception {
         HttpClient httpClient = HttpClient.newHttpClient();
 
-        stubFor(get(urlPathEqualTo("/products/" + 7))
+        stubFor(delete(urlPathEqualTo("/products/" + 7))
+                .inScenario("Retry Scenario")
+                .whenScenarioStateIs(STARTED)
+                .willReturn(aResponse()
+                        .withStatus(500)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("{Server Not Found}"))
+                .willSetStateTo("Cause Success"));
+
+        stubFor(delete(urlPathEqualTo("/products/" + 7))
+                .inScenario("Retry Scenario")
+                .whenScenarioStateIs("Cause Success")
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
@@ -147,13 +159,19 @@ class ProductControllerIT {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:" + wireMockServer.port() + "/products/" + 7))
-                .GET()
-                .build();
+                .DELETE().build();
+
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        assertThat(500).isEqualTo(response.statusCode());
+        assertThat("{Server Not Found}").isEqualTo(response.body());
 
+
+        response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         assertThat(200).isEqualTo(response.statusCode());
         assertThat("{\"cartsChanged\": 1}").isEqualTo(response.body());
+
+        verify(exactly(2), deleteRequestedFor(urlEqualTo("/products/" + 7)));
     }
 
     @Test
@@ -161,15 +179,14 @@ class ProductControllerIT {
     void deleteProductById_CartCall_NotFound() throws Exception {
         HttpClient httpClient = HttpClient.newHttpClient();
 
-        stubFor(get(urlPathEqualTo("/products/" + 999))
+        stubFor(delete(urlPathEqualTo("/products/" + 999))
                 .willReturn(aResponse()
                         .withStatus(404)
                         .withHeader("Content-Type", "application/json")));
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://localhost:" + wireMockServer.port() + "/products/" + 999))
-                .GET()
-                .build();
+                .DELETE().build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
