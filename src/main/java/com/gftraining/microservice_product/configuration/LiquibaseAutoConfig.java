@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
         name="enabled",
         matchIfMissing=true)
 @AutoConfigureAfter(value={DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-public class LiquibaseAutoConfiguration{
+public class LiquibaseAutoConfig {
 
 
 }
