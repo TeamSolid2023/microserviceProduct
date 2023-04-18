@@ -120,8 +120,8 @@ class ProductControllerTest {
     @Test
     @DisplayName("Given a json Product with price 0, When calling service to add a new Product, " +
             "Then price constraint greater than zero is thrown and catch block is called and returns response error")
-    void addProduct_ThrowConstraintViolationException() throws Exception {
-        ProductEntity productPriceZero = new ProductEntity(1L,"Pelota", "Juguetes", "",new BigDecimal(2),24);
+    void addProduct_ReturnBadRequest() throws Exception {
+        ProductEntity productPriceZero = new ProductEntity(1L,"Pelota", "Juguetes", "pelota futbol",new BigDecimal(0),24);
         given(productService.saveProduct(any(ProductDTO.class))).willReturn(productEntity.getId());
 
         mockmvc.perform(post("/products")
