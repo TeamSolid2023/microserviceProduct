@@ -201,8 +201,8 @@ class ProductServiceTest {
         Mono<HttpStatus> userDeleteMono = service.deleteUserProducts(productId);
 
         StepVerifier.create(userDeleteMono)
-                .expectNext(HttpStatus.NO_CONTENT)
-                .verifyComplete();
+                .expectComplete()
+                .verify();
 
         RecordedRequest request = mockWebServer.takeRequest();
         assertThat(request.getMethod()).isEqualTo("DELETE");
