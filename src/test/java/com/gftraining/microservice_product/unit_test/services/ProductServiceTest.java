@@ -9,6 +9,8 @@ import com.gftraining.microservice_product.repositories.ProductRepository;
 import com.gftraining.microservice_product.services.ProductService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import okhttp3.mockwebserver.RecordedRequest;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,6 +19,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.springframework.boot.test.json.JsonContent;
 import org.springframework.http.HttpStatus;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -24,6 +29,7 @@ import reactor.test.StepVerifier;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -165,7 +171,7 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("given a product id, when calling cart api to delete product, then returns Ok and number of carts affected.")
-    void deleteCartProducts_returnCartsChanged(){
+    void deleteCartProducts_returnCartsChanged() throws InterruptedException {
         Long productId = 7L;
         when(servicesUrl.getCartUrl()).thenReturn("htpp://localhost:" + mockWebServer.getPort());
 
@@ -179,11 +185,13 @@ class ProductServiceTest {
         StepVerifier.create(cartsMono)
                 .expectNext(cartsChanged)
                 .verifyComplete();
+        RecordedRequest request = mockWebServer.takeRequest();
+        assertThat(request.getMethod()).isEqualTo("DELETE");
     }
 
     @Test
     @DisplayName("given a product id, when calling user api to delete favorite product, then returns 204 No Content.")
-    void deleteUserProducts_returns204NoContent(){
+    void deleteUserProducts_returns204NoContent() throws InterruptedException {
         Long productId = 7L;
         when(servicesUrl.getUserUrl()).thenReturn("htpp://localhost:" + mockWebServer.getPort());
 
@@ -195,5 +203,31 @@ class ProductServiceTest {
         StepVerifier.create(userDeleteMono)
                 .expectNext(HttpStatus.NO_CONTENT)
                 .verifyComplete();
+
+        RecordedRequest request = mockWebServer.takeRequest();
+        assertThat(request.getMethod()).isEqualTo("DELETE");
+    }
+
+    @Test
+    @DisplayName("given a product id, when calling cart api to update products, then returns Ok and number of carts affected.")
+    void patchCartProducts_returnCartsChanged() throws InterruptedException, JSONException {
+        when(servicesUrl.getCartUrl()).thenReturn("htpp://localhost:" + mockWebServer.getPort());
+
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(String.valueOf(new JSONObject(cartsChanged)))
+                .addHeader("Content-Type", "application/json"));
+
+        Mono<Object> cartsMono = service.patchCartProducts(productDTO,productEntity.getId());
+
+        StepVerifier.create(cartsMono)
+                .expectNext(cartsChanged)
+                .verifyComplete();
+
+        RecordedRequest request = mockWebServer.takeRequest();
+        String requestBody = request.getBody().readUtf8();
+        assertThat(request.getMethod()).isEqualTo("PATCH");
+        JSONAssert.assertEquals("{\"id\":1,\"name\":\"Pelota\",\"description\":\"pelota futbol\",\"price\":19.99}", requestBody, JSONCompareMode.LENIENT);
+
     }
 }

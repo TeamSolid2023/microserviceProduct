@@ -90,7 +90,7 @@ public class ProductController {
             String message = "Product with id " + id + " updated successfully.";
 
             if (featureFlag.isCallCartEnabled()) {
-                productService.putCartProducts(id);
+                productService.patchCartProducts(newProduct, id).subscribe(result -> log.info("Update product from cart response: " + result.toString()));
             } else {
                 message = message + " Feature flag to call CART is DISABLED.";
             }

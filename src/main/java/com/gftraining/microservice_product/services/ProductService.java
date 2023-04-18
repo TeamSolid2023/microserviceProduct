@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microservice_product.configuration.CategoriesConfig;
 import com.gftraining.microservice_product.configuration.ServicesUrl;
+import com.gftraining.microservice_product.model.CartProductDTO;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
@@ -12,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
 import reactor.core.publisher.Mono;
@@ -148,7 +149,23 @@ public class ProductService{
 		productRepository.save(product);
 	}
 
-	public void putCartProducts(Long id) {
+	public Mono<Object> patchCartProducts(ProductDTO productDTO, Long id) {
+		CartProductDTO cartProductDTO = new CartProductDTO(id,productDTO.getName(),productDTO.getDescription(),productDTO.getPrice().doubleValue());
+		log.info("call to update products on carts.");
+		return WebClient.create(servicesUrl.getCartUrl())
+				.patch()
+				.uri( "/products/{id}",id)
+				.body(BodyInserters.fromValue(cartProductDTO))
+				.retrieve()
+				.bodyToMono(Object.class)
+				.onErrorResume(error -> {
+					log.error("Devuelve error en llamada a actualizar producto carrito");
+					if (error instanceof WebClientException && error.getCause() instanceof ConnectException) {
+						// Handle connection error
+						return Mono.error(new ConnectException("Error updating products from carts: Error connecting to cart service."));
+					}
+					return Mono.error(error);
+				});
 	}
 
 	private List<ProductEntity> addFinalPriceToProductsList(List<ProductEntity> products) {
