@@ -59,7 +59,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(ResponseStatusException.class)
 	public ResponseEntity<ExceptionResponse> handleResponseStatusException(ResponseStatusException ex) {
 
-		ExceptionResponse res = new ExceptionResponse("There is no user with that id", LocalDate.now());
+		ExceptionResponse res = new ExceptionResponse(ex.getMessage(), LocalDate.now());
 
 		return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
 	}
