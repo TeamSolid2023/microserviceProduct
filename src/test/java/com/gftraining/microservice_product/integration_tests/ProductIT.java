@@ -9,14 +9,13 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -24,11 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.URI;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -56,16 +50,16 @@ class ProductIT {
     ProductDTO productDTO = new ProductDTO("Pelota", "Juguetes","pelota de futbol",new BigDecimal(19.99),24);
     ProductDTO badProductDTO = new ProductDTO("S", "0","S",new BigDecimal(0),10);
 
-    @BeforeAll
-    public static void setup() {
-        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(8080));
+
+    public static void wireMockServerSetPort(int port) {
+        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(port));
         wireMockServer.start();
 
-        WireMock.configureFor("localhost", 8080);
+        WireMock.configureFor("localhost", port);
     }
 
-    @AfterAll
-    static void tearDown() throws Exception {
+
+    static void wireMockServerStop() throws Exception {
         wireMockServer.stop();
     }
 
@@ -142,6 +136,7 @@ class ProductIT {
     @Test
     @DisplayName("When retrying a delete call, then return 200 OK,")
     void deleteProductById_CartCallRetry() throws Exception {
+        wireMockServerSetPort(8080);
         wireMockServer.stubFor(
                  delete(urlEqualTo("/products/7")).inScenario("testing retires")
                          .whenScenarioStateIs(STARTED)
@@ -162,6 +157,34 @@ class ProductIT {
                 .verify();
 
         verify(2,deleteRequestedFor(urlPathEqualTo("/products/7")));
+        wireMockServerStop();
+    }
+    
+    @Test
+    @DisplayName("When retrying a delete call, then return 204 OK,")
+    void deleteProductById_UserCallRetry() throws Exception {
+        wireMockServerSetPort(8082);
+        wireMockServer.stubFor(
+                delete(urlEqualTo("/favorite/products/7")).inScenario("testing retires")
+                        .whenScenarioStateIs(STARTED)
+                        .willReturn(aResponse().withStatus(500))
+                        .willSetStateTo("OK response")
+        );
+        
+        wireMockServer.stubFor(
+                delete(urlEqualTo("/favorite/products/7")).inScenario("testing retires")
+                        .whenScenarioStateIs("OK response")
+                        .willReturn(aResponse().withStatus(204))
+        );
+        
+        Mono<HttpStatus> usersMono = service.deleteUserProducts(7L);
+        
+        StepVerifier.create(usersMono)
+                .expectComplete()
+                .verify();
+        
+        verify(2,deleteRequestedFor(urlPathEqualTo("/favorite/products/7")));
+        wireMockServerStop();
     }
 
     @Test
