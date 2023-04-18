@@ -21,6 +21,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.springframework.boot.test.json.JsonContent;
 import org.springframework.http.HttpStatus;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -28,6 +29,7 @@ import reactor.test.StepVerifier;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -106,29 +108,6 @@ class ProductServiceTest {
 
         verify(repository).save(any());
         assertThat(id).isEqualTo(1L);
-    }
-
-    @Test
-    @DisplayName("given a product id, when calling cart api to update products, then returns Ok and number of carts affected.")
-    void putCartProducts_returnCartsChanged() throws InterruptedException, JSONException {
-        when(servicesUrl.getCartUrl()).thenReturn("htpp://localhost:" + mockWebServer.getPort());
-
-        mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody(String.valueOf(new JSONObject(cartsChanged)))
-                .addHeader("Content-Type", "application/json"));
-
-        Mono<Object> cartsMono = service.putCartProducts(productDTO,productEntity.getId());
-
-        StepVerifier.create(cartsMono)
-                .expectNext(cartsChanged)
-                .verifyComplete();
-
-        RecordedRequest request = mockWebServer.takeRequest();
-        String requestBody = request.getBody().readUtf8();
-        assertThat(request.getMethod()).isEqualTo("PUT");
-        JSONAssert.assertEquals("{\"id\":1,\"name\":\"Pelota\",\"description\":\"pelota futbol\",\"price\":19.99}", requestBody, JSONCompareMode.LENIENT);
-
     }
 
     @Test
@@ -227,5 +206,28 @@ class ProductServiceTest {
 
         RecordedRequest request = mockWebServer.takeRequest();
         assertThat(request.getMethod()).isEqualTo("DELETE");
+    }
+
+    @Test
+    @DisplayName("given a product id, when calling cart api to update products, then returns Ok and number of carts affected.")
+    void patchCartProducts_returnCartsChanged() throws InterruptedException, JSONException {
+        when(servicesUrl.getCartUrl()).thenReturn("htpp://localhost:" + mockWebServer.getPort());
+
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(String.valueOf(new JSONObject(cartsChanged)))
+                .addHeader("Content-Type", "application/json"));
+
+        Mono<Object> cartsMono = service.patchCartProducts(productDTO,productEntity.getId());
+
+        StepVerifier.create(cartsMono)
+                .expectNext(cartsChanged)
+                .verifyComplete();
+
+        RecordedRequest request = mockWebServer.takeRequest();
+        String requestBody = request.getBody().readUtf8();
+        assertThat(request.getMethod()).isEqualTo("PATCH");
+        JSONAssert.assertEquals("{\"id\":1,\"name\":\"Pelota\",\"description\":\"pelota futbol\",\"price\":19.99}", requestBody, JSONCompareMode.LENIENT);
+
     }
 }

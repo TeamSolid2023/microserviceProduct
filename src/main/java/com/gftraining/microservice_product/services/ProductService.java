@@ -179,11 +179,11 @@ public class ProductService{
 		productRepository.save(product);
 	}
 
-	public Mono<Object> putCartProducts(ProductDTO productDTO, Long id) {
+	public Mono<Object> patchCartProducts(ProductDTO productDTO, Long id) {
 		CartProductDTO cartProductDTO = new CartProductDTO(id,productDTO.getName(),productDTO.getDescription(),productDTO.getPrice().doubleValue());
 		log.info("call to update products on carts.");
 		return WebClient.create(servicesUrl.getCartUrl())
-				.put()
+				.patch()
 				.uri( "/products/{id}",id)
 				.body(BodyInserters.fromValue(cartProductDTO))
 				.retrieve()
