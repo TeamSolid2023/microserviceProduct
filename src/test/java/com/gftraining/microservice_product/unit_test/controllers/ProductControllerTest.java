@@ -107,13 +107,27 @@ class ProductControllerTest {
 
     @Test
     @DisplayName("Given a Product, When calling service to add a new Product, Then the Product is created and is a Json")
-    void addNewProduct() throws Exception {
+    void addProduct() throws Exception {
         given(productService.saveProduct(any(ProductDTO.class))).willReturn(productEntity.getId());
 
         mockmvc.perform(post("/products")
                         .content(asJsonString(productEntity))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andExpect(content().contentType("application/json"));
+    }
+
+    @Test
+    @DisplayName("Given a json Product with price 0, When calling service to add a new Product, " +
+            "Then price constraint greater than zero is thrown and catch block is called and returns response error")
+    void addProduct_ThrowConstraintViolationException() throws Exception {
+        ProductEntity productPriceZero = new ProductEntity(1L,"Pelota", "Juguetes", "",new BigDecimal(2),24);
+        given(productService.saveProduct(any(ProductDTO.class))).willReturn(productEntity.getId());
+
+        mockmvc.perform(post("/products")
+                        .content(asJsonString(productPriceZero))
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json"));
     }
 

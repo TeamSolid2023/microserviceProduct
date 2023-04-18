@@ -74,13 +74,8 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> addProduct(@Valid @RequestBody ProductDTO product){
-        try {
-            Long id = productService.saveProduct(product);
-            return ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED,id);
-        } catch (ConstraintViolationException e) {
-            log.error("ConstraintViolationException: The data from the request was not valid");
-            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        Long id = productService.saveProduct(product);
+        return ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED,id);
     }
 
     @PostMapping("/JSON_load")
@@ -91,25 +86,19 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> putProductById(@PathVariable Long id, @Valid @RequestBody ProductDTO newProduct) {
-        try {
-            productService.putProductById(newProduct, id);
+        productService.putProductById(newProduct, id);
 
-            String message = "Product with id " + id + " updated successfully.";
+        String message = "Product with id " + id + " updated successfully.";
 
-            if (featureFlag.isCallCartEnabled()) {
-                log.info("Feature flag to call CART is ENABLED");
-                productService.patchCartProducts(newProduct, id).subscribe(result -> log.info("Update product from cart response: " + result.toString()));
-            } else {
-                log.info("Feature flag to call CART is DISABLED");
-                message = message + " Feature flag to call CART is DISABLED.";
-            }
-
-            return ResponseHandler.generateResponse(message,HttpStatus.CREATED,id);
-
-        } catch (ConstraintViolationException e) {
-            log.error("ConstraintViolationException: The data from the request was not valid");
-            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        if (featureFlag.isCallCartEnabled()) {
+            log.info("Feature flag to call CART is ENABLED");
+            productService.patchCartProducts(newProduct, id).subscribe(result -> log.info("Update product from cart response: " + result.toString()));
+        } else {
+            log.info("Feature flag to call CART is DISABLED");
+            message = message + " Feature flag to call CART is DISABLED.";
         }
+
+        return ResponseHandler.generateResponse(message,HttpStatus.CREATED,id);
     }
 
     @PatchMapping("/updateStock/{id}")
