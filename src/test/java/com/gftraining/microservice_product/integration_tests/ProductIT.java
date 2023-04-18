@@ -4,6 +4,7 @@ package com.gftraining.microservice_product.integration_tests;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microservice_product.model.ProductDTO;
 
+import com.gftraining.microservice_product.services.ProductService;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
@@ -21,6 +22,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -43,10 +46,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
-class ProductControllerIT {
+class ProductIT {
     @Autowired
     private MockMvc mockmvc;
-
+    @Autowired
+    ProductService service;
     private static WireMockServer wireMockServer;
 
     ProductDTO productDTO = new ProductDTO("Pelota", "Juguetes","pelota de futbol",new BigDecimal(19.99),24);
@@ -136,36 +140,28 @@ class ProductControllerIT {
     }
 
     @Test
-    @DisplayName("Given an id, When perform delete request /products/{id}, Then is expected to have status of 200 and have {\"cartsChanged\": 1}")
-    void deleteProductById_CartCall() throws Exception {
-        wireMockServer.givenThat(delete(urlEqualTo("/products/" + 7))
-                .willReturn(aResponse()
-                        .withStatus(500)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody("{Server Not Found}")));
+    @DisplayName("When retrying a delete call, then return 200 OK,")
+    void deleteProductById_CartCallRetry() throws Exception {
+        wireMockServer.stubFor(
+                 delete(urlEqualTo("/products/7")).inScenario("testing retires")
+                         .whenScenarioStateIs(STARTED)
+                         .willReturn(aResponse().withStatus(500))
+                         .willSetStateTo("OK response")
+        );
 
-        mockmvc.perform(delete("/products/{id}", 7))
-                .andExpect(status().is5xxServerError())
-                .andExpect(content().string("{Server Not Found}"));
-    }
+        wireMockServer.stubFor(
+                delete(urlEqualTo("/products/7")).inScenario("testing retires")
+                        .whenScenarioStateIs("OK response")
+                        .willReturn(aResponse().withStatus(200))
+        );
 
-    @Test
-    @DisplayName("Given an id, When perform delete request /products/{id}, Then is expected to have status of 404 and have {\"cartsChanged\": 1}")
-    void deleteProductById_CartCall_NotFound() throws Exception {
-        HttpClient httpClient = HttpClient.newHttpClient();
+        Mono<Object> cartsMono = service.deleteCartProducts(7L);
 
-        stubFor(delete(urlPathEqualTo("/products/" + 999))
-                .willReturn(aResponse()
-                        .withStatus(404)
-                        .withHeader("Content-Type", "application/json")));
+        StepVerifier.create(cartsMono)
+                .expectComplete()
+                .verify();
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + wireMockServer.port() + "/products/" + 999))
-                .DELETE().build();
-
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-        assertThat(404).isEqualTo(response.statusCode());
+        verify(2,deleteRequestedFor(urlPathEqualTo("/products/7")));
     }
 
     @Test
