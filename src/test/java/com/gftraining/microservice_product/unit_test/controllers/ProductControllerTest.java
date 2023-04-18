@@ -2,6 +2,7 @@ package com.gftraining.microservice_product.unit_test.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gftraining.microservice_product.configuration.FeatureFlagsConfig;
 import com.gftraining.microservice_product.controllers.ProductController;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
@@ -13,8 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -34,7 +37,9 @@ class ProductControllerTest {
     @Autowired
     private MockMvc mockmvc;
     @MockBean
-    ProductService productService;
+    private ProductService productService;
+    @MockBean
+    private FeatureFlagsConfig featureFlag;
 
     List<ProductEntity> productList = Arrays.asList(
             new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
@@ -58,12 +63,46 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("Given an id, When perform the delete request /products/{id}, Then verify if the service is called and has no content")
-    void deleteProductById() throws Exception {
-        mockmvc.perform(delete("/products/{id}",1L))
+    @DisplayName("Given an id, When perform the delete request /products/{id} and callcart and calluser flags are disabled, " +
+            "Then verify if the service is called and has no content")
+    void deleteProductById_CallCartDisabledAndCallUserDisabled() throws Exception {
+        when(featureFlag.isCallCartEnabled()).thenReturn(false);
+        when(featureFlag.isCallUserEnabled()).thenReturn(false);
+
+        mockmvc.perform(delete("/products/{id}",1l))
                 .andExpect(status().isOk());
 
         verify(productService).deleteProductById(anyLong());
+    }
+
+    @Test
+    @DisplayName("Given an id, When perform the delete request /products/{id} and callcart flag is enabled, " +
+            "Then verify call to delete our product and call to delete carts product")
+    void deleteProductById_CallCartEnabled() throws Exception {
+        when(featureFlag.isCallCartEnabled()).thenReturn(true);
+        when(featureFlag.isCallUserEnabled()).thenReturn(false);
+        when(productService.deleteCartProducts(anyLong())).thenReturn(Mono.just("{\"cartsChanged\":1}"));
+
+        mockmvc.perform(delete("/products/{id}",1l))
+                .andExpect(status().isOk());
+
+        verify(productService).deleteProductById(anyLong());
+        verify(productService).deleteCartProducts(anyLong());
+    }
+
+    @Test
+    @DisplayName("Given an id, When perform the delete request /products/{id} and calluser flag is enabled, " +
+            "Then verify call to delete our product and call to delete users favorite product")
+    void deleteProductById_CallUserEnabled() throws Exception {
+        when(featureFlag.isCallCartEnabled()).thenReturn(false);
+        when(featureFlag.isCallUserEnabled()).thenReturn(true);
+        when(productService.deleteUserProducts(anyLong())).thenReturn(Mono.just(HttpStatus.NO_CONTENT));
+
+        mockmvc.perform(delete("/products/{id}",1l))
+                .andExpect(status().isOk());
+
+        verify(productService).deleteProductById(anyLong());
+        verify(productService).deleteUserProducts(anyLong());
     }
 
     @Test
@@ -110,15 +149,33 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("Given any long, When perform the put request /products/{id}, Then expect is created and is equal to productEntity")
-    void putProductById() throws Exception {
+    @DisplayName("Given any long and a json productEntity, When perform the put request /products/{id} and callCart flag is disabled, " +
+            "Then expect status is created and is equal to productEntity")
+    void putProductById_CallCartDisabled() throws Exception {
         given(productService.getProductById(anyLong())).willReturn(productEntity);
+        when(featureFlag.isCallCartEnabled()).thenReturn(false);
 
         mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productEntity)))
                 .andExpect(status().isCreated());
 
         assertThat(productService.getProductById(1L)).isEqualTo(productEntity);
+    }
+
+    @Test
+    @DisplayName("Given any long and a json productEntity, When perform the put request /products/{id} and callCart flag is enabled, " +
+            "Then expect status is created ,is equal to productEntity and call to cart service.")
+    void putProductById_CallCartEnabled() throws Exception {
+        given(productService.getProductById(anyLong())).willReturn(productEntity);
+        when(featureFlag.isCallCartEnabled()).thenReturn(true);
+        when(productService.patchCartProducts(any(),anyLong())).thenReturn(Mono.just("{\"cartsChanged\":1}"));
+
+        mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(productEntity)))
+                .andExpect(status().isCreated());
+
+        assertThat(productService.getProductById(1L)).isEqualTo(productEntity);
+        verify(productService).patchCartProducts(any(),anyLong());
     }
 
     @Test
