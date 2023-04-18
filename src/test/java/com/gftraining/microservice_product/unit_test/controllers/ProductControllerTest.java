@@ -63,7 +63,7 @@ class ProductControllerTest {
     }
 
     @Test
-    @DisplayName("Given an id, When perform the delete request /products/{id} and callcart and calluser flags are disabeld, " +
+    @DisplayName("Given an id, When perform the delete request /products/{id} and callcart and calluser flags are disabled, " +
             "Then verify if the service is called and has no content")
     void deleteProductById_CallCartDisabledAndCallUserDisabled() throws Exception {
         when(featureFlag.isCallCartEnabled()).thenReturn(false);
@@ -102,7 +102,7 @@ class ProductControllerTest {
                 .andExpect(status().isOk());
 
         verify(productService).deleteProductById(anyLong());
-        verify(productService).deletmiteUserProducts(anyLong());
+        verify(productService).deleteUserProducts(anyLong());
     }
 
     @Test
