@@ -54,7 +54,7 @@ public class ProductController {
 
         if (featureFlag.isCallCartEnabled()) {
             log.info("Feature flag to call CART is ENABLED");
-            productService.deleteCartProducts(id).subscribe(result -> log.info(result.toString()));
+            productService.deleteCartProducts(id).subscribe(result -> log.info("Respuesta delete product from carrito: " + result.toString()));
         } else {
             log.info("Feature flag to call CART is DISABLED");
             message = message + " Feature flag to call CART is DISABLED.";
@@ -62,7 +62,7 @@ public class ProductController {
         }
         if (featureFlag.isCallUserEnabled()) {
             log.info("Feature flag to call USER is ENABLED");
-            productService.deleteUserProducts(id);
+            productService.deleteUserProducts(id).subscribe(result -> log.info("Respuesta delete product from user: " + result.toString()));
         } else {
             log.info("Feature flag to call USER is DISABLED");
             message = message + " Feature flag to call USER is DISABLED.";

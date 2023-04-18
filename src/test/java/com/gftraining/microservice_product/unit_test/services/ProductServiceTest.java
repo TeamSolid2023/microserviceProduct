@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -155,10 +156,8 @@ class ProductServiceTest {
     void deleteProductById() {
         //given
         given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
-
         //when
        service.deleteProductById(1L);
-
        //then
        verify(repository).findById(anyLong());
        verify(repository).deleteById(anyLong());
@@ -179,6 +178,22 @@ class ProductServiceTest {
 
         StepVerifier.create(cartsMono)
                 .expectNext(cartsChanged)
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("given a product id, when calling user api to delete favorite product, then returns 204 No Content.")
+    void deleteUserProducts_returns204NoContent(){
+        Long productId = 7L;
+        when(servicesUrl.getUserUrl()).thenReturn("htpp://localhost:" + mockWebServer.getPort());
+
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(204));
+
+        Mono<HttpStatus> userDeleteMono = service.deleteUserProducts(productId);
+
+        StepVerifier.create(userDeleteMono)
+                .expectNext(HttpStatus.NO_CONTENT)
                 .verifyComplete();
     }
 }
