@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Table(name = "product")
 @Entity
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public class ProductEntity implements Serializable {
 

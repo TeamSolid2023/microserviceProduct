@@ -98,7 +98,7 @@ public class ProductController {
 
             if (featureFlag.isCallCartEnabled()) {
                 log.info("Feature flag to call CART is ENABLED");
-                productService.putCartProducts(id);
+                productService.patchCartProducts(newProduct, id).subscribe(result -> log.info("Update product from cart response: " + result.toString()));
             } else {
                 log.info("Feature flag to call CART is DISABLED");
                 message = message + " Feature flag to call CART is DISABLED.";
