@@ -182,14 +182,14 @@ class ProductControllerTest {
     void putProductById_CallCartEnabled() throws Exception {
         given(productService.getProductById(anyLong())).willReturn(productEntity);
         when(featureFlag.isCallCartEnabled()).thenReturn(true);
-        when(productService.patchCartProducts(any(),anyLong())).thenReturn(Mono.just("{\"cartsChanged\":1}"));
+        when(productService.putCartProducts(any(),anyLong())).thenReturn(Mono.just("{\"cartsChanged\":1}"));
 
         mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productEntity)))
                 .andExpect(status().isCreated());
 
         assertThat(productService.getProductById(1L)).isEqualTo(productEntity);
-        verify(productService).patchCartProducts(any(),anyLong());
+        verify(productService).putCartProducts(any(),anyLong());
     }
 
     @Test

@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -92,7 +91,7 @@ public class ProductController {
 
         if (featureFlag.isCallCartEnabled()) {
             log.info("Feature flag to call CART is ENABLED");
-            productService.patchCartProducts(newProduct, id).subscribe(result -> log.info("Update product from cart response: " + result.toString()));
+            productService.putCartProducts(newProduct, id).subscribe(result -> log.info("Update product from cart response: " + result.toString()));
         } else {
             log.info("Feature flag to call CART is DISABLED");
             message = message + " Feature flag to call CART is DISABLED.";
