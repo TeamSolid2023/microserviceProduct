@@ -63,6 +63,49 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("Given an id, When perform the delete request /products/{id} and callcart and calluser flags are disabeld, " +
+            "Then verify if the service is called and has no content")
+    void deleteProductById_CallCartDisabledAndCallUserDisabled() throws Exception {
+        when(featureFlag.isCallCartEnabled()).thenReturn(false);
+        when(featureFlag.isCallUserEnabled()).thenReturn(false);
+
+        mockmvc.perform(delete("/products/{id}",1l))
+                .andExpect(status().isOk());
+
+        verify(productService).deleteProductById(anyLong());
+    }
+
+    @Test
+    @DisplayName("Given an id, When perform the delete request /products/{id} and callcart flag is enabled, " +
+            "Then verify call to delete our product and call to delete carts product")
+    void deleteProductById_CallCartEnabled() throws Exception {
+        when(featureFlag.isCallCartEnabled()).thenReturn(true);
+        when(featureFlag.isCallUserEnabled()).thenReturn(false);
+        when(productService.deleteCartProducts(anyLong())).thenReturn(Mono.just("{\"cartsChanged\":1}"));
+
+        mockmvc.perform(delete("/products/{id}",1l))
+                .andExpect(status().isOk());
+
+        verify(productService).deleteProductById(anyLong());
+        verify(productService).deleteCartProducts(anyLong());
+    }
+
+    @Test
+    @DisplayName("Given an id, When perform the delete request /products/{id} and calluser flag is enabled, " +
+            "Then verify call to delete our product and call to delete users favorite product")
+    void deleteProductById_CallUserEnabled() throws Exception {
+        when(featureFlag.isCallCartEnabled()).thenReturn(false);
+        when(featureFlag.isCallUserEnabled()).thenReturn(true);
+        when(productService.deleteUserProducts(anyLong())).thenReturn(Mono.just(HttpStatus.NO_CONTENT));
+
+        mockmvc.perform(delete("/products/{id}",1l))
+                .andExpect(status().isOk());
+
+        verify(productService).deleteProductById(anyLong());
+        verify(productService).deletmiteUserProducts(anyLong());
+    }
+
+    @Test
     @DisplayName("Given a Product, When calling service to add a new Product, Then the Product is created and is a Json")
     void addNewProduct() throws Exception {
         given(productService.saveProduct(any(ProductDTO.class))).willReturn(productEntity.getId());
@@ -147,49 +190,6 @@ class ProductControllerTest {
                         .andExpect(status().isOk());
 
         verify(productService).updateStock(5, 1L);
-    }
-
-    @Test
-    @DisplayName("Given an id, When perform the delete request /products/{id} and callcart and calluser flags are disabeld, " +
-            "Then verify if the service is called and has no content")
-    void deleteProductById_CallCartDisabledAndCallUserDisabled() throws Exception {
-        when(featureFlag.isCallCartEnabled()).thenReturn(false);
-        when(featureFlag.isCallUserEnabled()).thenReturn(false);
-
-        mockmvc.perform(delete("/products/{id}",1l))
-                .andExpect(status().isOk());
-
-        verify(productService).deleteProductById(anyLong());
-    }
-
-    @Test
-    @DisplayName("Given an id, When perform the delete request /products/{id} and callcart flag is enabled, " +
-            "Then verify call to delete our product and call to delete carts product")
-    void deleteProductById_CallCartEnabled() throws Exception {
-        when(featureFlag.isCallCartEnabled()).thenReturn(true);
-        when(featureFlag.isCallUserEnabled()).thenReturn(false);
-        when(productService.deleteCartProducts(anyLong())).thenReturn(Mono.just("{\"cartsChanged\":1}"));
-
-        mockmvc.perform(delete("/products/{id}",1l))
-                .andExpect(status().isOk());
-
-        verify(productService).deleteProductById(anyLong());
-        verify(productService).deleteCartProducts(anyLong());
-    }
-
-    @Test
-    @DisplayName("Given an id, When perform the delete request /products/{id} and calluser flag is enabled, " +
-            "Then verify call to delete our product and call to delete users favorite product")
-    void deleteProductById_CallUserEnabled() throws Exception {
-        when(featureFlag.isCallCartEnabled()).thenReturn(false);
-        when(featureFlag.isCallUserEnabled()).thenReturn(true);
-        when(productService.deleteUserProducts(anyLong())).thenReturn(Mono.just(HttpStatus.NO_CONTENT));
-
-        mockmvc.perform(delete("/products/{id}",1l))
-                .andExpect(status().isOk());
-
-        verify(productService).deleteProductById(anyLong());
-        verify(productService).deleteUserProducts(anyLong());
     }
 
     public static String asJsonString(final Object obj) {
