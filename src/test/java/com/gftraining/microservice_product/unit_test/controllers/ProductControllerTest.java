@@ -198,7 +198,7 @@ class ProductControllerTest {
         when(productService.getProductById(anyLong())).thenReturn(productEntity);
         doNothing().when(productService).updateStock(4, 1L);
 
-        mockmvc.perform(patch("/products/updateStock/{id}",1L)
+        mockmvc.perform(put("/products/updateStock/{id}",1L)
                 .param("id", "1").contentType(MediaType.APPLICATION_JSON)
                         .content("5"))
                         .andExpect(status().isOk());

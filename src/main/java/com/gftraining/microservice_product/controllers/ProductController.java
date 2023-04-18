@@ -101,7 +101,7 @@ public class ProductController {
         return ResponseHandler.generateResponse(message,HttpStatus.CREATED,id);
     }
 
-    @PatchMapping("/updateStock/{id}")
+    @PutMapping("/updateStock/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void updateStock(@PathVariable Long id, @RequestBody Integer units) {
         productService.updateStock(units, id);
