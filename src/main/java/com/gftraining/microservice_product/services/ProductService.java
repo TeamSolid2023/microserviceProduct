@@ -72,9 +72,10 @@ public class ProductService{
 	}
 
 	public void deleteProductById(Long id) {
-		getProductById(id);
+		if (productRepository.findById(id).isEmpty()){
+			throw new EntityNotFoundException("Id " + id + " not found.");
+		}
 		log.info("Get products with id " + id + "to be deleted");
-
 		productRepository.deleteById(id);
 	}
 
@@ -87,9 +88,9 @@ public class ProductService{
 				 .retrieve()
 				 .bodyToMono(Object.class)
 				 .retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
-				 .doBeforeRetry(retrySignal -> {
-					 log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1);
-				 }))
+				 .doBeforeRetry(retrySignal ->
+						 log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1)
+				 ))
 				 .doOnError(error -> {
 					 log.error("Returning error when cart is called");
 					 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
