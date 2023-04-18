@@ -99,19 +99,22 @@ public class ProductService{
 	}
 
 	public Mono<HttpStatus> deleteUserProducts(Long id) {
-		log.info("Empieza llamada asincrona a eliminar producto favorito usuarios");
+		log.info("Starting asynchronous call to user");
 		return WebClient.create(servicesUrl.getUserUrl())
 				.delete()
-				.uri( "/favorite/product/{id}",id)
-				.exchangeToMono(response -> Mono.just(response.statusCode()))
-				.onErrorResume(error -> {
-					log.error("Devuelve error en llamada a eliminar producto favorito usuarios");
-					if (error instanceof WebClientException && error.getCause() instanceof ConnectException) {
-						// Handle connection error
-						return Mono.error(new ConnectException("Error deleting product from users: Error connecting to user service."));
-					}
-					return Mono.error(error);
-				});
+				.uri( "/favorite/products/{id}",id)
+				.retrieve()
+				.bodyToMono(HttpStatus.class)
+				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
+				.doBeforeRetry(retrySignal -> {
+					log.info("Trying connection to user. Retry count: {}", retrySignal.totalRetries() + 1);
+				}))
+				.doOnError(error -> {
+					log.error("Returning error when user is called");
+					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+							"Error deleting product from users: Error connecting to user service.");
+				})
+				.filter(response -> !Objects.isNull(response.toString()));
 	}
 
 	public ProductEntity getProductById(Long id) {
