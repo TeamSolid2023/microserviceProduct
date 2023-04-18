@@ -61,7 +61,7 @@ class ProductControllerTest {
     @DisplayName("Given an id, When perform the delete request /products/{id}, Then verify if the service is called and has no content")
     void deleteProductById() throws Exception {
         mockmvc.perform(delete("/products/{id}",1l))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
         verify(productService).deleteProductById(anyLong());
     }

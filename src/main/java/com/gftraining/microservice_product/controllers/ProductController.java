@@ -53,15 +53,21 @@ public class ProductController {
         String message = "Product with id " + id + " deleted successfully.";
 
         if (featureFlag.isCallCartEnabled()) {
+            log.info("Feature flag to call CART is ENABLED");
             productService.deleteCartProducts(id).subscribe(result -> log.info("Respuesta delete product from carrito: " + result.toString()));
         } else {
+            log.info("Feature flag to call CART is DISABLED");
             message = message + " Feature flag to call CART is DISABLED.";
         }
+
         if (featureFlag.isCallUserEnabled()) {
+            log.info("Feature flag to call USER is ENABLED");
             productService.deleteUserProducts(id).subscribe(result -> log.info("Respuesta delete product from user: " + result.toString()));
         } else {
+            log.info("Feature flag to call USER is DISABLED");
             message = message + " Feature flag to call USER is DISABLED.";
         }
+
         return ResponseHandler.generateResponse( message, HttpStatus.OK, id);
     }
 
@@ -72,6 +78,7 @@ public class ProductController {
             Long id = productService.saveProduct(product);
             return ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED,id);
         } catch (ConstraintViolationException e) {
+            log.error("ConstraintViolationException: The data from the request was not valid");
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -90,14 +97,17 @@ public class ProductController {
             String message = "Product with id " + id + " updated successfully.";
 
             if (featureFlag.isCallCartEnabled()) {
+                log.info("Feature flag to call CART is ENABLED");
                 productService.patchCartProducts(newProduct, id).subscribe(result -> log.info("Update product from cart response: " + result.toString()));
             } else {
+                log.info("Feature flag to call CART is DISABLED");
                 message = message + " Feature flag to call CART is DISABLED.";
             }
 
             return ResponseHandler.generateResponse(message,HttpStatus.CREATED,id);
 
         } catch (ConstraintViolationException e) {
+            log.error("ConstraintViolationException: The data from the request was not valid");
             return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
