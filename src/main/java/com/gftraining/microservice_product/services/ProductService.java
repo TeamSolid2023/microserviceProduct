@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.File;
@@ -24,6 +26,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.net.ConnectException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -74,25 +77,25 @@ public class ProductService{
 		productRepository.deleteById(id);
 	}
 
-    public Mono<Object> deleteCartProducts(Long id) {
-    
-		log.info("Starting asynchronous call to cart");
+	public Mono<Object> deleteCartProducts(Long id) {
+ 		log.info("Starting asynchronous call to cart");
 
-        return WebClient.create(servicesUrl.getCartUrl())
-				.delete()
-                .uri( "/products/{id}",id)
-                .retrieve()
-                .bodyToMono(Object.class)
-                .onErrorResume(error -> {
-					log.error("Returning error when cart is called");
-                    if (error instanceof WebClientException && error.getCause() instanceof ConnectException) {
-                        // Handle connection error
-                        return Mono.error(new ConnectException("Error deleting product from carts: Error connecting to cart service."));
-                    }
-                    return Mono.error(error);
-                })
-                .filter(response -> !Objects.isNull(response.toString()));
-    }
+		 return WebClient.create(servicesUrl.getCartUrl())
+				 .delete()
+				 .uri( "/products/{id}",id)
+				 .retrieve()
+				 .bodyToMono(Object.class)
+				 .retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
+				 .doBeforeRetry(retrySignal -> {
+					 log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1);
+				 }))
+				 .doOnError(error -> {
+					 log.error("Returning error when cart is called");
+					 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+					 "Error deleting product from carts: Error connecting to cart service.");
+				 })
+				 .filter(response -> !Objects.isNull(response.toString()));
+	}
 
 	public Mono<HttpStatus> deleteUserProducts(Long id) {
 		log.info("Empieza llamada asincrona a eliminar producto favorito usuarios");

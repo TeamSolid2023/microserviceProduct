@@ -58,16 +58,16 @@ public class ProductController {
         } else {
             log.info("Feature flag to call CART is DISABLED");
             message = message + " Feature flag to call CART is DISABLED.";
- 
         }
+
         if (featureFlag.isCallUserEnabled()) {
             log.info("Feature flag to call USER is ENABLED");
             productService.deleteUserProducts(id).subscribe(result -> log.info("Respuesta delete product from user: " + result.toString()));
         } else {
             log.info("Feature flag to call USER is DISABLED");
             message = message + " Feature flag to call USER is DISABLED.";
-            
         }
+
         return ResponseHandler.generateResponse( message, HttpStatus.OK, id);
     }
 
