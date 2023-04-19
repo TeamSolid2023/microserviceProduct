@@ -1,14 +1,51 @@
 spring:
+  output:
+    ansi:
+      enabled: ALWAYS
   jpa:
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
     database-platform: org.hibernate.dialect.H2Dialect
   datasource:
-    url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:maindb
     username: sa
     password: password
+  liquibase:
+    enabled: true
+    change-log: classpath:db/migrations/db.changelog-root.yaml
+    default-schema: public
+  server:
+    profiles:
+      active: test, hsqldb
+
 server:
   port: 8081
+  error:
+    include-stacktrace: never
 springdoc:
   api-docs:
     path: /api-docs
+
+static-table:
+  categories:
+    Juguetes: 20
+    Libros: 15
+    Deportes: 5
+    Comida: 25
+    Ropa: 35
+    Otros: 0
+
+services-url:
+  cart-url: "http://localhost:8080"
+  user-url: "http://localhost:8082"
+
+
+logging:
+  level:
+    org.springframework.web: "DEBUG"
+    tomcat: "DEBUG"
+    liquibase: "INFO"
+
+feature-flags:
+  callUserEnabled: false
+  callCartEnabled: false

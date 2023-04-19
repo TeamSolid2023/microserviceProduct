@@ -6,9 +6,13 @@ spring:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
     username: sa
-    password: password
+    password:
+  liquibase:
+    enabled: false
+
 server:
   port: 8081
+
 springdoc:
   api-docs:
     path: /api-docs
