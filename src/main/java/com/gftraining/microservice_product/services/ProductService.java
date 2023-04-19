@@ -81,10 +81,12 @@ public class ProductService {
 	}
 	
 	public Mono<Object> patchCartProducts(ProductDTO productDTO, Long id) {
+		CartProductDTO cartProductDTO = new CartProductDTO(id,productDTO.getName(),productDTO.getDescription(),productDTO.getPrice().doubleValue());
 		log.info("Starting asynchronous call to cart");
 		return WebClient.create(servicesUrl.getCartUrl())
 				.patch()
 				.uri("/products/{id}", id)
+				.body(BodyInserters.fromValue(cartProductDTO))
 				.retrieve()
 				.bodyToMono(Object.class)
 				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
@@ -132,15 +134,14 @@ public class ProductService {
 					log.error("Returning error when cart is called");
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
 							"Error deleting product from carts: Error connecting to cart service.");
-				})
-				.filter(response -> !Objects.isNull(response.toString()));
+				});
 	}
 	
 	public Mono<HttpStatus> deleteUserProducts(Long id) {
 		log.info("Starting asynchronous call to user");
 		return WebClient.create(servicesUrl.getUserUrl())
 				.delete()
-				.uri("/favorite/products/{id}", id)
+				.uri("/favorite/product/{id}", id)
 				.retrieve()
 				.bodyToMono(HttpStatus.class)
 				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
@@ -151,8 +152,7 @@ public class ProductService {
 					log.error("Returning error when user is called");
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
 							"Error deleting product from users: Error connecting to user service.");
-				})
-				.filter(response -> !Objects.isNull(response.toString()));
+				});
 	}
 	
 	public List<ProductEntity> getProductByName(String name) {

@@ -201,7 +201,7 @@ class ProductControllerTest {
         mockmvc.perform(put("/products/updateStock/{id}",1L)
                 .param("id", "1").contentType(MediaType.APPLICATION_JSON)
                         .content("5"))
-                        .andExpect(status().isOk());
+                        .andExpect(status().isNoContent());
 
         verify(productService).updateStock(5, 1L);
     }
