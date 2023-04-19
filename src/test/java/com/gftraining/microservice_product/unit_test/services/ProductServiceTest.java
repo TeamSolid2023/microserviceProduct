@@ -228,6 +228,12 @@ class ProductServiceTest {
 		verify(repository).findById(anyLong());
 		verify(repository).deleteById(anyLong());
 	}
+
+	@Test
+	@DisplayName("given a product id, when delete product by id, then the product is not found")
+	void deleteProductById_NotFoundException() {
+		Assertions.assertThrows(EntityNotFoundException.class, () -> service.deleteProductById(9999L));
+	}
 	
 	@Test
 	@DisplayName("given a product id, when calling cart api to delete product, then returns Ok and number of carts affected.")

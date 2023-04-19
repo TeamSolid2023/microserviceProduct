@@ -100,7 +100,9 @@ public class ProductService {
 	}
 	
 	public void deleteProductById(Long id) {
-		getProductById(id);
+		if (productRepository.findById(id).isEmpty()) {
+			throw new EntityNotFoundException("Id " + id + " not found.");
+		}
 		log.info("Get products with id " + id + "to be deleted");
 		productRepository.deleteById(id);
 	}
