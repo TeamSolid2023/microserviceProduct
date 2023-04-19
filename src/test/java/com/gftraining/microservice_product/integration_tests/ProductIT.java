@@ -197,6 +197,24 @@ class ProductIT {
     }
 
     @Test
+    @DisplayName("Given an id and an integer, When perform put request /products/updateStock/{id}, Then is expected to have status of 200")
+    void UpdateStock() throws Exception {
+        mockmvc.perform(put("/products/updateStock/{id}", 7)
+                        .content(asJsonString("10"))
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Given an id and a String, When perform post request /products/updateStock/{id}, Then is expected to have status of 404")
+    void UpdateStock_BadRequestException() throws Exception {
+        mockmvc.perform(put("/products/updateStock/{id}", 7)
+                        .content(asJsonString("asdv"))
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @DisplayName("Given a Product, When perform post request /products, Then is expected to have status of 201, be a Json and have {\"id\":14,\"message\":\"DDBB updated\",\"status\":201}")
     void addNewProduct() throws Exception {
         mockmvc.perform(MockMvcRequestBuilders.post("/products")
@@ -216,7 +234,6 @@ class ProductIT {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json"));
     }
-
 
     public static String asJsonString(final Object obj) {
         try {

@@ -96,7 +96,7 @@ class ProductServiceTest {
 	}
 	
 	@Test()
-	@DisplayName("given a product id, when calling cart api to delete product, then returns error 500.")
+	@DisplayName("given a product id, when calling cart api to update product, then returns error 500.")
 	void patchCartProducts_returnSError500() {
 		when(servicesUrl.getCartUrl()).thenReturn("htpp://localhost:" + mockWebServer.getPort());
 		
@@ -193,13 +193,21 @@ class ProductServiceTest {
 	
 	@Test
 	@DisplayName("Given an id and an units, When calling updateStock, Then verify if repository is called")
-	void updateStock() {
+	void updateStock() throws Exception {
 		given(repository.findById(1L)).willReturn(Optional.of(productEntity));
 		
-		service.updateStock(100, 1L);
+		service.updateStock(5, 1L);
 		
 		verify(repository, times(1)).findById(anyLong());
 		verify(repository, times(1)).save(any());
+	}
+
+	@Test
+	@DisplayName("Given an id and an units, When calling updateStock, Then verify if exception jumps")
+	void updateStock_StockLessThan0() throws Exception{
+		given(repository.findById(1L)).willReturn(Optional.of(productEntity));
+
+		Assertions.assertThrows(Exception.class, () -> service.updateStock(500, 1L));
 	}
 	
 	@Test

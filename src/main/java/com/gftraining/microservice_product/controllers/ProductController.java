@@ -103,7 +103,7 @@ public class ProductController {
 
     @PutMapping("/updateStock/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateStock(@PathVariable Long id, @RequestBody Integer unitsToSubtract) {
+    public void updateStock(@PathVariable Long id, @RequestBody Integer unitsToSubtract) throws Exception {
         productService.updateStock(unitsToSubtract, id);
     }
 }
