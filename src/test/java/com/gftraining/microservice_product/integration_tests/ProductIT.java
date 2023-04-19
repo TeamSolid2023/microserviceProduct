@@ -114,7 +114,7 @@ class ProductIT {
     void putProductById() throws Exception {
         mockmvc.perform(put("/products/{id}",1).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productDTO)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
     }
 
     @Test
