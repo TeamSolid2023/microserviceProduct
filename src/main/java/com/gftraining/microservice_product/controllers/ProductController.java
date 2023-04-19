@@ -98,7 +98,7 @@ public class ProductController {
             message = message + " Feature flag to call CART is DISABLED.";
         }
 
-        return ResponseHandler.generateResponse(message,HttpStatus.CREATED,id);
+        return ResponseHandler.generateResponse(message,HttpStatus.OK,id);
     }
 
     @PutMapping("/updateStock/{id}")
