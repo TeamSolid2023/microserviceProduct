@@ -171,7 +171,7 @@ class ProductControllerTest {
 
         mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productEntity)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
 
         assertThat(productService.getProductById(1L)).isEqualTo(productEntity);
     }
@@ -186,7 +186,7 @@ class ProductControllerTest {
 
         mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productEntity)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
 
         assertThat(productService.getProductById(1L)).isEqualTo(productEntity);
         verify(productService).patchCartProducts(any(),anyLong());
