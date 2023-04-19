@@ -207,14 +207,20 @@ public class ProductService {
 		productRepository.save(product);
 	}
 	
-	public void updateStock(Integer units, Long id) {
+	public void updateStock(Integer units, Long id) throws Exception {
 		ProductEntity product = getProductById(id);
 		log.info("Copied product with id " + id + "to a new ProductEntity");
 		
 		Integer newStock = product.getStock() - units;
-		product.setStock(newStock);
-		log.info("Updated stock in the new ProductEntity to replace current product with id " + id);
-		
-		productRepository.save(product);
+
+		if(newStock<0 || units<0){
+			log.info("If the stock is less than 0 an error jumps");
+			throw new Exception ("Modify the quantity. Stock can't be less than 0 and Quantity can't be negative");
+		} else {
+			product.setStock(newStock);
+			log.info("Updated stock in the new ProductEntity to replace current product with id " + id);
+
+			productRepository.save(product);
+		}
 	}
 }
