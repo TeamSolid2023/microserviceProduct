@@ -59,27 +59,43 @@ public class ProductService {
 		log.info("Adding final price to the current list");
 		return addFinalPriceToProductsList(products);
 	}
-	
-	private List<ProductEntity> addFinalPriceToProductsList(List<ProductEntity> products) {
-		return products.stream()
-				.map(product -> {
-					product.setFinalPrice(calculateFinalPrice(product.getPrice(), getDiscount(product)));
-					return product;
-				})
-				.collect(Collectors.toList());
+
+	public List<ProductEntity> getProductByName(String name) {
+		List<ProductEntity> products = productRepository.findAllByName(name);
+		if (products.isEmpty()) throw new EntityNotFoundException("Products with name: " + name + " not found.");
+		log.info("Created list of product with name " + name);
+
+		log.info("Adding final price to the current list");
+		return addFinalPriceToProductsList(products);
 	}
-	
-	public BigDecimal calculateFinalPrice(BigDecimal price, int discount) {
-		log.info("Calculating final price");
-		return price.subtract(price.multiply(BigDecimal.valueOf(discount)).divide(new BigDecimal("100")))
-				.round(new MathContext(4, RoundingMode.HALF_UP));
+
+	public ProductEntity getProductById(Long id) {
+		ProductEntity product = productRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Product with id: " + id + " not found."));
+		log.info("Found product with id " + id);
+
+		log.info("Adding final price to the current product");
+		return addFinalPriceToProductsList(Arrays.asList(product)).get(0);
 	}
-	
-	public int getDiscount(ProductEntity product) {
-		log.info("Looking for discount");
-		return Optional.ofNullable(categoriesConfig.getCategories().get(product.getCategory())).orElse(0);
+
+	public void putProductById(ProductDTO productDTO, Long id) {
+		if (!categoriesConfig.getCategories().containsKey(productDTO.getCategory()))
+			throw new EntityNotFoundException("Category " + productDTO.getCategory() + " not found. Categories" +
+					" allowed: " + categoriesConfig.getCategories().keySet());
+		log.info("Category verified");
+
+		if (productRepository.findById(id).isEmpty()) {
+			throw new EntityNotFoundException("Id " + id + " not found.");
+		}
+		log.info("Id verified");
+
+		ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
+		product.setId(id);
+		log.info("Copied productDTO to a new ProductEntity to update product with id " + id);
+
+		productRepository.save(product);
 	}
-	
+
 	public Mono<Object> patchCartProducts(ProductDTO productDTO, Long id) {
 		CartProductDTO cartProductDTO = new CartProductDTO(id,productDTO.getName(),productDTO.getDescription(),productDTO.getPrice().doubleValue());
 		log.info("Starting asynchronous call to cart");
@@ -99,6 +115,23 @@ public class ProductService {
 				})
 				.filter(response -> !Objects.isNull(response.toString()));
 	}
+
+	public void updateStock(Integer units, Long id) {
+		ProductEntity product = getProductById(id);
+		log.info("Copied product with id " + id + "to a new ProductEntity");
+
+		Integer newStock = product.getStock() - units;
+
+		if (newStock < 0 || units < 0) {
+			log.info("If the stock is less than 0 an error jumps");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Modify the quantity. Stock can't be less than 0 and Quantity can't be negative");
+		} else {
+			product.setStock(newStock);
+			log.info("Updated stock in the new ProductEntity to replace current product with id " + id);
+
+			productRepository.save(product);
+		}
+	}
 	
 	public void deleteProductById(Long id) {
 		if (productRepository.findById(id).isEmpty()) {
@@ -106,15 +139,6 @@ public class ProductService {
 		}
 		log.info("Get products with id " + id + "to be deleted");
 		productRepository.deleteById(id);
-	}
-	
-	public ProductEntity getProductById(Long id) {
-		ProductEntity product = productRepository.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException("Product with id: " + id + " not found."));
-		log.info("Found product with id " + id);
-		
-		log.info("Adding final price to the current product");
-		return addFinalPriceToProductsList(Arrays.asList(product)).get(0);
 	}
 	
 	public Mono<Object> deleteCartProducts(Long id) {
@@ -152,15 +176,6 @@ public class ProductService {
 				});
 	}
 	
-	public List<ProductEntity> getProductByName(String name) {
-		List<ProductEntity> products = productRepository.findAllByName(name);
-		if (products.isEmpty()) throw new EntityNotFoundException("Products with name: " + name + " not found.");
-		log.info("Created list of product with name " + name);
-		
-		log.info("Adding final price to the current list");
-		return addFinalPriceToProductsList(products);
-	}
-	
 	public Long saveProduct(ProductDTO productDTO) {
 		if (!categoriesConfig.getCategories().containsKey(productDTO.getCategory()))
 			throw new EntityNotFoundException("Category " + productDTO.getCategory() + " not found. Categories" +
@@ -185,39 +200,24 @@ public class ProductService {
 		productRepository.saveAll(products);
 		
 	}
-	
-	public void putProductById(ProductDTO productDTO, Long id) {
-		if (!categoriesConfig.getCategories().containsKey(productDTO.getCategory()))
-			throw new EntityNotFoundException("Category " + productDTO.getCategory() + " not found. Categories" +
-					" allowed: " + categoriesConfig.getCategories().keySet());
-		log.info("Category verified");
-		
-		if (productRepository.findById(id).isEmpty()) {
-			throw new EntityNotFoundException("Id " + id + " not found.");
-		}
-		log.info("Id verified");
-		
-		ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
-		product.setId(id);
-		log.info("Copied productDTO to a new ProductEntity to update product with id " + id);
-		
-		productRepository.save(product);
+
+	private int getDiscount(ProductEntity product) {
+		log.info("Looking for discount");
+		return Optional.ofNullable(categoriesConfig.getCategories().get(product.getCategory())).orElse(0);
 	}
-	
-	public void updateStock(Integer units, Long id) {
-		ProductEntity product = getProductById(id);
-		log.info("Copied product with id " + id + "to a new ProductEntity");
-		
-		Integer newStock = product.getStock() - units;
 
-		if(newStock<0 || units<0){
-			log.info("If the stock is less than 0 an error jumps");
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Modify the quantity. Stock can't be less than 0 and Quantity can't be negative");
-		} else {
-			product.setStock(newStock);
-			log.info("Updated stock in the new ProductEntity to replace current product with id " + id);
+	private BigDecimal calculateFinalPrice(BigDecimal price, int discount) {
+		log.info("Calculating final price");
+		return price.subtract(price.multiply(BigDecimal.valueOf(discount)).divide(new BigDecimal("100")))
+				.round(new MathContext(4, RoundingMode.HALF_UP));
+	}
 
-			productRepository.save(product);
-		}
+	private List<ProductEntity> addFinalPriceToProductsList(List<ProductEntity> products) {
+		return products.stream()
+				.map(product -> {
+					product.setFinalPrice(calculateFinalPrice(product.getPrice(), getDiscount(product)));
+					return product;
+				})
+				.collect(Collectors.toList());
 	}
 }
