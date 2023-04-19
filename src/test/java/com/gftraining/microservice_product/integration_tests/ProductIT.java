@@ -165,14 +165,14 @@ class ProductIT {
     void deleteProductById_UserCallRetry() throws Exception {
         wireMockServerSetPort(8082);
         wireMockServer.stubFor(
-                delete(urlEqualTo("/favorite/products/7")).inScenario("testing retires")
+                delete(urlEqualTo("/favorite/product/7")).inScenario("testing retires")
                         .whenScenarioStateIs(STARTED)
                         .willReturn(aResponse().withStatus(500))
                         .willSetStateTo("OK response")
         );
         
         wireMockServer.stubFor(
-                delete(urlEqualTo("/favorite/products/7")).inScenario("testing retires")
+                delete(urlEqualTo("/favorite/product/7")).inScenario("testing retires")
                         .whenScenarioStateIs("OK response")
                         .willReturn(aResponse().withStatus(204))
         );
@@ -183,7 +183,7 @@ class ProductIT {
                 .expectComplete()
                 .verify();
         
-        verify(2,deleteRequestedFor(urlPathEqualTo("/favorite/products/7")));
+        verify(2,deleteRequestedFor(urlPathEqualTo("/favorite/product/7")));
         wireMockServerStop();
     }
 
@@ -202,7 +202,7 @@ class ProductIT {
         mockmvc.perform(put("/products/updateStock/{id}", 7)
                         .content(asJsonString("10"))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
