@@ -172,7 +172,7 @@ class ProductServiceTest {
 		Long id = service.saveProduct(productDTO);
 		
 		verify(repository).save(any());
-		assertThat(1L).isEqualTo(id);
+		assertThat(id).isEqualTo(1L);
 	}
 	
 	@Test

@@ -90,9 +90,8 @@ public class ProductService {
 				.retrieve()
 				.bodyToMono(Object.class)
 				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
-						.doBeforeRetry(retrySignal -> {
-							log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1);
-						}))
+						.doBeforeRetry(retrySignal ->
+								log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1)))
 				.doOnError(error -> {
 					log.error("Returning error when cart is called");
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -127,9 +126,8 @@ public class ProductService {
 				.retrieve()
 				.bodyToMono(Object.class)
 				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
-						.doBeforeRetry(retrySignal -> {
-							log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1);
-						}))
+						.doBeforeRetry(retrySignal ->
+								log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1)))
 				.doOnError(error -> {
 					log.error("Returning error when cart is called");
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -145,9 +143,8 @@ public class ProductService {
 				.retrieve()
 				.bodyToMono(HttpStatus.class)
 				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
-						.doBeforeRetry(retrySignal -> {
-							log.info("Trying connection to user. Retry count: {}", retrySignal.totalRetries() + 1);
-						}))
+						.doBeforeRetry(retrySignal ->
+								log.info("Trying connection to user. Retry count: {}", retrySignal.totalRetries() + 1)))
 				.doOnError(error -> {
 					log.error("Returning error when user is called");
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -207,7 +204,7 @@ public class ProductService {
 		productRepository.save(product);
 	}
 	
-	public void updateStock(Integer units, Long id) throws Exception {
+	public void updateStock(Integer units, Long id) {
 		ProductEntity product = getProductById(id);
 		log.info("Copied product with id " + id + "to a new ProductEntity");
 		
@@ -215,7 +212,7 @@ public class ProductService {
 
 		if(newStock<0 || units<0){
 			log.info("If the stock is less than 0 an error jumps");
-			throw new Exception ("Modify the quantity. Stock can't be less than 0 and Quantity can't be negative");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Modify the quantity. Stock can't be less than 0 and Quantity can't be negative");
 		} else {
 			product.setStock(newStock);
 			log.info("Updated stock in the new ProductEntity to replace current product with id " + id);
