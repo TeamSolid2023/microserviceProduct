@@ -47,5 +47,5 @@ logging:
     liquibase: "INFO"
 
 feature-flags:
-  callUserEnabled: false
+  callUserEnabled: true
   callCartEnabled: false
