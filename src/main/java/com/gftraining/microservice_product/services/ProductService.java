@@ -112,8 +112,7 @@ public class ProductService {
 					log.error("Returning error when cart is called");
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
 							"Error updating product from carts: Error connecting to cart service.");
-				})
-				.filter(response -> !Objects.isNull(response.toString()));
+				});
 	}
 
 	public void updateStock(Integer units, Long id) {

@@ -41,15 +41,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
 class ProductIT {
-    @Autowired
-    private MockMvc mockmvc;
+    private static WireMockServer wireMockServer;
     @Autowired
     ProductService service;
-    private static WireMockServer wireMockServer;
-
-    ProductDTO productDTO = new ProductDTO("Pelota", "Juguetes","pelota de futbol",new BigDecimal(19.99),24);
-    ProductDTO badProductDTO = new ProductDTO("S", "0","S",new BigDecimal(0),10);
-
+    ProductDTO productDTO = new ProductDTO("Pelota", "Juguetes", "pelota de futbol", new BigDecimal(19.99), 24);
+    ProductDTO badProductDTO = new ProductDTO("S", "0", "S", new BigDecimal(0), 10);
+    @Autowired
+    private MockMvc mockmvc;
 
     public static void wireMockServerSetPort(int port) {
         wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(port));
@@ -61,6 +59,14 @@ class ProductIT {
 
     static void wireMockServerStop() throws Exception {
         wireMockServer.stop();
+    }
+
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -76,7 +82,7 @@ class ProductIT {
     @Test
     @DisplayName("Given an id, When perform get request /products/id/{id}, Then is expected to have status of 200, be a Json and have {id: 1, name: Wonder, stock: 90}")
     void getProductById() throws Exception {
-        mockmvc.perform(get("/products/id/{id}",1))
+        mockmvc.perform(get("/products/id/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json("{id: 1, name: Wonder, stock: 90}"));
@@ -85,7 +91,7 @@ class ProductIT {
     @Test
     @DisplayName("Given an id, When perform get request /products/id/{id}, Then is expected to have status of 404")
     void getProductById_NotFoundException() throws Exception {
-        mockmvc.perform(get("/products/id/{id}",200))
+        mockmvc.perform(get("/products/id/{id}", 200))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json"));
     }
@@ -93,17 +99,17 @@ class ProductIT {
     @Test
     @DisplayName("Given a name, When perform get request /products/name/{name}, Then is expected to have status of 404, be a Json and have size 2")
     void getProductByName() throws Exception {
-        mockmvc.perform(get("/products/name/{name}","Los Surcos del Azar"))
+        mockmvc.perform(get("/products/name/{name}", "Los Surcos del Azar"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.*", hasSize(2)));
-    
+
     }
 
     @Test
     @DisplayName("Given a name, When perform get request /products/name/{name}, Then is expected to have status of 404")
     void getProductByName_NotFoundException() throws Exception {
-        mockmvc.perform(get("/products/name/{name}","Pepe"))
+        mockmvc.perform(get("/products/name/{name}", "Pepe"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType("application/json"));
 
@@ -112,7 +118,7 @@ class ProductIT {
     @Test
     @DisplayName("Given an id, When perform put request /products/{id}, Then is expected to have status of 201")
     void putProductById() throws Exception {
-        mockmvc.perform(put("/products/{id}",1).contentType(MediaType.APPLICATION_JSON)
+        mockmvc.perform(put("/products/{id}", 1).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productDTO)))
                 .andExpect(status().isOk());
     }
@@ -120,7 +126,7 @@ class ProductIT {
     @Test
     @DisplayName("Given a bad id, When perform put request /products/{id}, Then is expected to have status of 404")
     void putProductById_NotFoundException() throws Exception {
-        mockmvc.perform(put("/products/{id}",200).contentType(MediaType.APPLICATION_JSON)
+        mockmvc.perform(put("/products/{id}", 200).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productDTO)))
                 .andExpect(status().isNotFound());
     }
@@ -128,9 +134,36 @@ class ProductIT {
     @Test
     @DisplayName("Given a bad Product, When perform put request /products/{id}, Then is expected to have status of 400")
     void putProductById_BadRequest() throws Exception {
-        mockmvc.perform(put("/products/{id}",1).contentType(MediaType.APPLICATION_JSON)
+        mockmvc.perform(put("/products/{id}", 1).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(badProductDTO)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("When retrying a patch call, then return 200 OK,")
+    void putProductById_CartCallRetry() throws Exception {
+        wireMockServerSetPort(8080);
+        wireMockServer.stubFor(
+                patch(urlEqualTo("/products/7")).inScenario("testing retires")
+                        .whenScenarioStateIs(STARTED)
+                        .willReturn(aResponse().withStatus(500))
+                        .willSetStateTo("OK response")
+        );
+
+        wireMockServer.stubFor(
+                patch(urlEqualTo("/products/7")).inScenario("testing retires")
+                        .whenScenarioStateIs("OK response")
+                        .willReturn(aResponse().withStatus(200))
+        );
+
+        Mono<Object> cartsMono = service.patchCartProducts(productDTO, 7L);
+
+        StepVerifier.create(cartsMono)
+                .expectComplete()
+                .verify();
+
+        verify(2, patchRequestedFor(urlPathEqualTo("/products/7")));
+        wireMockServerStop();
     }
 
     @Test
@@ -138,10 +171,10 @@ class ProductIT {
     void deleteProductById_CartCallRetry() throws Exception {
         wireMockServerSetPort(8080);
         wireMockServer.stubFor(
-                 delete(urlEqualTo("/products/7")).inScenario("testing retires")
-                         .whenScenarioStateIs(STARTED)
-                         .willReturn(aResponse().withStatus(500))
-                         .willSetStateTo("OK response")
+                delete(urlEqualTo("/products/7")).inScenario("testing retires")
+                        .whenScenarioStateIs(STARTED)
+                        .willReturn(aResponse().withStatus(500))
+                        .willSetStateTo("OK response")
         );
 
         wireMockServer.stubFor(
@@ -156,10 +189,10 @@ class ProductIT {
                 .expectComplete()
                 .verify();
 
-        verify(2,deleteRequestedFor(urlPathEqualTo("/products/7")));
+        verify(2, deleteRequestedFor(urlPathEqualTo("/products/7")));
         wireMockServerStop();
     }
-    
+
     @Test
     @DisplayName("When retrying a delete call, then return 204 OK,")
     void deleteProductById_UserCallRetry() throws Exception {
@@ -170,20 +203,20 @@ class ProductIT {
                         .willReturn(aResponse().withStatus(500))
                         .willSetStateTo("OK response")
         );
-        
+
         wireMockServer.stubFor(
                 delete(urlEqualTo("/favorite/product/7")).inScenario("testing retires")
                         .whenScenarioStateIs("OK response")
                         .willReturn(aResponse().withStatus(204))
         );
-        
+
         Mono<HttpStatus> usersMono = service.deleteUserProducts(7L);
-        
+
         StepVerifier.create(usersMono)
                 .expectComplete()
                 .verify();
-        
-        verify(2,deleteRequestedFor(urlPathEqualTo("/favorite/product/7")));
+
+        verify(2, deleteRequestedFor(urlPathEqualTo("/favorite/product/7")));
         wireMockServerStop();
     }
 
@@ -233,13 +266,5 @@ class ProductIT {
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json"));
-    }
-
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }
