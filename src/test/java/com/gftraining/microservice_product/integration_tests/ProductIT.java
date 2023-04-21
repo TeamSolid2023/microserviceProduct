@@ -131,7 +131,7 @@ class ProductIT {
 
     @Test
     @DisplayName("When retrying a patch call, then return 200 OK,")
-    void putProductById_CartCallRetry() {
+    void putProductById_CartCallRetry() throws Exception {
         wireMockServerSetPort(8080);
         wireMockServer.stubFor(
                 patch(urlEqualTo("/products/7")).inScenario("testing retires")
@@ -275,7 +275,7 @@ class ProductIT {
     }
 
 
-    static void wireMockServerStop() throws Exception {
+    static void wireMockServerStop() {
         wireMockServer.stop();
     }
 }
