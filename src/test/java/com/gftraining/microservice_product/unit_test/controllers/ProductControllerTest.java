@@ -20,15 +20,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.isA;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @WebMvcTest(ProductController.class)
@@ -61,6 +63,71 @@ class ProductControllerTest {
                 .andExpect(content().json(new ObjectMapper().writeValueAsString(productList)))
                 .andReturn();
     }
+
+    @Test
+    @DisplayName("Given a product name, When calling service to find products by name, Then a list of products with that name is returned")
+    void getProductByName() throws Exception {
+        given(productService.getProductByName("Playmobil")).willReturn(productListSameName);
+
+        mockmvc.perform(get("/products/name/{name}","Playmobil"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(asJsonString(productListSameName)));
+    }
+
+    @Test
+    @DisplayName("given a product id, when calling service to find products by id, then the product is returned")
+    void getProductById() throws Exception {
+        given(productService.getProductById(1L)).willReturn(productEntity);
+
+        mockmvc.perform(get("/products/id/{id}",1L))
+                .andExpect(status().isOk())
+                .andExpect(content().json(asJsonString(productEntity)));
+    }
+
+    @Test
+    @DisplayName("Given any long and a json productEntity, When perform the put request /products/{id} and callCart flag is disabled, " +
+            "Then expect status is created and is equal to productEntity")
+    void putProductById_CallCartDisabled() throws Exception {
+        given(productService.getProductById(anyLong())).willReturn(productEntity);
+        when(featureFlag.isCallCartEnabled()).thenReturn(false);
+
+        mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(productEntity)))
+                .andExpect(status().isOk());
+
+        assertThat(productService.getProductById(1L)).isEqualTo(productEntity);
+    }
+
+    @Test
+    @DisplayName("Given any long and a json productEntity, When perform the put request /products/{id} and callCart flag is enabled, " +
+            "Then expect status is created ,is equal to productEntity and call to cart service.")
+    void putProductById_CallCartEnabled() throws Exception {
+        given(productService.getProductById(anyLong())).willReturn(productEntity);
+        when(featureFlag.isCallCartEnabled()).thenReturn(true);
+        when(productService.patchCartProducts(any(),anyLong())).thenReturn(Mono.just("{\"cartsChanged\":1}"));
+
+        mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(productEntity)))
+                .andExpect(status().isOk());
+
+        assertThat(productService.getProductById(1L)).isEqualTo(productEntity);
+        verify(productService).patchCartProducts(any(),anyLong());
+    }
+
+    @Test
+    @DisplayName("When calling the service with any Long, Then the product is returned")
+    void updateStock() throws Exception {
+        when(productService.getProductById(anyLong())).thenReturn(productEntity);
+        doNothing().when(productService).updateStock(4, 1L);
+
+        mockmvc.perform(put("/products/updateStock/{id}",1L)
+                        .param("id", "1").contentType(MediaType.APPLICATION_JSON)
+                        .content("5"))
+                .andExpect(status().isNoContent());
+
+        verify(productService).updateStock(5, 1L);
+    }
+
 
     @Test
     @DisplayName("Given an id, When perform the delete request /products/{id} and callcart and calluser flags are disabled, " +
@@ -131,25 +198,6 @@ class ProductControllerTest {
                 .andExpect(content().contentType("application/json"));
     }
 
-    @Test
-    @DisplayName("given a product id, when calling service to find products by id, then the product is returned")
-    void getProductById() throws Exception {
-        given(productService.getProductById(1L)).willReturn(productEntity);
-
-        mockmvc.perform(get("/products/id/{id}",1L))
-                .andExpect(status().isOk())
-                .andExpect(content().json(asJsonString(productEntity)));
-    }
-
-    @Test
-    @DisplayName("Given a product name, When calling service to find products by name, Then a list of products with that name is returned")
-    void getProductByName() throws Exception {
-        given(productService.getProductByName("Playmobil")).willReturn(productListSameName);
-
-        mockmvc.perform(get("/products/name/{name}","Playmobil"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(asJsonString(productListSameName)));
-    }
 
     @Test
     @DisplayName("Given a path, When perform the post request /products/JSON_load, Then verify if the service is called and has been created")
@@ -160,50 +208,6 @@ class ProductControllerTest {
                 .andExpect(status().isCreated());
 
         verify(productService).updateProductsFromJson("C:\\Files\\data_test.json");
-    }
-
-    @Test
-    @DisplayName("Given any long and a json productEntity, When perform the put request /products/{id} and callCart flag is disabled, " +
-            "Then expect status is created and is equal to productEntity")
-    void putProductById_CallCartDisabled() throws Exception {
-        given(productService.getProductById(anyLong())).willReturn(productEntity);
-        when(featureFlag.isCallCartEnabled()).thenReturn(false);
-
-        mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(productEntity)))
-                .andExpect(status().isCreated());
-
-        assertThat(productService.getProductById(1L)).isEqualTo(productEntity);
-    }
-
-    @Test
-    @DisplayName("Given any long and a json productEntity, When perform the put request /products/{id} and callCart flag is enabled, " +
-            "Then expect status is created ,is equal to productEntity and call to cart service.")
-    void putProductById_CallCartEnabled() throws Exception {
-        given(productService.getProductById(anyLong())).willReturn(productEntity);
-        when(featureFlag.isCallCartEnabled()).thenReturn(true);
-        when(productService.patchCartProducts(any(),anyLong())).thenReturn(Mono.just("{\"cartsChanged\":1}"));
-
-        mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(productEntity)))
-                .andExpect(status().isCreated());
-
-        assertThat(productService.getProductById(1L)).isEqualTo(productEntity);
-        verify(productService).patchCartProducts(any(),anyLong());
-    }
-
-    @Test
-    @DisplayName("When calling the service with any Long, Then the product is returned")
-    void updateStock() throws Exception {
-        when(productService.getProductById(anyLong())).thenReturn(productEntity);
-        doNothing().when(productService).updateStock(4, 1L);
-
-        mockmvc.perform(put("/products/updateStock/{id}",1L)
-                .param("id", "1").contentType(MediaType.APPLICATION_JSON)
-                        .content("5"))
-                        .andExpect(status().isOk());
-
-        verify(productService).updateStock(5, 1L);
     }
 
     public static String asJsonString(final Object obj) {

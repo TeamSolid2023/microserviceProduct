@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/error/schema",
+  "title": "Error",
+  "type": "object",
+  "properties": {
+    "localDate": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "details": {
+      "type": "null"
+    }
+  },
+  "required": ["localDate", "message", "details"]
+}
