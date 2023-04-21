@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/product/schema",
+  "title": "Product",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "name": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "price": {
+      "type": "number"
+    },
+    "stock": {
+      "type": "integer"
+    },
+    "finalPrice": {
+      "type": "number"
+    }
+  },
+  "required": ["id", "name", "category", "description", "price","stock","finalPrice"]
+}
