@@ -1,4 +1,30 @@
-[{"name":"Ammospermophilus nelsoni","category":"Juguetes","description":"amet diam","price":47.7,"stock":1},
-  {"name":"Ovibos moschatus","category":"Juguetes","description":"eros viverra eget congue eget semper rutrum nulla nunc","price":757.1,"stock":2},
-  {"name":"Mycteria ibis","category":"Juguetes","description":"duis aliquam convallis nunc proin at","price":2384.23,"stock":3},
-  {"name":"Cervus duvauceli","category":"Juguetes","description":"pellentesque at nulla suspendisse potenti cras in","price":2221.42,"stock":4}]
+[
+  {
+    "name": "Ammospermophilus nelsoni",
+    "category": "Juguetes",
+    "description": "amet diam",
+    "price": 47.7,
+    "stock": 1
+  },
+  {
+    "name": "Ovibos moschatus",
+    "category": "Juguetes",
+    "description": "eros viverra eget congue eget semper rutrum nulla nunc",
+    "price": 757.1,
+    "stock": 2
+  },
+  {
+    "name": "Mycteria ibis",
+    "category": "Juguetes",
+    "description": "duis aliquam convallis nunc proin at",
+    "price": 2384.23,
+    "stock": 3
+  },
+  {
+    "name": "Cervus duvauceli",
+    "category": "Juguetes",
+    "description": "pellentesque at nulla suspendisse potenti cras in",
+    "price": 2221.42,
+    "stock": 4
+  }
+]

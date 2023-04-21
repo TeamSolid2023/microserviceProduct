@@ -7,10 +7,8 @@ import com.gftraining.microservice_product.controllers.ProductController;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.services.ProductService;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -36,6 +34,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
 
+    final List<ProductEntity> productList = Arrays.asList(
+            new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal("40.00"), 100)
+            , new ProductEntity(2L, "Espaguetis", "Comida", "pasta italiana elaborada con harina de grano duro y agua", new BigDecimal("2.00"), 220)
+    );
+    final List<ProductEntity> productListSameName = Arrays.asList(
+            new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal("40.00"), 100),
+            new ProductEntity(2L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal("40.00"), 100)
+    );
+    final ProductEntity productEntity = new ProductEntity(1L, "Pelota", "Juguetes", "pelota futbol", new BigDecimal("19.99"), 24);
     @Autowired
     private MockMvc mockmvc;
     @MockBean
@@ -43,16 +50,13 @@ class ProductControllerTest {
     @MockBean
     private FeatureFlagsConfig featureFlag;
 
-    List<ProductEntity> productList = Arrays.asList(
-            new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
-            , new ProductEntity(2L, "Espaguetis", "Comida", "pasta italiana elaborada con harina de grano duro y agua", new BigDecimal(2.00), 220)
-    );
-    List<ProductEntity> productListSameName = Arrays.asList(
-            new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100),
-            new ProductEntity(2L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100)
-    );
-
-    ProductEntity productEntity = new ProductEntity(1L,"Pelota", "Juguetes", "pelota futbol",new BigDecimal(19.99),24);
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
     @DisplayName("Given a call in ProductService getAll, When perform the get request /products/getAll, Then return a list of Products")
@@ -69,7 +73,7 @@ class ProductControllerTest {
     void getProductByName() throws Exception {
         given(productService.getProductByName("Playmobil")).willReturn(productListSameName);
 
-        mockmvc.perform(get("/products/name/{name}","Playmobil"))
+        mockmvc.perform(get("/products/name/{name}", "Playmobil"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(asJsonString(productListSameName)));
     }
@@ -79,7 +83,7 @@ class ProductControllerTest {
     void getProductById() throws Exception {
         given(productService.getProductById(1L)).willReturn(productEntity);
 
-        mockmvc.perform(get("/products/id/{id}",1L))
+        mockmvc.perform(get("/products/id/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().json(asJsonString(productEntity)));
     }
@@ -91,7 +95,7 @@ class ProductControllerTest {
         given(productService.getProductById(anyLong())).willReturn(productEntity);
         when(featureFlag.isCallCartEnabled()).thenReturn(false);
 
-        mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
+        mockmvc.perform(put("/products/{id}", 1L).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productEntity)))
                 .andExpect(status().isOk());
 
@@ -104,14 +108,14 @@ class ProductControllerTest {
     void putProductById_CallCartEnabled() throws Exception {
         given(productService.getProductById(anyLong())).willReturn(productEntity);
         when(featureFlag.isCallCartEnabled()).thenReturn(true);
-        when(productService.patchCartProducts(any(),anyLong())).thenReturn(Mono.just("{\"cartsChanged\":1}"));
+        when(productService.patchCartProducts(any(), anyLong())).thenReturn(Mono.just("{\"cartsChanged\":1}"));
 
-        mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
+        mockmvc.perform(put("/products/{id}", 1L).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productEntity)))
                 .andExpect(status().isOk());
 
         assertThat(productService.getProductById(1L)).isEqualTo(productEntity);
-        verify(productService).patchCartProducts(any(),anyLong());
+        verify(productService).patchCartProducts(any(), anyLong());
     }
 
     @Test
@@ -120,14 +124,13 @@ class ProductControllerTest {
         when(productService.getProductById(anyLong())).thenReturn(productEntity);
         doNothing().when(productService).updateStock(4, 1L);
 
-        mockmvc.perform(put("/products/updateStock/{id}",1L)
+        mockmvc.perform(put("/products/updateStock/{id}", 1L)
                         .param("id", "1").contentType(MediaType.APPLICATION_JSON)
                         .content("5"))
                 .andExpect(status().isNoContent());
 
         verify(productService).updateStock(5, 1L);
     }
-
 
     @Test
     @DisplayName("Given an id, When perform the delete request /products/{id} and callcart and calluser flags are disabled, " +
@@ -136,7 +139,7 @@ class ProductControllerTest {
         when(featureFlag.isCallCartEnabled()).thenReturn(false);
         when(featureFlag.isCallUserEnabled()).thenReturn(false);
 
-        mockmvc.perform(delete("/products/{id}",1l))
+        mockmvc.perform(delete("/products/{id}", 1L))
                 .andExpect(status().isOk());
 
         verify(productService).deleteProductById(anyLong());
@@ -150,7 +153,7 @@ class ProductControllerTest {
         when(featureFlag.isCallUserEnabled()).thenReturn(false);
         when(productService.deleteCartProducts(anyLong())).thenReturn(Mono.just("{\"cartsChanged\":1}"));
 
-        mockmvc.perform(delete("/products/{id}",1l))
+        mockmvc.perform(delete("/products/{id}", 1L))
                 .andExpect(status().isOk());
 
         verify(productService).deleteProductById(anyLong());
@@ -165,7 +168,7 @@ class ProductControllerTest {
         when(featureFlag.isCallUserEnabled()).thenReturn(true);
         when(productService.deleteUserProducts(anyLong())).thenReturn(Mono.just(HttpStatus.NO_CONTENT));
 
-        mockmvc.perform(delete("/products/{id}",1l))
+        mockmvc.perform(delete("/products/{id}", 1L))
                 .andExpect(status().isOk());
 
         verify(productService).deleteProductById(anyLong());
@@ -188,7 +191,7 @@ class ProductControllerTest {
     @DisplayName("Given a json Product with price 0, When calling service to add a new Product, " +
             "Then price constraint greater than zero is thrown and catch block is called and returns response error")
     void addProduct_ReturnBadRequest() throws Exception {
-        ProductEntity productPriceZero = new ProductEntity(1L,"Pelota", "Juguetes", "pelota futbol",new BigDecimal(0),24);
+        ProductEntity productPriceZero = new ProductEntity(1L, "Pelota", "Juguetes", "pelota futbol", new BigDecimal(0), 24);
         given(productService.saveProduct(any(ProductDTO.class))).willReturn(productEntity.getId());
 
         mockmvc.perform(post("/products")
@@ -197,7 +200,6 @@ class ProductControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json"));
     }
-
 
     @Test
     @DisplayName("Given a path, When perform the post request /products/JSON_load, Then verify if the service is called and has been created")
@@ -208,13 +210,5 @@ class ProductControllerTest {
                 .andExpect(status().isCreated());
 
         verify(productService).updateProductsFromJson("C:\\Files\\data_test.json");
-    }
-
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }
