@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/product/schema",
+  "title": "List of Products",
+  "type": "array",
+  "items": {
+    "$ref": "product.json"
+  }
+}
