@@ -11,17 +11,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping(value = "/products")
 public class ProductController {
 
-    private ProductService productService;
-    private FeatureFlagsConfig featureFlag;
+    private final ProductService productService;
+    private final FeatureFlagsConfig featureFlag;
 
     public ProductController(ProductService productService, FeatureFlagsConfig microserviceStatus) {
         super();
@@ -41,7 +41,7 @@ public class ProductController {
     }
 
     @GetMapping("/id/{id}")
-    public ProductEntity getProductById(@PathVariable Long id){
+    public ProductEntity getProductById(@PathVariable Long id) {
         return productService.getProductById(id);
     }
 
@@ -59,7 +59,7 @@ public class ProductController {
             message = message + " Feature flag to call CART is DISABLED.";
         }
 
-        return ResponseHandler.generateResponse(message,HttpStatus.OK,id);
+        return ResponseHandler.generateResponse(message, HttpStatus.OK, id);
     }
 
     @PutMapping("/updateStock/{id}")
@@ -91,19 +91,19 @@ public class ProductController {
             message = message + " Feature flag to call USER is DISABLED.";
         }
 
-        return ResponseHandler.generateResponse( message, HttpStatus.OK, id);
+        return ResponseHandler.generateResponse(message, HttpStatus.OK, id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> addProduct(@Valid @RequestBody ProductDTO product){
+    public ResponseEntity<Object> addProduct(@Valid @RequestBody ProductDTO product) {
         Long id = productService.saveProduct(product);
-        return ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED,id);
+        return ResponseHandler.generateResponse("DDBB updated", HttpStatus.CREATED, id);
     }
 
     @PostMapping("/JSON_load")
     @ResponseStatus(HttpStatus.CREATED)
     public void updateProductsFromJson(@RequestParam("path") String path) throws IOException {
-            productService.updateProductsFromJson(path);
+        productService.updateProductsFromJson(path);
     }
 }

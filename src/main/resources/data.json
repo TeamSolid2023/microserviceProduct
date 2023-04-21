@@ -1,100 +1,702 @@
-[{"name":"Ammospermophilus nelsoni","category":"Juguetes","description":"amet diam","price":47.7,"stock":1},
-  {"name":"Ovibos moschatus","category":"Juguetes","description":"eros viverra eget congue eget semper rutrum nulla nunc","price":757.1,"stock":2},
-  {"name":"Mycteria ibis","category":"Juguetes","description":"duis aliquam convallis nunc proin at","price":2384.23,"stock":3},
-  {"name":"Cervus duvauceli","category":"Juguetes","description":"pellentesque at nulla suspendisse potenti cras in","price":2221.42,"stock":4},
-  {"name":"Macropus fuliginosus","category":"Juguetes","description":"magna at","price":2072.23,"stock":5},
-  {"name":"Bubo virginianus","category":"Juguetes","description":"nulla suspendisse","price":2483.62,"stock":6},
-  {"name":"Macropus fuliginosus","category":"Juguetes","description":"adipiscing elit proin risus","price":221.43,"stock":7},
-  {"name":"Bettongia penicillata","category":"Juguetes","description":"in faucibus orci luctus et","price":2167.28,"stock":8},
-  {"name":"Drymarchon corias couperi","category":"Juguetes","description":"quis orci nullam molestie nibh","price":215.56,"stock":9},
-  {"name":"Macropus fuliginosus","category":"Juguetes","description":"eu est congue elementum in hac","price":878.15,"stock":10},
-  {"name":"Chauna torquata","category":"Juguetes","description":"massa id","price":1665.81,"stock":11},
-  {"name":"Varanus sp.","category":"Juguetes","description":"dui maecenas tristique est","price":113.51,"stock":12},
-  {"name":"Morelia spilotes variegata","category":"Juguetes","description":"habitasse platea dictumst morbi","price":764.43,"stock":13},
-  {"name":"Nesomimus trifasciatus","category":"Juguetes","description":"nulla sed accumsan felis ut at dolor","price":2198.77,"stock":14},
-  {"name":"Felis silvestris lybica","category":"Juguetes","description":"integer aliquet massa","price":2904.21,"stock":15},
-  {"name":"Trichosurus vulpecula","category":"Juguetes","description":"aliquet at feugiat non","price":523.24,"stock":16},
-  {"name":"Stercorarius longicausus","category":"Juguetes","description":"ligula nec sem","price":2061.6,"stock":17},
-  {"name":"Chordeiles minor","category":"Juguetes","description":"vel augue vestibulum ante","price":905.69,"stock":18},
-  {"name":"Castor canadensis","category":"Juguetes","description":"mauris lacinia","price":782.63,"stock":19},
-  {"name":"Phascogale tapoatafa","category":"Juguetes","description":"tincidunt eget tempus vel pede morbi porttitor lorem id ligula","price":416.24,"stock":20},
-  {"name":"Platalea leucordia","category":"Juguetes","description":"in congue etiam justo etiam pretium iaculis justo in","price":346.63,"stock":21},
-  {"name":"Dasypus novemcinctus","category":"Juguetes","description":"interdum eu tincidunt in","price":1925.85,"stock":22},
-  {"name":"Vulpes vulpes","category":"Juguetes","description":"velit vivamus vel nulla eget","price":2624.13,"stock":23},
-  {"name":"Crotalus cerastes","category":"Juguetes","description":"aenean lectus pellentesque","price":206.94,"stock":24},
-  {"name":"Panthera leo persica","category":"Juguetes","description":"lacinia sapien quis libero nullam sit amet turpis elementum ligula","price":1214.75,"stock":25},
-  {"name":"Macropus rufogriseus","category":"Juguetes","description":"rutrum rutrum neque aenean auctor","price":623.6,"stock":26},
-  {"name":"Paraxerus cepapi","category":"Juguetes","description":"velit donec diam neque","price":1488.94,"stock":27},
-  {"name":"Geochelone elephantopus","category":"Juguetes","description":"integer pede justo","price":382.71,"stock":28},
-  {"name":"Egretta thula","category":"Juguetes","description":"maecenas leo","price":2305.42,"stock":29},
-  {"name":"Aegypius tracheliotus","category":"Juguetes","description":"in hac","price":2650.02,"stock":30},
-  {"name":"Phasianus colchicus","category":"Juguetes","description":"platea dictumst maecenas ut massa","price":1027.48,"stock":31},
-  {"name":"Litrocranius walleri","category":"Juguetes","description":"facilisi cras non velit nec nisi","price":711.89,"stock":32},
-  {"name":"Lamprotornis nitens","category":"Juguetes","description":"leo odio condimentum id","price":1385.92,"stock":33},
-  {"name":"Meles meles","category":"Juguetes","description":"at ipsum","price":1585.52,"stock":34},
-  {"name":"Manouria emys","category":"Juguetes","description":"augue luctus tincidunt","price":1319.82,"stock":35},
-  {"name":"Choloepus hoffmani","category":"Juguetes","description":"non mauris morbi non lectus aliquam","price":2288.6,"stock":36},
-  {"name":"Phalacrocorax carbo","category":"Juguetes","description":"neque aenean auctor gravida sem praesent","price":2286.19,"stock":37},
-  {"name":"Zonotrichia capensis","category":"Juguetes","description":"morbi non lectus aliquam sit amet diam","price":1689.61,"stock":38},
-  {"name":"Phoca vitulina","category":"Juguetes","description":"erat quisque erat","price":652.52,"stock":39},
-  {"name":"Pytilia melba","category":"Juguetes","description":"id turpis integer aliquet massa id lobortis convallis tortor","price":1921.8,"stock":40},
-  {"name":"Haliaetus leucogaster","category":"Juguetes","description":"mollis molestie","price":520.16,"stock":41},
-  {"name":"Anitibyx armatus","category":"Juguetes","description":"curabitur at ipsum ac tellus","price":269.03,"stock":42},
-  {"name":"Phalacrocorax brasilianus","category":"Juguetes","description":"non interdum in ante vestibulum ante","price":2253.63,"stock":43},
-  {"name":"Canis aureus","category":"Juguetes","description":"dapibus augue vel accumsan tellus","price":2883.16,"stock":44},
-  {"name":"Aquila chrysaetos","category":"Juguetes","description":"augue quam sollicitudin vitae consectetuer eget rutrum","price":2919.4,"stock":45},
-  {"name":"Hyaena hyaena","category":"Juguetes","description":"tortor eu pede","price":847.77,"stock":46},
-  {"name":"Castor fiber","category":"Juguetes","description":"purus eu magna vulputate luctus cum sociis natoque penatibus","price":2936.55,"stock":47},
-  {"name":"Coracias caudata","category":"Juguetes","description":"ligula in lacus curabitur at ipsum","price":1433.69,"stock":48},
-  {"name":"Stenella coeruleoalba","category":"Juguetes","description":"quis odio","price":2728.08,"stock":49},
-  {"name":"Bassariscus astutus","category":"Juguetes","description":"id turpis integer aliquet massa id lobortis","price":1103.35,"stock":50},
-  {"name":"Creagrus furcatus","category":"Juguetes","description":"ante vestibulum ante ipsum primis in","price":542.71,"stock":51},
-  {"name":"Felis yagouaroundi","category":"Juguetes","description":"nisl ut volutpat sapien arcu sed augue aliquam erat","price":964.38,"stock":52},
-  {"name":"Plocepasser mahali","category":"Juguetes","description":"in faucibus orci luctus et","price":1310.05,"stock":53},
-  {"name":"Caiman crocodilus","category":"Juguetes","description":"mauris non ligula pellentesque","price":2046.37,"stock":54},
-  {"name":"Nyctanassa violacea","category":"Juguetes","description":"odio curabitur convallis duis","price":2089.4,"stock":55},
-  {"name":"Leptoptilus dubius","category":"Juguetes","description":"lectus pellentesque at nulla suspendisse potenti cras in purus","price":875.15,"stock":56},
-  {"name":"Pelecanus conspicillatus","category":"Juguetes","description":"ultrices phasellus id sapien in sapien iaculis congue vivamus metus","price":182.73,"stock":57},
-  {"name":"Corallus hortulanus cooki","category":"Juguetes","description":"morbi non quam nec dui luctus","price":1287.97,"stock":58},
-  {"name":"Mirounga angustirostris","category":"Juguetes","description":"adipiscing lorem vitae mattis nibh ligula","price":2021.55,"stock":59},
-  {"name":"Crotalus cerastes","category":"Juguetes","description":"ut tellus","price":2307.83,"stock":60},
-  {"name":"Crotaphytus collaris","category":"Juguetes","description":"porttitor id consequat in consequat ut","price":2207.9,"stock":61},
-  {"name":"Acrantophis madagascariensis","category":"Juguetes","description":"leo pellentesque","price":1222.05,"stock":62},
-  {"name":"Delphinus delphis","category":"Juguetes","description":"nulla tellus in","price":2888.93,"stock":63},
-  {"name":"Chlamydosaurus kingii","category":"Juguetes","description":"quisque porta volutpat erat quisque erat","price":2317.23,"stock":64},
-  {"name":"Pseudoleistes virescens","category":"Juguetes","description":"lacus morbi quis","price":2222.9,"stock":65},
-  {"name":"Perameles nasuta","category":"Juguetes","description":"quisque erat eros viverra eget congue eget semper","price":1806.35,"stock":66},
-  {"name":"Charadrius tricollaris","category":"Juguetes","description":"non velit nec nisi vulputate nonummy maecenas tincidunt lacus at","price":2324.17,"stock":67},
-  {"name":"Ovis ammon","category":"Juguetes","description":"turpis donec posuere metus vitae ipsum aliquam non mauris morbi","price":2850.15,"stock":68},
-  {"name":"Taxidea taxus","category":"Juguetes","description":"leo rhoncus sed vestibulum sit","price":2837.01,"stock":69},
-  {"name":"Pytilia melba","category":"Juguetes","description":"pretium quis lectus suspendisse potenti in eleifend quam","price":84.78,"stock":70},
-  {"name":"Tetracerus quadricornis","category":"Juguetes","description":"eget nunc donec quis","price":2915.18,"stock":71},
-  {"name":"Notechis semmiannulatus","category":"Juguetes","description":"in felis donec semper sapien a libero nam","price":1281.63,"stock":72},
-  {"name":"Grus canadensis","category":"Juguetes","description":"aliquam convallis nunc proin at turpis a","price":550.94,"stock":73},
-  {"name":"Sarcorhamphus papa","category":"Juguetes","description":"platea dictumst maecenas ut massa quis augue luctus tincidunt nulla","price":1386.71,"stock":74},
-  {"name":"Paraxerus cepapi","category":"Juguetes","description":"at feugiat non pretium quis lectus suspendisse potenti","price":2601.22,"stock":75},
-  {"name":"Sylvicapra grimma","category":"Juguetes","description":"proin at turpis a pede posuere nonummy integer","price":1209.21,"stock":76},
-  {"name":"Dicrostonyx groenlandicus","category":"Juguetes","description":"venenatis tristique fusce","price":2685.69,"stock":77},
-  {"name":"Bucephala clangula","category":"Juguetes","description":"viverra eget congue eget semper rutrum nulla","price":2529.0,"stock":78},
-  {"name":"Tiliqua scincoides","category":"Juguetes","description":"volutpat eleifend donec ut","price":2538.47,"stock":79},
-  {"name":"Papio cynocephalus","category":"Juguetes","description":"sit amet justo","price":2279.47,"stock":80},
-  {"name":"Acrantophis madagascariensis","category":"Juguetes","description":"lacinia eget tincidunt eget tempus vel pede morbi porttitor","price":2903.67,"stock":81},
-  {"name":"Parus atricapillus","category":"Juguetes","description":"mattis pulvinar nulla pede ullamcorper augue a","price":2055.24,"stock":82},
-  {"name":"Bubalus arnee","category":"Juguetes","description":"dictumst etiam faucibus cursus urna ut tellus nulla ut","price":2309.91,"stock":83},
-  {"name":"Lamprotornis nitens","category":"Juguetes","description":"diam in magna bibendum","price":1638.86,"stock":84},
-  {"name":"Rhea americana","category":"Juguetes","description":"ut at dolor quis odio","price":2316.48,"stock":85},
-  {"name":"Panthera leo","category":"Juguetes","description":"justo in blandit ultrices","price":2208.42,"stock":86},
-  {"name":"Ephippiorhynchus mycteria","category":"Juguetes","description":"venenatis non sodales sed tincidunt eu felis","price":833.64,"stock":87},
-  {"name":"Trichosurus vulpecula","category":"Juguetes","description":"sapien placerat ante","price":118.72,"stock":88},
-  {"name":"Tachyglossus aculeatus","category":"Juguetes","description":"vel accumsan tellus nisi eu orci mauris","price":229.99,"stock":89},
-  {"name":"Dicrostonyx groenlandicus","category":"Juguetes","description":"tincidunt lacus at velit vivamus vel nulla eget eros elementum","price":93.0,"stock":90},
-  {"name":"Butorides striatus","category":"Juguetes","description":"lobortis sapien sapien non mi integer","price":2603.72,"stock":91},
-  {"name":"Macropus robustus","category":"Juguetes","description":"nunc proin at turpis","price":1711.49,"stock":92},
-  {"name":"Spilogale gracilis","category":"Juguetes","description":"neque aenean auctor gravida sem praesent id massa id","price":2579.09,"stock":93},
-  {"name":"Butorides striatus","category":"Juguetes","description":"justo in hac habitasse platea dictumst","price":168.41,"stock":94},
-  {"name":"Propithecus verreauxi","category":"Juguetes","description":"volutpat eleifend donec ut dolor","price":307.26,"stock":95},
-  {"name":"Pavo cristatus","category":"Juguetes","description":"quisque erat eros viverra","price":186.04,"stock":96},
-  {"name":"Dusicyon thous","category":"Juguetes","description":"turpis enim","price":1002.79,"stock":97},
-  {"name":"Numida meleagris","category":"Juguetes","description":"curabitur in libero ut massa volutpat convallis","price":2139.38,"stock":98},
-  {"name":"Sauromalus obesus","category":"Juguetes","description":"diam neque vestibulum eget vulputate","price":1643.74,"stock":99},
-  {"name":"Naja haje","category":"Juguetes","description":"commodo placerat praesent blandit nam","price":1872.67,"stock":100}]
+[
+  {
+    "name": "Ammospermophilus nelsoni",
+    "category": "Juguetes",
+    "description": "amet diam",
+    "price": 47.7,
+    "stock": 1
+  },
+  {
+    "name": "Ovibos moschatus",
+    "category": "Juguetes",
+    "description": "eros viverra eget congue eget semper rutrum nulla nunc",
+    "price": 757.1,
+    "stock": 2
+  },
+  {
+    "name": "Mycteria ibis",
+    "category": "Juguetes",
+    "description": "duis aliquam convallis nunc proin at",
+    "price": 2384.23,
+    "stock": 3
+  },
+  {
+    "name": "Cervus duvauceli",
+    "category": "Juguetes",
+    "description": "pellentesque at nulla suspendisse potenti cras in",
+    "price": 2221.42,
+    "stock": 4
+  },
+  {
+    "name": "Macropus fuliginosus",
+    "category": "Juguetes",
+    "description": "magna at",
+    "price": 2072.23,
+    "stock": 5
+  },
+  {
+    "name": "Bubo virginianus",
+    "category": "Juguetes",
+    "description": "nulla suspendisse",
+    "price": 2483.62,
+    "stock": 6
+  },
+  {
+    "name": "Macropus fuliginosus",
+    "category": "Juguetes",
+    "description": "adipiscing elit proin risus",
+    "price": 221.43,
+    "stock": 7
+  },
+  {
+    "name": "Bettongia penicillata",
+    "category": "Juguetes",
+    "description": "in faucibus orci luctus et",
+    "price": 2167.28,
+    "stock": 8
+  },
+  {
+    "name": "Drymarchon corias couperi",
+    "category": "Juguetes",
+    "description": "quis orci nullam molestie nibh",
+    "price": 215.56,
+    "stock": 9
+  },
+  {
+    "name": "Macropus fuliginosus",
+    "category": "Juguetes",
+    "description": "eu est congue elementum in hac",
+    "price": 878.15,
+    "stock": 10
+  },
+  {
+    "name": "Chauna torquata",
+    "category": "Juguetes",
+    "description": "massa id",
+    "price": 1665.81,
+    "stock": 11
+  },
+  {
+    "name": "Varanus sp.",
+    "category": "Juguetes",
+    "description": "dui maecenas tristique est",
+    "price": 113.51,
+    "stock": 12
+  },
+  {
+    "name": "Morelia spilotes variegata",
+    "category": "Juguetes",
+    "description": "habitasse platea dictumst morbi",
+    "price": 764.43,
+    "stock": 13
+  },
+  {
+    "name": "Nesomimus trifasciatus",
+    "category": "Juguetes",
+    "description": "nulla sed accumsan felis ut at dolor",
+    "price": 2198.77,
+    "stock": 14
+  },
+  {
+    "name": "Felis silvestris lybica",
+    "category": "Juguetes",
+    "description": "integer aliquet massa",
+    "price": 2904.21,
+    "stock": 15
+  },
+  {
+    "name": "Trichosurus vulpecula",
+    "category": "Juguetes",
+    "description": "aliquet at feugiat non",
+    "price": 523.24,
+    "stock": 16
+  },
+  {
+    "name": "Stercorarius longicausus",
+    "category": "Juguetes",
+    "description": "ligula nec sem",
+    "price": 2061.6,
+    "stock": 17
+  },
+  {
+    "name": "Chordeiles minor",
+    "category": "Juguetes",
+    "description": "vel augue vestibulum ante",
+    "price": 905.69,
+    "stock": 18
+  },
+  {
+    "name": "Castor canadensis",
+    "category": "Juguetes",
+    "description": "mauris lacinia",
+    "price": 782.63,
+    "stock": 19
+  },
+  {
+    "name": "Phascogale tapoatafa",
+    "category": "Juguetes",
+    "description": "tincidunt eget tempus vel pede morbi porttitor lorem id ligula",
+    "price": 416.24,
+    "stock": 20
+  },
+  {
+    "name": "Platalea leucordia",
+    "category": "Juguetes",
+    "description": "in congue etiam justo etiam pretium iaculis justo in",
+    "price": 346.63,
+    "stock": 21
+  },
+  {
+    "name": "Dasypus novemcinctus",
+    "category": "Juguetes",
+    "description": "interdum eu tincidunt in",
+    "price": 1925.85,
+    "stock": 22
+  },
+  {
+    "name": "Vulpes vulpes",
+    "category": "Juguetes",
+    "description": "velit vivamus vel nulla eget",
+    "price": 2624.13,
+    "stock": 23
+  },
+  {
+    "name": "Crotalus cerastes",
+    "category": "Juguetes",
+    "description": "aenean lectus pellentesque",
+    "price": 206.94,
+    "stock": 24
+  },
+  {
+    "name": "Panthera leo persica",
+    "category": "Juguetes",
+    "description": "lacinia sapien quis libero nullam sit amet turpis elementum ligula",
+    "price": 1214.75,
+    "stock": 25
+  },
+  {
+    "name": "Macropus rufogriseus",
+    "category": "Juguetes",
+    "description": "rutrum rutrum neque aenean auctor",
+    "price": 623.6,
+    "stock": 26
+  },
+  {
+    "name": "Paraxerus cepapi",
+    "category": "Juguetes",
+    "description": "velit donec diam neque",
+    "price": 1488.94,
+    "stock": 27
+  },
+  {
+    "name": "Geochelone elephantopus",
+    "category": "Juguetes",
+    "description": "integer pede justo",
+    "price": 382.71,
+    "stock": 28
+  },
+  {
+    "name": "Egretta thula",
+    "category": "Juguetes",
+    "description": "maecenas leo",
+    "price": 2305.42,
+    "stock": 29
+  },
+  {
+    "name": "Aegypius tracheliotus",
+    "category": "Juguetes",
+    "description": "in hac",
+    "price": 2650.02,
+    "stock": 30
+  },
+  {
+    "name": "Phasianus colchicus",
+    "category": "Juguetes",
+    "description": "platea dictumst maecenas ut massa",
+    "price": 1027.48,
+    "stock": 31
+  },
+  {
+    "name": "Litrocranius walleri",
+    "category": "Juguetes",
+    "description": "facilisi cras non velit nec nisi",
+    "price": 711.89,
+    "stock": 32
+  },
+  {
+    "name": "Lamprotornis nitens",
+    "category": "Juguetes",
+    "description": "leo odio condimentum id",
+    "price": 1385.92,
+    "stock": 33
+  },
+  {
+    "name": "Meles meles",
+    "category": "Juguetes",
+    "description": "at ipsum",
+    "price": 1585.52,
+    "stock": 34
+  },
+  {
+    "name": "Manouria emys",
+    "category": "Juguetes",
+    "description": "augue luctus tincidunt",
+    "price": 1319.82,
+    "stock": 35
+  },
+  {
+    "name": "Choloepus hoffmani",
+    "category": "Juguetes",
+    "description": "non mauris morbi non lectus aliquam",
+    "price": 2288.6,
+    "stock": 36
+  },
+  {
+    "name": "Phalacrocorax carbo",
+    "category": "Juguetes",
+    "description": "neque aenean auctor gravida sem praesent",
+    "price": 2286.19,
+    "stock": 37
+  },
+  {
+    "name": "Zonotrichia capensis",
+    "category": "Juguetes",
+    "description": "morbi non lectus aliquam sit amet diam",
+    "price": 1689.61,
+    "stock": 38
+  },
+  {
+    "name": "Phoca vitulina",
+    "category": "Juguetes",
+    "description": "erat quisque erat",
+    "price": 652.52,
+    "stock": 39
+  },
+  {
+    "name": "Pytilia melba",
+    "category": "Juguetes",
+    "description": "id turpis integer aliquet massa id lobortis convallis tortor",
+    "price": 1921.8,
+    "stock": 40
+  },
+  {
+    "name": "Haliaetus leucogaster",
+    "category": "Juguetes",
+    "description": "mollis molestie",
+    "price": 520.16,
+    "stock": 41
+  },
+  {
+    "name": "Anitibyx armatus",
+    "category": "Juguetes",
+    "description": "curabitur at ipsum ac tellus",
+    "price": 269.03,
+    "stock": 42
+  },
+  {
+    "name": "Phalacrocorax brasilianus",
+    "category": "Juguetes",
+    "description": "non interdum in ante vestibulum ante",
+    "price": 2253.63,
+    "stock": 43
+  },
+  {
+    "name": "Canis aureus",
+    "category": "Juguetes",
+    "description": "dapibus augue vel accumsan tellus",
+    "price": 2883.16,
+    "stock": 44
+  },
+  {
+    "name": "Aquila chrysaetos",
+    "category": "Juguetes",
+    "description": "augue quam sollicitudin vitae consectetuer eget rutrum",
+    "price": 2919.4,
+    "stock": 45
+  },
+  {
+    "name": "Hyaena hyaena",
+    "category": "Juguetes",
+    "description": "tortor eu pede",
+    "price": 847.77,
+    "stock": 46
+  },
+  {
+    "name": "Castor fiber",
+    "category": "Juguetes",
+    "description": "purus eu magna vulputate luctus cum sociis natoque penatibus",
+    "price": 2936.55,
+    "stock": 47
+  },
+  {
+    "name": "Coracias caudata",
+    "category": "Juguetes",
+    "description": "ligula in lacus curabitur at ipsum",
+    "price": 1433.69,
+    "stock": 48
+  },
+  {
+    "name": "Stenella coeruleoalba",
+    "category": "Juguetes",
+    "description": "quis odio",
+    "price": 2728.08,
+    "stock": 49
+  },
+  {
+    "name": "Bassariscus astutus",
+    "category": "Juguetes",
+    "description": "id turpis integer aliquet massa id lobortis",
+    "price": 1103.35,
+    "stock": 50
+  },
+  {
+    "name": "Creagrus furcatus",
+    "category": "Juguetes",
+    "description": "ante vestibulum ante ipsum primis in",
+    "price": 542.71,
+    "stock": 51
+  },
+  {
+    "name": "Felis yagouaroundi",
+    "category": "Juguetes",
+    "description": "nisl ut volutpat sapien arcu sed augue aliquam erat",
+    "price": 964.38,
+    "stock": 52
+  },
+  {
+    "name": "Plocepasser mahali",
+    "category": "Juguetes",
+    "description": "in faucibus orci luctus et",
+    "price": 1310.05,
+    "stock": 53
+  },
+  {
+    "name": "Caiman crocodilus",
+    "category": "Juguetes",
+    "description": "mauris non ligula pellentesque",
+    "price": 2046.37,
+    "stock": 54
+  },
+  {
+    "name": "Nyctanassa violacea",
+    "category": "Juguetes",
+    "description": "odio curabitur convallis duis",
+    "price": 2089.4,
+    "stock": 55
+  },
+  {
+    "name": "Leptoptilus dubius",
+    "category": "Juguetes",
+    "description": "lectus pellentesque at nulla suspendisse potenti cras in purus",
+    "price": 875.15,
+    "stock": 56
+  },
+  {
+    "name": "Pelecanus conspicillatus",
+    "category": "Juguetes",
+    "description": "ultrices phasellus id sapien in sapien iaculis congue vivamus metus",
+    "price": 182.73,
+    "stock": 57
+  },
+  {
+    "name": "Corallus hortulanus cooki",
+    "category": "Juguetes",
+    "description": "morbi non quam nec dui luctus",
+    "price": 1287.97,
+    "stock": 58
+  },
+  {
+    "name": "Mirounga angustirostris",
+    "category": "Juguetes",
+    "description": "adipiscing lorem vitae mattis nibh ligula",
+    "price": 2021.55,
+    "stock": 59
+  },
+  {
+    "name": "Crotalus cerastes",
+    "category": "Juguetes",
+    "description": "ut tellus",
+    "price": 2307.83,
+    "stock": 60
+  },
+  {
+    "name": "Crotaphytus collaris",
+    "category": "Juguetes",
+    "description": "porttitor id consequat in consequat ut",
+    "price": 2207.9,
+    "stock": 61
+  },
+  {
+    "name": "Acrantophis madagascariensis",
+    "category": "Juguetes",
+    "description": "leo pellentesque",
+    "price": 1222.05,
+    "stock": 62
+  },
+  {
+    "name": "Delphinus delphis",
+    "category": "Juguetes",
+    "description": "nulla tellus in",
+    "price": 2888.93,
+    "stock": 63
+  },
+  {
+    "name": "Chlamydosaurus kingii",
+    "category": "Juguetes",
+    "description": "quisque porta volutpat erat quisque erat",
+    "price": 2317.23,
+    "stock": 64
+  },
+  {
+    "name": "Pseudoleistes virescens",
+    "category": "Juguetes",
+    "description": "lacus morbi quis",
+    "price": 2222.9,
+    "stock": 65
+  },
+  {
+    "name": "Perameles nasuta",
+    "category": "Juguetes",
+    "description": "quisque erat eros viverra eget congue eget semper",
+    "price": 1806.35,
+    "stock": 66
+  },
+  {
+    "name": "Charadrius tricollaris",
+    "category": "Juguetes",
+    "description": "non velit nec nisi vulputate nonummy maecenas tincidunt lacus at",
+    "price": 2324.17,
+    "stock": 67
+  },
+  {
+    "name": "Ovis ammon",
+    "category": "Juguetes",
+    "description": "turpis donec posuere metus vitae ipsum aliquam non mauris morbi",
+    "price": 2850.15,
+    "stock": 68
+  },
+  {
+    "name": "Taxidea taxus",
+    "category": "Juguetes",
+    "description": "leo rhoncus sed vestibulum sit",
+    "price": 2837.01,
+    "stock": 69
+  },
+  {
+    "name": "Pytilia melba",
+    "category": "Juguetes",
+    "description": "pretium quis lectus suspendisse potenti in eleifend quam",
+    "price": 84.78,
+    "stock": 70
+  },
+  {
+    "name": "Tetracerus quadricornis",
+    "category": "Juguetes",
+    "description": "eget nunc donec quis",
+    "price": 2915.18,
+    "stock": 71
+  },
+  {
+    "name": "Notechis semmiannulatus",
+    "category": "Juguetes",
+    "description": "in felis donec semper sapien a libero nam",
+    "price": 1281.63,
+    "stock": 72
+  },
+  {
+    "name": "Grus canadensis",
+    "category": "Juguetes",
+    "description": "aliquam convallis nunc proin at turpis a",
+    "price": 550.94,
+    "stock": 73
+  },
+  {
+    "name": "Sarcorhamphus papa",
+    "category": "Juguetes",
+    "description": "platea dictumst maecenas ut massa quis augue luctus tincidunt nulla",
+    "price": 1386.71,
+    "stock": 74
+  },
+  {
+    "name": "Paraxerus cepapi",
+    "category": "Juguetes",
+    "description": "at feugiat non pretium quis lectus suspendisse potenti",
+    "price": 2601.22,
+    "stock": 75
+  },
+  {
+    "name": "Sylvicapra grimma",
+    "category": "Juguetes",
+    "description": "proin at turpis a pede posuere nonummy integer",
+    "price": 1209.21,
+    "stock": 76
+  },
+  {
+    "name": "Dicrostonyx groenlandicus",
+    "category": "Juguetes",
+    "description": "venenatis tristique fusce",
+    "price": 2685.69,
+    "stock": 77
+  },
+  {
+    "name": "Bucephala clangula",
+    "category": "Juguetes",
+    "description": "viverra eget congue eget semper rutrum nulla",
+    "price": 2529.0,
+    "stock": 78
+  },
+  {
+    "name": "Tiliqua scincoides",
+    "category": "Juguetes",
+    "description": "volutpat eleifend donec ut",
+    "price": 2538.47,
+    "stock": 79
+  },
+  {
+    "name": "Papio cynocephalus",
+    "category": "Juguetes",
+    "description": "sit amet justo",
+    "price": 2279.47,
+    "stock": 80
+  },
+  {
+    "name": "Acrantophis madagascariensis",
+    "category": "Juguetes",
+    "description": "lacinia eget tincidunt eget tempus vel pede morbi porttitor",
+    "price": 2903.67,
+    "stock": 81
+  },
+  {
+    "name": "Parus atricapillus",
+    "category": "Juguetes",
+    "description": "mattis pulvinar nulla pede ullamcorper augue a",
+    "price": 2055.24,
+    "stock": 82
+  },
+  {
+    "name": "Bubalus arnee",
+    "category": "Juguetes",
+    "description": "dictumst etiam faucibus cursus urna ut tellus nulla ut",
+    "price": 2309.91,
+    "stock": 83
+  },
+  {
+    "name": "Lamprotornis nitens",
+    "category": "Juguetes",
+    "description": "diam in magna bibendum",
+    "price": 1638.86,
+    "stock": 84
+  },
+  {
+    "name": "Rhea americana",
+    "category": "Juguetes",
+    "description": "ut at dolor quis odio",
+    "price": 2316.48,
+    "stock": 85
+  },
+  {
+    "name": "Panthera leo",
+    "category": "Juguetes",
+    "description": "justo in blandit ultrices",
+    "price": 2208.42,
+    "stock": 86
+  },
+  {
+    "name": "Ephippiorhynchus mycteria",
+    "category": "Juguetes",
+    "description": "venenatis non sodales sed tincidunt eu felis",
+    "price": 833.64,
+    "stock": 87
+  },
+  {
+    "name": "Trichosurus vulpecula",
+    "category": "Juguetes",
+    "description": "sapien placerat ante",
+    "price": 118.72,
+    "stock": 88
+  },
+  {
+    "name": "Tachyglossus aculeatus",
+    "category": "Juguetes",
+    "description": "vel accumsan tellus nisi eu orci mauris",
+    "price": 229.99,
+    "stock": 89
+  },
+  {
+    "name": "Dicrostonyx groenlandicus",
+    "category": "Juguetes",
+    "description": "tincidunt lacus at velit vivamus vel nulla eget eros elementum",
+    "price": 93.0,
+    "stock": 90
+  },
+  {
+    "name": "Butorides striatus",
+    "category": "Juguetes",
+    "description": "lobortis sapien sapien non mi integer",
+    "price": 2603.72,
+    "stock": 91
+  },
+  {
+    "name": "Macropus robustus",
+    "category": "Juguetes",
+    "description": "nunc proin at turpis",
+    "price": 1711.49,
+    "stock": 92
+  },
+  {
+    "name": "Spilogale gracilis",
+    "category": "Juguetes",
+    "description": "neque aenean auctor gravida sem praesent id massa id",
+    "price": 2579.09,
+    "stock": 93
+  },
+  {
+    "name": "Butorides striatus",
+    "category": "Juguetes",
+    "description": "justo in hac habitasse platea dictumst",
+    "price": 168.41,
+    "stock": 94
+  },
+  {
+    "name": "Propithecus verreauxi",
+    "category": "Juguetes",
+    "description": "volutpat eleifend donec ut dolor",
+    "price": 307.26,
+    "stock": 95
+  },
+  {
+    "name": "Pavo cristatus",
+    "category": "Juguetes",
+    "description": "quisque erat eros viverra",
+    "price": 186.04,
+    "stock": 96
+  },
+  {
+    "name": "Dusicyon thous",
+    "category": "Juguetes",
+    "description": "turpis enim",
+    "price": 1002.79,
+    "stock": 97
+  },
+  {
+    "name": "Numida meleagris",
+    "category": "Juguetes",
+    "description": "curabitur in libero ut massa volutpat convallis",
+    "price": 2139.38,
+    "stock": 98
+  },
+  {
+    "name": "Sauromalus obesus",
+    "category": "Juguetes",
+    "description": "diam neque vestibulum eget vulputate",
+    "price": 1643.74,
+    "stock": 99
+  },
+  {
+    "name": "Naja haje",
+    "category": "Juguetes",
+    "description": "commodo placerat praesent blandit nam",
+    "price": 1872.67,
+    "stock": 100
+  }
+]

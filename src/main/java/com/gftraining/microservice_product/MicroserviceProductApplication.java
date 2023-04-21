@@ -12,8 +12,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @EnableConfigurationProperties({CategoriesConfig.class, FeatureFlagsConfig.class})
 public class MicroserviceProductApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MicroserviceProductApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MicroserviceProductApplication.class, args);
+    }
 
 }

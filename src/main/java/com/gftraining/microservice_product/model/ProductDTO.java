@@ -14,15 +14,15 @@ public class ProductDTO {
 
     @NotBlank(message = "cannot be null.")
     @Pattern(message = "add a name", regexp = "^(?!string$).+$")
-    @Schema(example = "string", description = "")
+    @Schema(example = "string")
     private String name;
     @NotBlank(message = "cannot be null.")
     @Pattern(message = "add a category", regexp = "^(?!string$).+$")
-    @Schema(example = "string", description = "")
+    @Schema(example = "string")
     private String category;
     @NotBlank(message = "cannot be null.")
     @Pattern(message = "add a description", regexp = "^(?!string$).+$")
-    @Schema(example = "string", description = "")
+    @Schema(example = "string")
     private String description;
     @NotNull(message = "cannot be null.")
     @Positive(message = "should be greater than 0.")

@@ -3,15 +3,12 @@ package com.gftraining.microservice_product.integration_tests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microservice_product.model.ProductDTO;
-
 import com.gftraining.microservice_product.services.ProductService;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,10 +26,12 @@ import java.util.ArrayList;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.isA;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -46,8 +45,8 @@ class ProductIT {
     MockMvc mockmvc;
     @Autowired
     ProductService service;
-    ProductDTO productDTO = new ProductDTO("Pelota", "Juguetes", "pelota de futbol", new BigDecimal(19.99), 24);
-    ProductDTO badProductDTO = new ProductDTO("S", "0", "S", new BigDecimal(0), 10);
+    final ProductDTO productDTO = new ProductDTO("Pelota", "Juguetes", "pelota de futbol", new BigDecimal("19.99"), 24);
+    final ProductDTO badProductDTO = new ProductDTO("S", "0", "S", new BigDecimal(0), 10);
 
     public static void wireMockServerSetPort(int port) {
         wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(port));
@@ -57,8 +56,16 @@ class ProductIT {
     }
 
 
-    static void wireMockServerStop() throws Exception {
+    static void wireMockServerStop() {
         wireMockServer.stop();
+    }
+
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -133,7 +140,7 @@ class ProductIT {
 
     @Test
     @DisplayName("When retrying a patch call, then return 200 OK,")
-    void putProductById_CartCallRetry() throws Exception {
+    void putProductById_CartCallRetry() {
         wireMockServerSetPort(8080);
         wireMockServer.stubFor(
                 patch(urlEqualTo("/products/7")).inScenario("testing retires")
@@ -160,7 +167,7 @@ class ProductIT {
 
     @Test
     @DisplayName("When retrying a delete call, then return 200 OK,")
-    void deleteProductById_CartCallRetry() throws Exception {
+    void deleteProductById_CartCallRetry() {
         wireMockServerSetPort(8080);
         wireMockServer.stubFor(
                 delete(urlEqualTo("/products/7")).inScenario("testing retires")
@@ -187,7 +194,7 @@ class ProductIT {
 
     @Test
     @DisplayName("When retrying a delete call, then return 204 OK,")
-    void deleteProductById_UserCallRetry() throws Exception {
+    void deleteProductById_UserCallRetry() {
         wireMockServerSetPort(8082);
         wireMockServer.stubFor(
                 delete(urlEqualTo("/favorite/product/7")).inScenario("testing retires")
@@ -258,13 +265,5 @@ class ProductIT {
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json"));
-    }
-
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }
