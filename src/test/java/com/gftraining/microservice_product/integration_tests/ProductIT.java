@@ -43,11 +43,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProductIT {
     private static WireMockServer wireMockServer;
     @Autowired
+    MockMvc mockmvc;
+    @Autowired
     ProductService service;
     ProductDTO productDTO = new ProductDTO("Pelota", "Juguetes", "pelota de futbol", new BigDecimal(19.99), 24);
     ProductDTO badProductDTO = new ProductDTO("S", "0", "S", new BigDecimal(0), 10);
-    @Autowired
-    private MockMvc mockmvc;
 
     public static void wireMockServerSetPort(int port) {
         wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(port));
@@ -59,14 +59,6 @@ class ProductIT {
 
     static void wireMockServerStop() throws Exception {
         wireMockServer.stop();
-    }
-
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Test
@@ -266,5 +258,13 @@ class ProductIT {
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json"));
+    }
+
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
