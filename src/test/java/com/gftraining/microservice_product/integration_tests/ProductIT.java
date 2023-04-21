@@ -27,13 +27,14 @@ import reactor.test.StepVerifier;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import static com.gftraining.microservice_product.integration_tests.ITConfig.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 
 
 @SpringBootTest
@@ -42,24 +43,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
 class ProductIT {
     private static WireMockServer wireMockServer;
+
     @Autowired
     MockMvc mockmvc;
     @Autowired
     ProductService service;
+
     ProductDTO productDTO = new ProductDTO("Pelota", "Juguetes", "pelota de futbol", new BigDecimal(19.99), 24);
     ProductDTO badProductDTO = new ProductDTO("S", "0", "S", new BigDecimal(0), 10);
-
-    public static void wireMockServerSetPort(int port) {
-        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(port));
-        wireMockServer.start();
-
-        WireMock.configureFor("localhost", port);
-    }
-
-
-    static void wireMockServerStop() throws Exception {
-        wireMockServer.stop();
-    }
 
     @Test
     @DisplayName("When perform get request /products/getAll, Then is expected to have status of 200, be an ArrayList, be a Json and have size 13")
@@ -68,7 +59,8 @@ class ProductIT {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.*", isA(ArrayList.class)))
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$.*", hasSize(13)));
+                .andExpect(jsonPath("$.*", hasSize(13)))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(PRODUCT_ARRAY_SCHEMA)));
     }
 
     @Test
@@ -77,7 +69,8 @@ class ProductIT {
         mockmvc.perform(get("/products/id/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(content().json("{id: 1, name: Wonder, stock: 90}"));
+                .andExpect(content().json("{id: 1, name: Wonder, stock: 90}"))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(PRODUCT_SCHEMA)));
     }
 
     @Test
@@ -85,7 +78,8 @@ class ProductIT {
     void getProductById_NotFoundException() throws Exception {
         mockmvc.perform(get("/products/id/{id}", 200))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType("application/json"));
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)));
     }
 
     @Test
@@ -94,8 +88,9 @@ class ProductIT {
         mockmvc.perform(get("/products/name/{name}", "Los Surcos del Azar"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$.*", hasSize(2)));
-
+                .andExpect(jsonPath("$.*", hasSize(2)))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(PRODUCT_ARRAY_SCHEMA)));
+    
     }
 
     @Test
@@ -103,7 +98,8 @@ class ProductIT {
     void getProductByName_NotFoundException() throws Exception {
         mockmvc.perform(get("/products/name/{name}", "Pepe"))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType("application/json"));
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)));
 
     }
 
@@ -120,7 +116,8 @@ class ProductIT {
     void putProductById_NotFoundException() throws Exception {
         mockmvc.perform(put("/products/{id}", 200).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productDTO)))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(matchesJsonSchemaInClasspath(ERROR_SCHEMA)));
     }
 
     @Test
@@ -128,7 +125,8 @@ class ProductIT {
     void putProductById_BadRequest() throws Exception {
         mockmvc.perform(put("/products/{id}", 1).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(badProductDTO)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(matchesJsonSchemaInClasspath(BAD_REQUEST_ERROR_SCHEMA)));
     }
 
     @Test
@@ -257,7 +255,8 @@ class ProductIT {
                         .content(asJsonString(badProductDTO))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().contentType("application/json"));
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().string(matchesJsonSchemaInClasspath(BAD_REQUEST_ERROR_SCHEMA)));
     }
 
     public static String asJsonString(final Object obj) {
@@ -266,5 +265,17 @@ class ProductIT {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void wireMockServerSetPort(int port) {
+        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(port));
+        wireMockServer.start();
+
+        WireMock.configureFor("localhost", port);
+    }
+
+
+    static void wireMockServerStop() throws Exception {
+        wireMockServer.stop();
     }
 }
