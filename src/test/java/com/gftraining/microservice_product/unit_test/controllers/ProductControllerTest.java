@@ -116,7 +116,7 @@ class ProductControllerTest {
     @DisplayName("When calling the service with any Long, Then the product is returned")
     void updateStock() throws Exception {
         when(productService.getProductById(anyLong())).thenReturn(productEntity);
-        doNothing().when(progit git ductService).updateStock(4, 1L);
+        doNothing().when(productService).updateStock(4, 1L);
 
         mockmvc.perform(put("/products/updateStock/{id}",1L)
                         .param("id", "1").contentType(MediaType.APPLICATION_JSON)
