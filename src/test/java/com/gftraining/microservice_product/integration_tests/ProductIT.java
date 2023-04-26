@@ -113,7 +113,7 @@ class ProductIT {
     void putProductById() throws Exception {
         mockmvc.perform(put("/products/{id}",1).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productDTO)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -164,14 +164,14 @@ class ProductIT {
     void deleteProductById_UserCallRetry() {
         wireMockServerSetPort(8082);
         wireMockServer.stubFor(
-                delete(urlEqualTo("/favorite/products/7")).inScenario("testing retires")
+                delete(urlEqualTo("/favorite/product/7")).inScenario("testing retires")
                         .whenScenarioStateIs(STARTED)
                         .willReturn(aResponse().withStatus(500))
                         .willSetStateTo("OK response")
         );
         
         wireMockServer.stubFor(
-                delete(urlEqualTo("/favorite/products/7")).inScenario("testing retires")
+                delete(urlEqualTo("/favorite/product/7")).inScenario("testing retires")
                         .whenScenarioStateIs("OK response")
                         .willReturn(aResponse().withStatus(204))
         );
@@ -182,7 +182,7 @@ class ProductIT {
                 .expectComplete()
                 .verify();
         
-        verify(2,deleteRequestedFor(urlPathEqualTo("/favorite/products/7")));
+        verify(2,deleteRequestedFor(urlPathEqualTo("/favorite/product/7")));
         wireMockServerStop();
     }
 
@@ -193,6 +193,24 @@ class ProductIT {
         mockmvc.perform(MockMvcRequestBuilders.post("/products/JSON_load")
                         .param("path", "C:\\Files\\data.json"))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    @DisplayName("Given an id and an integer, When perform put request /products/updateStock/{id}, Then is expected to have status of 200")
+    void UpdateStock() throws Exception {
+        mockmvc.perform(put("/products/updateStock/{id}", 7)
+                        .content(asJsonString("10"))
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Given an id and a String, When perform post request /products/updateStock/{id}, Then is expected to have status of 404")
+    void UpdateStock_BadRequestException() throws Exception {
+        mockmvc.perform(put("/products/updateStock/{id}", 7)
+                        .content(asJsonString("asdv"))
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -215,7 +233,6 @@ class ProductIT {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json"));
     }
-
 
     public static String asJsonString(final Object obj) {
         try {

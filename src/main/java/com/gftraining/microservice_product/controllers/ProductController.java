@@ -66,12 +66,12 @@ public class ProductController {
     public ResponseEntity<Object> putProductById(@PathVariable Long id, @Valid @RequestBody ProductDTO newProduct) {
         String message = productService.putProductById(newProduct, id);
 
-        return ResponseHandler.generateResponse(message,HttpStatus.CREATED,id);
+        return ResponseHandler.generateResponse(message,HttpStatus.OK,id);
     }
 
     @PutMapping("/updateStock/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void updateStock(@PathVariable Long id, @RequestBody Integer units) {
-        productService.updateStock(units, id);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateStock(@PathVariable Long id, @RequestBody Integer unitsToSubtract) {
+        productService.updateStock(unitsToSubtract, id);
     }
 }

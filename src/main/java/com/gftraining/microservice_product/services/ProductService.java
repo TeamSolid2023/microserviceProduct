@@ -79,15 +79,19 @@ public class ProductService {
 	}
 	
 	public Mono<Object> patchCartProducts(ProductDTO productDTO, Long id) {
+		CartProductDTO cartProductDTO = new CartProductDTO(id,productDTO.getName(),productDTO.getDescription(),productDTO.getPrice().doubleValue());
 		log.info("Starting asynchronous call to cart");
 		return WebClient.create(servicesUrl.getCartUrl())
 				.patch()
 				.uri("/products/{id}", id)
+				.body(BodyInserters.fromValue(cartProductDTO))
 				.retrieve()
 				.bodyToMono(Object.class)
 				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
 						.doBeforeRetry(retrySignal ->
 							log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1)))
+						.doBeforeRetry(retrySignal ->
+								log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1)))
 				.doOnError(error -> {
 					log.error("Returning error when cart is called");
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -147,30 +151,30 @@ public class ProductService {
 				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
 						.doBeforeRetry(retrySignal ->
 							log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1)))
+						.doBeforeRetry(retrySignal ->
+								log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1)))
 				.doOnError(error -> {
 					log.error("Returning error when cart is called");
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
 							"Error deleting product from carts: Error connecting to cart service.");
-				})
-				.filter(response -> !Objects.isNull(response.toString()));
+				});
 	}
 	
 	public Mono<HttpStatus> deleteUserProducts(Long id) {
 		log.info("Starting asynchronous call to user");
 		return WebClient.create(servicesUrl.getUserUrl())
 				.delete()
-				.uri("/favorite/products/{id}", id)
+				.uri("/favorite/product/{id}", id)
 				.retrieve()
 				.bodyToMono(HttpStatus.class)
 				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
 						.doBeforeRetry(retrySignal ->
-							log.info("Trying connection to user. Retry count: {}", retrySignal.totalRetries() + 1)))
+								log.info("Trying connection to user. Retry count: {}", retrySignal.totalRetries() + 1)))
 				.doOnError(error -> {
 					log.error("Returning error when user is called");
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
 							"Error deleting product from users: Error connecting to user service.");
-				})
-				.filter(response -> !Objects.isNull(response.toString()));
+				});
 	}
 	
 	public List<ProductEntity> getProductByName(String name) {
@@ -242,9 +246,15 @@ public class ProductService {
 		log.info("Copied product with id " + id + "to a new ProductEntity");
 		
 		Integer newStock = product.getStock() - units;
-		product.setStock(newStock);
-		log.info("Updated stock in the new ProductEntity to replace current product with id " + id);
-		
-		productRepository.save(product);
+
+		if(newStock<0 || units<0){
+			log.info("If the stock is less than 0 an error jumps");
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Modify the quantity. Stock can't be less than 0 and Quantity can't be negative");
+		} else {
+			product.setStock(newStock);
+			log.info("Updated stock in the new ProductEntity to replace current product with id " + id);
+
+			productRepository.save(product);
+		}
 	}
 }
