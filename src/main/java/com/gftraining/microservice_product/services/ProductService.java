@@ -1,11 +1,11 @@
 package com.gftraining.microservice_product.services;
 
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microservice_product.configuration.CategoriesConfig;
 import com.gftraining.microservice_product.configuration.FeatureFlagsConfig;
 import com.gftraining.microservice_product.configuration.ServicesUrl;
+import com.gftraining.microservice_product.model.CartProductDTO;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
@@ -27,7 +28,6 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -90,14 +90,11 @@ public class ProductService {
 				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
 						.doBeforeRetry(retrySignal ->
 							log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1)))
-						.doBeforeRetry(retrySignal ->
-								log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1)))
 				.doOnError(error -> {
 					log.error("Returning error when cart is called");
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
 							"Error updating product from carts: Error connecting to cart service.");
-				})
-				.filter(response -> !Objects.isNull(response.toString()));
+				});
 	}
 	
 	public String deleteProductById(Long id) {
@@ -151,8 +148,6 @@ public class ProductService {
 				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
 						.doBeforeRetry(retrySignal ->
 							log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1)))
-						.doBeforeRetry(retrySignal ->
-								log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1)))
 				.doOnError(error -> {
 					log.error("Returning error when cart is called");
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
