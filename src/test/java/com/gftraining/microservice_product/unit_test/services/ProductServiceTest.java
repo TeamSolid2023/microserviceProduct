@@ -1,7 +1,7 @@
 package com.gftraining.microservice_product.unit_test.services;
 
-
 import com.gftraining.microservice_product.configuration.CategoriesConfig;
+import com.gftraining.microservice_product.configuration.FeatureFlagsConfig;
 import com.gftraining.microservice_product.configuration.ServicesUrl;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
@@ -32,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -46,6 +47,13 @@ class ProductServiceTest {
 	CategoriesConfig categoriesConfig;
 	@Mock
 	ModelMapper modelMapper;
+
+	@Mock
+	private ServicesUrl servicesUrl;
+
+	@Mock
+	FeatureFlagsConfig featureFlags;
+
 	List<ProductEntity> productList = Arrays.asList(
 			new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100),
 			new ProductEntity(2L, "Espaguetis", "Comida", "pasta italiana elaborada con harina de grano duro y agua", new BigDecimal(20.00), 220)
@@ -59,8 +67,7 @@ class ProductServiceTest {
 	Map<String, Integer> cartsChanged = new HashMap<>() {{
 		put("cartsChanged", 1);
 	}};
-	@Mock
-	private ServicesUrl servicesUrl;
+
 	
 	@BeforeAll
 	static void setUp() throws IOException {
@@ -76,7 +83,7 @@ class ProductServiceTest {
 	@Order(1)
 	@Test
 	@DisplayName("given a product id, when calling cart api to update products, then returns Ok and number of carts affected.")
-	void patchCartProducts_returnCartsChanged() throws InterruptedException, JSONException {
+	void patchCartProducts_returnCartsChanged() throws InterruptedException {
 		when(servicesUrl.getCartUrl()).thenReturn("htpp://localhost:" + mockWebServer.getPort());
 		
 		mockWebServer.enqueue(new MockResponse()
@@ -138,17 +145,6 @@ class ProductServiceTest {
 	}
 	
 	@Test
-	@DisplayName("Given a Product, When the product is saved, Then verify if repository is called and if the id is 1")
-	void putProductById() {
-		given(categoriesConfig.getCategories()).willReturn(Map.of("Juguetes", 20));
-		given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
-		given(modelMapper.map(productDTO, ProductEntity.class)).willReturn(productEntity);
-		
-		service.putProductById(productDTO, 1L);
-		verify(repository).save(any());
-	}
-	
-	@Test
 	@DisplayName("Given a Product with a wrong category, When the product is saved, Then throw an error")
 	void putProductById_returnsCategoryError() {
 		
@@ -172,7 +168,7 @@ class ProductServiceTest {
 		Long id = service.saveProduct(productDTO);
 		
 		verify(repository).save(any());
-		assertThat(1L).isEqualTo(id);
+		assertThat(id).isEqualTo(1L);
 	}
 	
 	@Test
@@ -215,18 +211,6 @@ class ProductServiceTest {
 	@DisplayName("Given a Product, When getting the discount, Then discount has to be 0")
 	void getDiscount() {
 		assertThat(service.getDiscount(productEntity)).isZero();
-	}
-	
-	@Test
-	@DisplayName("given a product id, when delete product by id, then the product is deleted")
-	void deleteProductById() {
-		//given
-		given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
-		//when
-		service.deleteProductById(1L);
-		//then
-		verify(repository).findById(anyLong());
-		verify(repository).deleteById(anyLong());
 	}
 
 	@Test
@@ -309,8 +293,77 @@ class ProductServiceTest {
 		StepVerifier.create(userDeleteMono)
 				.expectError()
 				.verify();
-		
 	}
-	
-	
+
+	@Test
+	@DisplayName("Given an id, When perform the delete request /products/{id} and callcart and calluser flags are disabled, " +
+			"Then verify if the service is called and return a message and product is deleted")
+	void deleteProductById_CallCartDisabledAndCallUserDisabled() {
+		given(featureFlags.isCallCartEnabled()).willReturn(false);
+		given(featureFlags.isCallUserEnabled()).willReturn(false);
+		given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
+
+		assertThat(service.deleteProductById(1L)).isEqualTo("Product with id 1 deleted successfully." +
+				" Feature flag to call CART is DISABLED. Feature flag to call USER is DISABLED.");
+
+		verify(repository).deleteById(anyLong());
+	}
+
+	@Test
+	@DisplayName("Given an id, When perform the delete request /products/{id} and callcart flag is enabled, " +
+			"Then verify call to delete our product and call to delete carts product and product is deleted")
+	void deleteProductById_CallCartEnabled() {
+		given(featureFlags.isCallCartEnabled()).willReturn(true);
+		given(featureFlags.isCallUserEnabled()).willReturn(false);
+		given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
+
+
+		assertThat(service.deleteProductById(1L)).isEqualTo("Product with id " + 1 + " deleted successfully." +
+				" Feature flag to call USER is DISABLED.");
+
+		verify(repository).deleteById(1L);
+	}
+
+	@Test
+	@DisplayName("Given an id, When perform the delete request /products/{id} and calluser flag is enabled, " +
+			"Then verify call to delete our product and call to delete users favorite product and product is deleted")
+	void deleteProductById_CallUserEnabled() {
+		given(featureFlags.isCallCartEnabled()).willReturn(false);
+		given(featureFlags.isCallUserEnabled()).willReturn(true);
+		given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
+
+		assertThat(service.deleteProductById(1L)).isEqualTo("Product with id " + 1 + " deleted successfully." +
+				" Feature flag to call CART is DISABLED.");
+
+		verify(repository).deleteById(1L);
+	}
+
+	@Test
+	@DisplayName("Given any long and a json productEntity, When perform the put request /products/{id} and callCart flag is disabled, " +
+			"Then expect status is created and is equal to productEntity and product is updated.")
+	void putProductById_CallCartDisabled() {
+		given(featureFlags.isCallCartEnabled()).willReturn(false);
+		given(categoriesConfig.getCategories()).willReturn(Map.of("Juguetes", 20));
+		given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
+		given(modelMapper.map(productDTO, ProductEntity.class)).willReturn(productEntity);
+
+		assertThat(service.putProductById(productDTO,1L)).isEqualTo("Product with id " + 1 + " updated successfully." +
+				" Feature flag to call CART is DISABLED.");
+
+		verify(repository).save(any());
+	}
+
+	@Test
+	@DisplayName("Given any long and a json productEntity, When perform the put request /products/{id} and callCart flag is enabled, " +
+			"Then expect status is created ,is equal to productEntity and call to cart service and product is updated.")
+	void putProductById_CallCartEnabled() {
+		given(featureFlags.isCallCartEnabled()).willReturn(true);
+		given(categoriesConfig.getCategories()).willReturn(Map.of("Juguetes", 20));
+		given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
+		given(modelMapper.map(productDTO, ProductEntity.class)).willReturn(productEntity);
+
+		assertThat(service.putProductById(productDTO,1L)).isEqualTo("Product with id " + 1 + " updated successfully.");
+
+		verify(repository).save(any());
+	}
 }

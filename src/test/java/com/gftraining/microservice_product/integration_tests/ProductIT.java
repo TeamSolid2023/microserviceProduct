@@ -29,7 +29,6 @@ import java.util.ArrayList;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -59,7 +58,7 @@ class ProductIT {
     }
 
 
-    static void wireMockServerStop() throws Exception {
+    static void wireMockServerStop() {
         wireMockServer.stop();
     }
 
@@ -135,7 +134,7 @@ class ProductIT {
 
     @Test
     @DisplayName("When retrying a delete call, then return 200 OK,")
-    void deleteProductById_CartCallRetry() throws Exception {
+    void deleteProductById_CartCallRetry() {
         wireMockServerSetPort(8080);
         wireMockServer.stubFor(
                  delete(urlEqualTo("/products/7")).inScenario("testing retires")
@@ -162,7 +161,7 @@ class ProductIT {
     
     @Test
     @DisplayName("When retrying a delete call, then return 204 OK,")
-    void deleteProductById_UserCallRetry() throws Exception {
+    void deleteProductById_UserCallRetry() {
         wireMockServerSetPort(8082);
         wireMockServer.stubFor(
                 delete(urlEqualTo("/favorite/products/7")).inScenario("testing retires")

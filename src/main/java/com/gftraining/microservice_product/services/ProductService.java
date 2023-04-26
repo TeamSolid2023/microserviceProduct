@@ -4,8 +4,8 @@ package com.gftraining.microservice_product.services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftraining.microservice_product.configuration.CategoriesConfig;
+import com.gftraining.microservice_product.configuration.FeatureFlagsConfig;
 import com.gftraining.microservice_product.configuration.ServicesUrl;
-import com.gftraining.microservice_product.model.CartProductDTO;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
@@ -13,9 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
@@ -26,7 +24,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.net.ConnectException;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
@@ -41,15 +38,16 @@ public class ProductService {
 	private CategoriesConfig categoriesConfig;
 	private ModelMapper modelMapper;
 	private ServicesUrl servicesUrl;
-	
+	private FeatureFlagsConfig featureFlags;
 	
 	public ProductService(ProductRepository productRepository, CategoriesConfig categoriesConfig,
-	                      ModelMapper modelMapper, ServicesUrl servicesUrl) {
+	                      ModelMapper modelMapper, ServicesUrl servicesUrl, FeatureFlagsConfig featureFlags) {
 		super();
 		this.productRepository = productRepository;
 		this.categoriesConfig = categoriesConfig;
 		this.modelMapper = modelMapper;
 		this.servicesUrl = servicesUrl;
+		this.featureFlags = featureFlags;
 	}
 	
 	public List<ProductEntity> getAll() {
@@ -88,9 +86,8 @@ public class ProductService {
 				.retrieve()
 				.bodyToMono(Object.class)
 				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
-						.doBeforeRetry(retrySignal -> {
-							log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1);
-						}))
+						.doBeforeRetry(retrySignal ->
+							log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1)))
 				.doOnError(error -> {
 					log.error("Returning error when cart is called");
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -99,12 +96,35 @@ public class ProductService {
 				.filter(response -> !Objects.isNull(response.toString()));
 	}
 	
-	public void deleteProductById(Long id) {
+	public String deleteProductById(Long id) {
+		log.info("Getting products with id " + id + "to be deleted");
 		if (productRepository.findById(id).isEmpty()) {
 			throw new EntityNotFoundException("Id " + id + " not found.");
 		}
-		log.info("Get products with id " + id + "to be deleted");
+		log.info("Deleting products");
 		productRepository.deleteById(id);
+
+		String message = "Product with id " + id + " deleted successfully.";
+
+		log.info("Checking feature flag to call CART status");
+		if (featureFlags.isCallCartEnabled()) {
+			log.info("Feature flag to call CART is ENABLED");
+			deleteCartProducts(id).subscribe(result -> log.info("Delete product from CART result: " + result.toString()));
+		} else {
+			log.info("Feature flag to call CART is DISABLED");
+			message = message + " Feature flag to call CART is DISABLED.";
+		}
+
+		log.info("Checking feature flag to call USER status");
+		if (featureFlags.isCallUserEnabled()) {
+			log.info("Feature flag to call USER is ENABLED");
+			deleteUserProducts(id).subscribe(result -> log.info("Delete product from user result: " + result.toString()));
+		} else {
+			log.info("Feature flag to call USER is DISABLED");
+			message = message + " Feature flag to call USER is DISABLED.";
+		}
+
+		return message;
 	}
 	
 	public ProductEntity getProductById(Long id) {
@@ -125,9 +145,8 @@ public class ProductService {
 				.retrieve()
 				.bodyToMono(Object.class)
 				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
-						.doBeforeRetry(retrySignal -> {
-							log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1);
-						}))
+						.doBeforeRetry(retrySignal ->
+							log.info("Trying connection to cart. Retry count: {}", retrySignal.totalRetries() + 1)))
 				.doOnError(error -> {
 					log.error("Returning error when cart is called");
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -144,9 +163,8 @@ public class ProductService {
 				.retrieve()
 				.bodyToMono(HttpStatus.class)
 				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
-						.doBeforeRetry(retrySignal -> {
-							log.info("Trying connection to user. Retry count: {}", retrySignal.totalRetries() + 1);
-						}))
+						.doBeforeRetry(retrySignal ->
+							log.info("Trying connection to user. Retry count: {}", retrySignal.totalRetries() + 1)))
 				.doOnError(error -> {
 					log.error("Returning error when user is called");
 					throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -186,10 +204,9 @@ public class ProductService {
 		log.info("Created a list with all products");
 		
 		productRepository.saveAll(products);
-		
 	}
 	
-	public void putProductById(ProductDTO productDTO, Long id) {
+	public String putProductById(ProductDTO productDTO, Long id) {
 		if (!categoriesConfig.getCategories().containsKey(productDTO.getCategory()))
 			throw new EntityNotFoundException("Category " + productDTO.getCategory() + " not found. Categories" +
 					" allowed: " + categoriesConfig.getCategories().keySet());
@@ -205,6 +222,19 @@ public class ProductService {
 		log.info("Copied productDTO to a new ProductEntity to update product with id " + id);
 		
 		productRepository.save(product);
+
+		String message = "Product with id " + id + " updated successfully.";
+
+		log.info("Checking feature flag to call CART status");
+		if (featureFlags.isCallCartEnabled()) {
+			log.info("Feature flag to call CART is ENABLED");
+			patchCartProducts(productDTO, id).subscribe(result -> log.info("Update product from CART response: " + result.toString()));
+		} else {
+			log.info("Feature flag to call CART is DISABLED");
+			message = message + " Feature flag to call CART is DISABLED.";
+		}
+
+		return message;
 	}
 	
 	public void updateStock(Integer units, Long id) {
