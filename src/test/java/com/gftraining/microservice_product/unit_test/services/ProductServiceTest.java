@@ -324,7 +324,6 @@ class ProductServiceTest {
 		given(featureFlags.isCallUserEnabled()).willReturn(false);
 		given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
 
-
 		assertThat(service.deleteProductById(1L)).isEqualTo("Product with id " + 1 + " deleted successfully." +
 				" Feature flag to call USER is DISABLED.");
 

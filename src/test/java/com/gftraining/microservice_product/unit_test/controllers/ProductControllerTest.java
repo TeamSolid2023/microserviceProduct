@@ -43,18 +43,11 @@ class ProductControllerTest {
             new ProductEntity(2L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal("40.00"), 100)
     );
     final ProductEntity productEntity = new ProductEntity(1L, "Pelota", "Juguetes", "pelota futbol", new BigDecimal("19.99"), 24);
+
     @Autowired
     private MockMvc mockmvc;
     @MockBean
     private ProductService productService;
-
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     ProductDTO productDTO = new ProductDTO(productEntity.getName(), productEntity.getCategory(), productEntity.getDescription(), productEntity.getPrice(), productEntity.getStock());
 
@@ -86,60 +79,6 @@ class ProductControllerTest {
         mockmvc.perform(get("/products/id/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().json(asJsonString(productEntity)));
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = {false, true})
-    @DisplayName("Given any long and a json productEntity, When perform the put request /products/{id} and callCart flag is disabled, " +
-            "Then expect status is created and is equal to productEntity")
-    void putProductById_CallCartDisabled(boolean flag) throws Exception {
-        given(productService.getProductById(anyLong())).willReturn(productEntity);
-        when(featureFlag.isCallCartEnabled()).thenReturn(flag);
-        when(productService.patchCartProducts(any(),anyLong())).thenReturn(Mono.just("{\"cartsChanged\":1}"));
-
-        mockmvc.perform(put("/products/{id}", 1L).contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(productEntity)))
-                .andExpect(status().isOk());
-
-        assertThat(productService.getProductById(1L)).isEqualTo(productEntity);
-
-        if (flag) verify(productService).patchCartProducts(any(),anyLong());
-    }
-
-    @Test
-    @DisplayName("When calling the service with any Long, Then the product is returned")
-    void updateStock() throws Exception {
-        when(productService.getProductById(anyLong())).thenReturn(productEntity);
-        doNothing().when(productService).updateStock(4, 1L);
-
-        mockmvc.perform(put("/products/updateStock/{id}", 1L)
-                        .param("id", "1").contentType(MediaType.APPLICATION_JSON)
-                        .content("5"))
-                .andExpect(status().isNoContent());
-
-        verify(productService).updateStock(5, 1L);
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = {false, true})
-    @DisplayName("Given an id, When perform the delete request /products/{id} and callcart and calluser flags are disabled, " +
-            "Then verify if the service is called and has no content")
-    void deleteProductById_CallCartDisabledAndCallUserDisabled(boolean flag) throws Exception {
-        when(featureFlag.isCallCartEnabled()).thenReturn(flag);
-        when(featureFlag.isCallUserEnabled()).thenReturn(flag);
-
-        when(productService.deleteCartProducts(anyLong())).thenReturn(Mono.just("{\"cartsChanged\":1}"));
-        when(productService.deleteUserProducts(anyLong())).thenReturn(Mono.just(HttpStatus.NO_CONTENT));
-
-        mockmvc.perform(delete("/products/{id}", 1L))
-                .andExpect(status().isOk());
-
-        verify(productService).deleteProductById(anyLong());
-
-        if(flag) {
-            verify(productService).deleteUserProducts(anyLong());
-            verify(productService).deleteCartProducts(anyLong());
-        }
     }
 
     @Test
@@ -206,14 +145,6 @@ class ProductControllerTest {
         verify(productService).updateStock(5, 1L);
     }
 
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Test
     @DisplayName("Given an id, When perform the delete request /products/{id}, " +
             "Then expect a message")
@@ -224,5 +155,13 @@ class ProductControllerTest {
                 .andExpect(status().isOk());
 
         assertThat(productService.deleteProductById(1L)).isEqualTo("Product with id " + 1 + " deleted successfully.");
+    }
+
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

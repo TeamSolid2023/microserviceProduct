@@ -55,19 +55,6 @@ class ProductIT {
     final ProductDTO productDTO = new ProductDTO("Pelota", "Juguetes","pelota de futbol",new BigDecimal(19.99),24);
     final ProductDTO badProductDTO = new ProductDTO("S", "0","S",new BigDecimal(0),10);
 
-
-    public static void wireMockServerSetPort(int port) {
-        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(port));
-        wireMockServer.start();
-
-        WireMock.configureFor("localhost", port);
-    }
-
-
-    static void wireMockServerStop() {
-        wireMockServer.stop();
-    }
-
     @Test
     @DisplayName("When perform get request /products/getAll, Then is expected to have status of 200, be an ArrayList, be a Json and have size 13")
     void testGetAll() throws Exception {
