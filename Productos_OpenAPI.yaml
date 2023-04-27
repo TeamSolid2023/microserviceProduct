@@ -26,7 +26,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Product'
-              
+
         '404':
           description: product not found
           content:
@@ -49,7 +49,7 @@ paths:
               example:
                 msg: "Error: response failed"
                 error_code: 500
-                
+
   /products/name/{name_product}:
     get:
       tags:
@@ -94,8 +94,8 @@ paths:
               example:
                 msg: "Error: response failed"
                 error_code: 500
-                
-          
+
+
   /products/id/{id_product}:
     get:
       tags:
@@ -139,13 +139,13 @@ paths:
               example:
                 msg: "Error: response failed"
                 error_code: 500
-                
-  /products/{id_product}:
+
+  /products/updateStock/{id_product}:
     put:
       tags:
         - Products
-      summary: update a product
-      description: you can update a product
+      summary: update the stock
+      description: you can update the stock of a product
       operationId: putProduct
       parameters:
         - name: id_product
@@ -157,9 +157,49 @@ paths:
       requestBody:
         description: update an existent product in the store
         content:
-          application/json:
+          text/plain:
             schema:
-              $ref: '#/components/schemas/Product'
+              type: integer
+              example: 0
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '500':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Error'
+              example:
+                msg: "Error: response failed"
+                error_code: 500
+  
+  /products/{id_product}:
+    put:
+      tags:
+        - Products
+      summary: update a product
+      description: you can update a product
+      operationId: putStock
+      parameters:
+        - name: id_product
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: update an existent product in the store
+        content:
+          text/plain:
+            schema:
+              type: string
       responses:
         '200':
           description: Ok
@@ -180,7 +220,7 @@ paths:
                 error_code: 500
     
     delete:
-      tags: 
+      tags:
         - Products
       summary: delete a product
       description: delete an entire product
@@ -250,7 +290,7 @@ paths:
               example:
                 msg: "Error: response failed"
                 error_code: 500
-                
+
   /products/JSON_load:
     post:
       tags:
@@ -258,6 +298,7 @@ paths:
       summary: Here you can load products from a JSON file given a path.
       description: The JSON needs to match the Products schema. The products table will be overwritten by this file content.
       operationId: loadJSONProducts
+      parameters:
         - in: query
           name: path
           schema:
@@ -315,7 +356,7 @@ components:
           required:
             - name
           description: Product category
-          
+
         description:
           type: string
           example: Pelota Adidas Futbol Profesional.
@@ -327,7 +368,7 @@ components:
           type: integer
           format: int64
           example: 48
-   
+
     Error:
       type: object
       properties:

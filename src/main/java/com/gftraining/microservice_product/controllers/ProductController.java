@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping(value = "/products")
 public class ProductController {
 
-    private ProductService productService;
+    private final ProductService productService;
 
     public ProductController(ProductService productService) {
         super();
@@ -31,28 +31,51 @@ public class ProductController {
         return productService.getAll();
     }
 
-    @GetMapping("/id/{id}")
-    public ProductEntity getProductById(@PathVariable Long id){
-        return productService.getProductById(id);
-    }
-
     @GetMapping("/name/{name}")
     public List<ProductEntity> getProductByName(@PathVariable String name) {
         return productService.getProductByName(name);
+    }
+
+    @GetMapping("/id/{id}")
+    public ProductEntity getProductById(@PathVariable Long id) {
+        return productService.getProductById(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> putProductById(@PathVariable Long id, @Valid @RequestBody ProductDTO newProduct) {
+        productService.putProductById(newProduct, id);
+
+        String message = "Product with id " + id + " updated successfully.";
+
+        if (featureFlag.isCallCartEnabled()) {
+            log.info("Feature flag to call CART is ENABLED");
+            productService.patchCartProducts(newProduct, id).subscribe(result -> log.info("Update product from cart response: " + result.toString()));
+        } else {
+            log.info("Feature flag to call CART is DISABLED");
+            message = message + " Feature flag to call CART is DISABLED.";
+        }
+
+        return ResponseHandler.generateResponse(message, HttpStatus.OK, id);
+    }
+
+    @PutMapping("/updateStock/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateStock(@PathVariable Long id, @RequestBody Integer unitsToSubtract) {
+        productService.updateStock(unitsToSubtract, id);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteProductById(@PathVariable Long id) {
         String message = productService.deleteProductById(id);
 
-        return ResponseHandler.generateResponse( message, HttpStatus.OK, id);
+        return ResponseHandler.generateResponse(message, HttpStatus.OK, id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> addProduct(@Valid @RequestBody ProductDTO product){
+    public ResponseEntity<Object> addProduct(@Valid @RequestBody ProductDTO product) {
         Long id = productService.saveProduct(product);
-
+        
         return ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED,id);
     }
 

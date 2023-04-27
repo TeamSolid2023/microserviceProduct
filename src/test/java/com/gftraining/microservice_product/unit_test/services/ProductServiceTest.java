@@ -10,7 +10,6 @@ import com.gftraining.microservice_product.services.ProductService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +28,6 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -37,7 +35,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 	
-	public static MockWebServer mockWebServer;
 	@InjectMocks
 	@Spy
 	ProductService service;
@@ -53,6 +50,8 @@ class ProductServiceTest {
 
 	@Mock
 	FeatureFlagsConfig featureFlags;
+  
+  public static MockWebServer mockWebServer;
 
 	List<ProductEntity> productList = Arrays.asList(
 			new ProductEntity(1L, "Playmobil", "Juguetes", "juguetes de plástico", new BigDecimal(40.00), 100),
@@ -102,7 +101,7 @@ class ProductServiceTest {
 		
 	}
 	
-	@Test()
+	@Test
 	@DisplayName("given a product id, when calling cart api to update product, then returns error 500.")
 	void patchCartProducts_returnSError500() {
 		when(servicesUrl.getCartUrl()).thenReturn("htpp://localhost:" + mockWebServer.getPort());
@@ -247,7 +246,7 @@ class ProductServiceTest {
 		assertThat(request.getMethod()).isEqualTo("DELETE");
 	}
 	
-	@Test()
+	@Test
 	@DisplayName("given a product id, when calling cart api to delete product, then returns error 500.")
 	void deleteCartProducts_returnSError500() {
 		Long productId = 7L;
@@ -285,7 +284,7 @@ class ProductServiceTest {
 		assertThat(request.getMethod()).isEqualTo("DELETE");
 	}
 	
-	@Test()
+	@Test
 	@DisplayName("given a product id, when calling user api to delete product, then returns error 500.")
 	void deleteUserProducts_returnsError500() {
 		Long productId = 7L;

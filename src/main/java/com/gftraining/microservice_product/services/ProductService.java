@@ -26,7 +26,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.Duration;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,11 +34,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class ProductService {
-	private ProductRepository productRepository;
-	private CategoriesConfig categoriesConfig;
-	private ModelMapper modelMapper;
-	private ServicesUrl servicesUrl;
-	private FeatureFlagsConfig featureFlags;
+
+  private final ProductRepository productRepository;
+  private final CategoriesConfig categoriesConfig;
+  private final ModelMapper modelMapper;
+  private final ServicesUrl servicesUrl;
+	private final FeatureFlagsConfig featureFlags;
 	
 	public ProductService(ProductRepository productRepository, CategoriesConfig categoriesConfig,
 	                      ModelMapper modelMapper, ServicesUrl servicesUrl, FeatureFlagsConfig featureFlags) {
