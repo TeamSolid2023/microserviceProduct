@@ -27,8 +27,9 @@ import java.util.ArrayList;
 import static com.gftraining.microservice_product.integration_tests.ITConfig.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.isA;
+
+import static org.hamcrest.Matchers.*;
+
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -42,15 +43,30 @@ import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInC
 @ActiveProfiles("test")
 @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
 class ProductIT {
-    private static WireMockServer wireMockServer;
 
     @Autowired
     MockMvc mockmvc;
+    
     @Autowired
     ProductService service;
-    
-    final ProductDTO productDTO = new ProductDTO("Pelota", "Juguetes", "pelota de futbol", new BigDecimal("19.99"), 24);
-    final ProductDTO badProductDTO = new ProductDTO("S", "0", "S", new BigDecimal(0), 10);
+
+    private static WireMockServer wireMockServer;
+
+    final ProductDTO productDTO = new ProductDTO("Pelota", "Juguetes","pelota de futbol",new BigDecimal(19.99),24);
+    final ProductDTO badProductDTO = new ProductDTO("S", "0","S",new BigDecimal(0),10);
+
+
+    public static void wireMockServerSetPort(int port) {
+        wireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(port));
+        wireMockServer.start();
+
+        WireMock.configureFor("localhost", port);
+    }
+
+
+    static void wireMockServerStop() {
+        wireMockServer.stop();
+    }
 
     @Test
     @DisplayName("When perform get request /products/getAll, Then is expected to have status of 200, be an ArrayList, be a Json and have size 13")

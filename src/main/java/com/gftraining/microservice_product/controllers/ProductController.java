@@ -1,7 +1,5 @@
 package com.gftraining.microservice_product.controllers;
 
-
-import com.gftraining.microservice_product.configuration.FeatureFlagsConfig;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.model.ResponseHandler;
@@ -21,12 +19,10 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
-    private final FeatureFlagsConfig featureFlag;
 
-    public ProductController(ProductService productService, FeatureFlagsConfig microserviceStatus) {
+    public ProductController(ProductService productService) {
         super();
         this.productService = productService;
-        this.featureFlag = microserviceStatus;
     }
 
     @GetMapping("/getAll")
@@ -69,27 +65,8 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Object> deleteProductById(@PathVariable Long id) {
-        productService.deleteProductById(id);
-
-        String message = "Product with id " + id + " deleted successfully.";
-
-        if (featureFlag.isCallCartEnabled()) {
-            log.info("Feature flag to call CART is ENABLED");
-            productService.deleteCartProducts(id).subscribe(result -> log.info("Respuesta delete product from carrito: " + result.toString()));
-        } else {
-            log.info("Feature flag to call CART is DISABLED");
-            message = message + " Feature flag to call CART is DISABLED.";
-        }
-
-        if (featureFlag.isCallUserEnabled()) {
-            log.info("Feature flag to call USER is ENABLED");
-            productService.deleteUserProducts(id).subscribe(result -> log.info("Respuesta delete product from user: " + result.toString()));
-        } else {
-            log.info("Feature flag to call USER is DISABLED");
-            message = message + " Feature flag to call USER is DISABLED.";
-        }
+        String message = productService.deleteProductById(id);
 
         return ResponseHandler.generateResponse(message, HttpStatus.OK, id);
     }
@@ -98,12 +75,26 @@ public class ProductController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> addProduct(@Valid @RequestBody ProductDTO product) {
         Long id = productService.saveProduct(product);
-        return ResponseHandler.generateResponse("DDBB updated", HttpStatus.CREATED, id);
+        
+        return ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED,id);
     }
 
     @PostMapping("/JSON_load")
     @ResponseStatus(HttpStatus.CREATED)
     public void updateProductsFromJson(@RequestParam("path") String path) throws IOException {
-        productService.updateProductsFromJson(path);
+            productService.updateProductsFromJson(path);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> putProductById(@PathVariable Long id, @Valid @RequestBody ProductDTO newProduct) {
+        String message = productService.putProductById(newProduct, id);
+
+        return ResponseHandler.generateResponse(message,HttpStatus.OK,id);
+    }
+
+    @PutMapping("/updateStock/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateStock(@PathVariable Long id, @RequestBody Integer unitsToSubtract) {
+        productService.updateStock(unitsToSubtract, id);
     }
 }

@@ -14,10 +14,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -49,8 +47,6 @@ class ProductControllerTest {
     private MockMvc mockmvc;
     @MockBean
     private ProductService productService;
-    @MockBean
-    private FeatureFlagsConfig featureFlag;
 
     public static String asJsonString(final Object obj) {
         try {
@@ -59,6 +55,8 @@ class ProductControllerTest {
             throw new RuntimeException(e);
         }
     }
+
+    ProductDTO productDTO = new ProductDTO(productEntity.getName(), productEntity.getCategory(), productEntity.getDescription(), productEntity.getPrice(), productEntity.getStock());
 
     @Test
     @DisplayName("Given a call in ProductService getAll, When perform the get request /products/getAll, Then return a list of Products")
@@ -179,5 +177,52 @@ class ProductControllerTest {
                 .andExpect(status().isCreated());
 
         verify(productService).updateProductsFromJson("C:\\Files\\data_test.json");
+    }
+
+    @Test
+    @DisplayName("Given any long and a json productEntity, When perform the put request /products/{id}, " +
+            "Then expect return a message")
+    void putProductById() throws Exception {
+        when(productService.putProductById(productDTO, 1L)).thenReturn("Product with id " + 1 + " updated successfully.");
+
+        mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(productEntity)))
+                .andExpect(status().isOk());
+
+        assertThat(productService.putProductById(productDTO, 1L)).isEqualTo("Product with id " + 1 + " updated successfully.");
+    }
+
+    @Test
+    @DisplayName("When calling the service with any Long, Then the product is returned")
+    void updateStock() throws Exception {
+        when(productService.getProductById(anyLong())).thenReturn(productEntity);
+        doNothing().when(productService).updateStock(4, 1L);
+
+        mockmvc.perform(put("/products/updateStock/{id}",1L)
+                .param("id", "1").contentType(MediaType.APPLICATION_JSON)
+                        .content("5"))
+                        .andExpect(status().isNoContent());
+
+        verify(productService).updateStock(5, 1L);
+    }
+
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    @DisplayName("Given an id, When perform the delete request /products/{id}, " +
+            "Then expect a message")
+    void deleteProductById() throws Exception {
+        when(productService.deleteProductById(1L)).thenReturn("Product with id " + 1 + " deleted successfully.");
+
+        mockmvc.perform(delete("/products/{id}",1L))
+                .andExpect(status().isOk());
+
+        assertThat(productService.deleteProductById(1L)).isEqualTo("Product with id " + 1 + " deleted successfully.");
     }
 }
