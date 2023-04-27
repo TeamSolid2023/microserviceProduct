@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,6 +29,7 @@ import static com.gftraining.microservice_product.integration_tests.ITConfig.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.stubbing.Scenario.STARTED;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
@@ -203,9 +205,10 @@ class ProductIT {
                         .willReturn(aResponse().withStatus(204))
         );
 
-        Mono<HttpStatus> usersMono = service.deleteUserProducts(7L);
+        Mono<ResponseEntity<Void>> usersMono = service.deleteUserProducts(7L);
 
         StepVerifier.create(usersMono)
+                .assertNext(response -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT) )
                 .expectComplete()
                 .verify();
 
