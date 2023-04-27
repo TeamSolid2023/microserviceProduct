@@ -12,6 +12,7 @@ import com.gftraining.microservice_product.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -27,7 +28,6 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -100,11 +100,11 @@ public class ProductService {
 	}
 	
 	public String deleteProductById(Long id) {
-		log.info("Getting products with id " + id + "to be deleted");
+		log.info("Getting product with id " + id + "to be deleted");
 		if (productRepository.findById(id).isEmpty()) {
 			throw new EntityNotFoundException("Id " + id + " not found.");
 		}
-		log.info("Deleting products");
+		log.info("Deleting product");
 		productRepository.deleteById(id);
 
 		String message = "Product with id " + id + " deleted successfully.";
@@ -115,7 +115,7 @@ public class ProductService {
 			deleteCartProducts(id).subscribe(result -> log.info("Delete product from CART result: " + result.toString()));
 		} else {
 			log.info("Feature flag to call CART is DISABLED");
-			message = message + " Feature flag to call CART is DISABLED.";
+			message += " Feature flag to call CART is DISABLED.";
 		}
 
 		log.info("Checking feature flag to call USER status");
@@ -124,7 +124,7 @@ public class ProductService {
 			deleteUserProducts(id).subscribe(result -> log.info("Delete product from user result: " + result.toString()));
 		} else {
 			log.info("Feature flag to call USER is DISABLED");
-			message = message + " Feature flag to call USER is DISABLED.";
+			message += " Feature flag to call USER is DISABLED.";
 		}
 
 		return message;
@@ -157,13 +157,13 @@ public class ProductService {
 				});
 	}
 	
-	public Mono<HttpStatus> deleteUserProducts(Long id) {
+	public Mono<ResponseEntity<Void>> deleteUserProducts(Long id) {
 		log.info("Starting asynchronous call to user");
 		return WebClient.create(servicesUrl.getUserUrl())
 				.delete()
 				.uri("/favorite/product/{id}", id)
 				.retrieve()
-				.bodyToMono(HttpStatus.class)
+				.toBodilessEntity()
 				.retryWhen(Retry.backoff(3, Duration.ofSeconds(1))
 						.doBeforeRetry(retrySignal ->
 								log.info("Trying connection to user. Retry count: {}", retrySignal.totalRetries() + 1)))

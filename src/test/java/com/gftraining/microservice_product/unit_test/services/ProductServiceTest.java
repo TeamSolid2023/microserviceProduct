@@ -21,6 +21,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -276,9 +277,10 @@ class ProductServiceTest {
 		mockWebServer.enqueue(new MockResponse()
 				.setResponseCode(204));
 		
-		Mono<HttpStatus> userDeleteMono = service.deleteUserProducts(productId);
+		Mono<ResponseEntity<Void>> userDeleteMono = service.deleteUserProducts(productId);
 		
 		StepVerifier.create(userDeleteMono)
+				.assertNext(response -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT) )
 				.expectComplete()
 				.verify();
 		
@@ -297,7 +299,7 @@ class ProductServiceTest {
 		mockWebServer.enqueue(new MockResponse().setResponseCode(500));
 		mockWebServer.enqueue(new MockResponse().setResponseCode(500));
 		
-		Mono<HttpStatus> userDeleteMono = service.deleteUserProducts(productId);
+		Mono<ResponseEntity<Void>> userDeleteMono = service.deleteUserProducts(productId);
 		
 		StepVerifier.create(userDeleteMono)
 				.expectError()
