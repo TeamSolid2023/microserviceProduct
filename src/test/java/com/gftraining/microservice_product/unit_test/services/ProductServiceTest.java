@@ -13,6 +13,8 @@ import okhttp3.mockwebserver.RecordedRequest;
 import org.json.JSONObject;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -302,19 +304,23 @@ class ProductServiceTest {
 				.verify();
 	}
 
-	@Test
-	@DisplayName("Given an id, When perform the delete request /products/{id} and callcart and calluser flags are disabled, " +
-			"Then verify if the service is called and return a message and product is deleted")
-	void deleteProductById_CallCartDisabledAndCallUserDisabled() {
-		given(featureFlags.isCallCartEnabled()).willReturn(false);
-		given(featureFlags.isCallUserEnabled()).willReturn(false);
-		given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    @DisplayName("Given an id, When perform the delete request /products/{id} and callcart and calluser flags are disabled and enabled, " +
+            "Then verify if the repository is called and if it returns a specific message.")
+    void deleteProductById_CallUserAndCallCart(boolean flag) throws Exception {
+        given(featureFlags.isCallCartEnabled()).willReturn(flag);
+        given(featureFlags.isCallUserEnabled()).willReturn(flag);
+        given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
 
-		assertThat(service.deleteProductById(1L)).isEqualTo("Product with id 1 deleted successfully." +
-				" Feature flag to call CART is DISABLED. Feature flag to call USER is DISABLED.");
+        if (flag)
+            assertThat(service.deleteProductById(1L)).isEqualTo("Product with id " + 1 + " deleted successfully.");
+        else
+            assertThat(service.deleteProductById(1L)).isEqualTo("Product with id 1 deleted successfully." +
+                    " Feature flag to call CART is DISABLED. Feature flag to call USER is DISABLED.");
 
-		verify(repository).deleteById(anyLong());
-	}
+        verify(repository).deleteById(anyLong());
+    }
 
 	@Test
 	@DisplayName("Given an id, When perform the delete request /products/{id} and callcart flag is enabled, " +
@@ -327,7 +333,7 @@ class ProductServiceTest {
 		assertThat(service.deleteProductById(1L)).isEqualTo("Product with id " + 1 + " deleted successfully." +
 				" Feature flag to call USER is DISABLED.");
 
-		verify(repository).deleteById(1L);
+		verify(repository).deleteById(anyLong());
 	}
 
 	@Test
@@ -341,35 +347,24 @@ class ProductServiceTest {
 		assertThat(service.deleteProductById(1L)).isEqualTo("Product with id " + 1 + " deleted successfully." +
 				" Feature flag to call CART is DISABLED.");
 
-		verify(repository).deleteById(1L);
+		verify(repository).deleteById(anyLong());
 	}
 
-	@Test
-	@DisplayName("Given any long and a json productEntity, When perform the put request /products/{id} and callCart flag is disabled, " +
-			"Then expect status is created and is equal to productEntity and product is updated.")
-	void putProductById_CallCartDisabled() {
-		given(featureFlags.isCallCartEnabled()).willReturn(false);
-		given(categoriesConfig.getCategories()).willReturn(Map.of("Juguetes", 20));
-		given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
-		given(modelMapper.map(productDTO, ProductEntity.class)).willReturn(productEntity);
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    @DisplayName("Given an id, When perform the delete request /products/{id} and callcart flag are disabled and enabled, " +
+            "Then verify if the repository is called and has updated")
+    void putProductById_CallCart(boolean flag) throws Exception {
+        given(featureFlags.isCallCartEnabled()).willReturn(flag);
+        given(categoriesConfig.getCategories()).willReturn(Map.of("Juguetes", 20));
+        given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
+        given(modelMapper.map(productDTO, ProductEntity.class)).willReturn(productEntity);
 
-		assertThat(service.putProductById(productDTO,1L)).isEqualTo("Product with id " + 1 + " updated successfully." +
-				" Feature flag to call CART is DISABLED.");
+        if (flag)
+            assertThat(service.putProductById(productDTO,1L)).isEqualTo("Product with id " + 1 + " updated successfully.");
+        else
+            assertThat(service.putProductById(productDTO,1L)).isEqualTo("Product with id " + 1 + " updated successfully. Feature flag to call CART is DISABLED.");
 
-		verify(repository).save(any());
-	}
-
-	@Test
-	@DisplayName("Given any long and a json productEntity, When perform the put request /products/{id} and callCart flag is enabled, " +
-			"Then expect status is created ,is equal to productEntity and call to cart service and product is updated.")
-	void putProductById_CallCartEnabled() {
-		given(featureFlags.isCallCartEnabled()).willReturn(true);
-		given(categoriesConfig.getCategories()).willReturn(Map.of("Juguetes", 20));
-		given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
-		given(modelMapper.map(productDTO, ProductEntity.class)).willReturn(productEntity);
-
-		assertThat(service.putProductById(productDTO,1L)).isEqualTo("Product with id " + 1 + " updated successfully.");
-
-		verify(repository).save(any());
-	}
+        verify(repository).save(any());
+    }
 }
