@@ -7,7 +7,6 @@ import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
 import com.gftraining.microservice_product.repositories.ProductRepository;
 import com.gftraining.microservice_product.services.ProductService;
-import liquibase.repackaged.org.apache.commons.collections4.MultiValuedMap;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
