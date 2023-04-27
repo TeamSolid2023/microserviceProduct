@@ -41,23 +41,6 @@ public class ProductController {
         return productService.getProductById(id);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Object> putProductById(@PathVariable Long id, @Valid @RequestBody ProductDTO newProduct) {
-        productService.putProductById(newProduct, id);
-
-        String message = "Product with id " + id + " updated successfully.";
-
-        if (featureFlag.isCallCartEnabled()) {
-            log.info("Feature flag to call CART is ENABLED");
-            productService.patchCartProducts(newProduct, id).subscribe(result -> log.info("Update product from cart response: " + result.toString()));
-        } else {
-            log.info("Feature flag to call CART is DISABLED");
-            message = message + " Feature flag to call CART is DISABLED.";
-        }
-
-        return ResponseHandler.generateResponse(message, HttpStatus.OK, id);
-    }
-
     @PutMapping("/updateStock/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateStock(@PathVariable Long id, @RequestBody Integer unitsToSubtract) {
@@ -90,11 +73,5 @@ public class ProductController {
         String message = productService.putProductById(newProduct, id);
 
         return ResponseHandler.generateResponse(message,HttpStatus.OK,id);
-    }
-
-    @PutMapping("/updateStock/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateStock(@PathVariable Long id, @RequestBody Integer unitsToSubtract) {
-        productService.updateStock(unitsToSubtract, id);
     }
 }
