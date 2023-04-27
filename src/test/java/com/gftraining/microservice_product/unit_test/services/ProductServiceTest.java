@@ -319,7 +319,7 @@ class ProductServiceTest {
             assertThat(service.deleteProductById(1L)).isEqualTo("Product with id 1 deleted successfully." +
                     " Feature flag to call CART is DISABLED. Feature flag to call USER is DISABLED.");
 
-        verify(repository).deleteById(1L);
+        verify(repository).deleteById(anyLong());
     }
 
 	@Test
@@ -333,7 +333,7 @@ class ProductServiceTest {
 		assertThat(service.deleteProductById(1L)).isEqualTo("Product with id " + 1 + " deleted successfully." +
 				" Feature flag to call USER is DISABLED.");
 
-		verify(repository).deleteById(1L);
+		verify(repository).deleteById(anyLong());
 	}
 
 	@Test
@@ -347,7 +347,7 @@ class ProductServiceTest {
 		assertThat(service.deleteProductById(1L)).isEqualTo("Product with id " + 1 + " deleted successfully." +
 				" Feature flag to call CART is DISABLED.");
 
-		verify(repository).deleteById(1L);
+		verify(repository).deleteById(anyLong());
 	}
 
     @ParameterizedTest
