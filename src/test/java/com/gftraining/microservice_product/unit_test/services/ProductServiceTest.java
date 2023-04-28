@@ -5,6 +5,7 @@ import com.gftraining.microservice_product.configuration.FeatureFlagsConfig;
 import com.gftraining.microservice_product.configuration.ServicesUrl;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
+import com.gftraining.microservice_product.model.ResponseHandler;
 import com.gftraining.microservice_product.repositories.ProductRepository;
 import com.gftraining.microservice_product.services.ProductService;
 import okhttp3.mockwebserver.MockResponse;
@@ -167,10 +168,11 @@ class ProductServiceTest {
 		given(categoriesConfig.getCategories()).willReturn(Map.of("Juguetes", 20));
 		given(modelMapper.map(productDTO, ProductEntity.class)).willReturn(productEntity);
 		given(repository.save(any())).willReturn(productEntity);
-		Long id = service.saveProduct(productDTO);
-		
+
+		ResponseEntity result = service.saveProduct(productDTO);
+
 		verify(repository).save(any());
-		assertThat(id).isEqualTo(1L);
+		assertThat(result).isEqualTo(ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED, productEntity.getId()));
 	}
 	
 	@Test
@@ -245,6 +247,7 @@ class ProductServiceTest {
 		StepVerifier.create(cartsMono)
 				.expectNext(cartsChanged)
 				.verifyComplete();
+
 		RecordedRequest request = mockWebServer.takeRequest();
 		assertThat(request.getMethod()).isEqualTo("DELETE");
 	}
@@ -315,11 +318,14 @@ class ProductServiceTest {
         given(featureFlags.isCallUserEnabled()).willReturn(flag);
         given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
 
+		ResponseEntity<Object> resultTrue = ResponseHandler.generateResponse("Product with id " + 1 + " deleted successfully.", HttpStatus.OK, 1L);
+		ResponseEntity<Object> resultFalse = ResponseHandler.generateResponse("Product with id 1 deleted successfully." +
+				" Feature flag to call CART is DISABLED. Feature flag to call USER is DISABLED.", HttpStatus.OK, 1L);
+
         if (flag)
-            assertThat(service.deleteProductById(1L)).isEqualTo("Product with id " + 1 + " deleted successfully.");
+            assertThat(service.deleteProductById(1L)).isEqualTo(resultTrue);
         else
-            assertThat(service.deleteProductById(1L)).isEqualTo("Product with id 1 deleted successfully." +
-                    " Feature flag to call CART is DISABLED. Feature flag to call USER is DISABLED.");
+            assertThat(service.deleteProductById(1L)).isEqualTo(resultFalse);
 
         verify(repository).deleteById(anyLong());
     }
@@ -332,8 +338,10 @@ class ProductServiceTest {
 		given(featureFlags.isCallUserEnabled()).willReturn(false);
 		given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
 
-		assertThat(service.deleteProductById(1L)).isEqualTo("Product with id " + 1 + " deleted successfully." +
-				" Feature flag to call USER is DISABLED.");
+		ResponseEntity<Object> result = ResponseHandler.generateResponse("Product with id " + 1 + " deleted successfully." +
+				" Feature flag to call USER is DISABLED.", HttpStatus.OK, 1L);
+
+		assertThat(service.deleteProductById(1L)).isEqualTo(result);
 
 		verify(repository).deleteById(anyLong());
 	}
@@ -346,8 +354,10 @@ class ProductServiceTest {
 		given(featureFlags.isCallUserEnabled()).willReturn(true);
 		given(repository.findById(anyLong())).willReturn(Optional.of(productEntity));
 
-		assertThat(service.deleteProductById(1L)).isEqualTo("Product with id " + 1 + " deleted successfully." +
-				" Feature flag to call CART is DISABLED.");
+		ResponseEntity<Object> result = ResponseHandler.generateResponse("Product with id " + 1 + " deleted successfully." +
+				" Feature flag to call CART is DISABLED.", HttpStatus.OK, 1L);
+
+		assertThat(service.deleteProductById(1L)).isEqualTo(result);
 
 		verify(repository).deleteById(anyLong());
 	}
@@ -363,9 +373,11 @@ class ProductServiceTest {
         given(modelMapper.map(productDTO, ProductEntity.class)).willReturn(productEntity);
 
         if (flag)
-            assertThat(service.putProductById(productDTO,1L)).isEqualTo("Product with id " + 1 + " updated successfully.");
+            assertThat(service.putProductById(productDTO,1L))
+					.isEqualTo(ResponseHandler.generateResponse("Product with id " + 1 + " updated successfully.",HttpStatus.OK,1L));
         else
-            assertThat(service.putProductById(productDTO,1L)).isEqualTo("Product with id " + 1 + " updated successfully. Feature flag to call CART is DISABLED.");
+            assertThat(service.putProductById(productDTO,1L))
+					.isEqualTo(ResponseHandler.generateResponse("Product with id 1 updated successfully. Feature flag to call CART is DISABLED.",HttpStatus.OK,1L));
 
         verify(repository).save(any());
     }

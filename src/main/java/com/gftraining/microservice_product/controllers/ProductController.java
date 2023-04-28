@@ -2,7 +2,6 @@ package com.gftraining.microservice_product.controllers;
 
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
-import com.gftraining.microservice_product.model.ResponseHandler;
 import com.gftraining.microservice_product.services.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,7 +25,6 @@ public class ProductController {
     }
 
     @GetMapping("/getAll")
-    @ResponseStatus(HttpStatus.OK)
     public List<ProductEntity> getAll() {
         return productService.getAll();
     }
@@ -49,17 +47,13 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteProductById(@PathVariable Long id) {
-        String message = productService.deleteProductById(id);
-
-        return ResponseHandler.generateResponse(message, HttpStatus.OK, id);
+        return productService.deleteProductById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> addProduct(@Valid @RequestBody ProductDTO product) {
-        Long id = productService.saveProduct(product);
-        
-        return ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED,id);
+        return productService.saveProduct(product);
     }
 
     @PostMapping("/JSON_load")
@@ -70,8 +64,6 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> putProductById(@PathVariable Long id, @Valid @RequestBody ProductDTO newProduct) {
-        String message = productService.putProductById(newProduct, id);
-
-        return ResponseHandler.generateResponse(message,HttpStatus.OK,id);
+        return productService.putProductById(newProduct, id);
     }
 }
