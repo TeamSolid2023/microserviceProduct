@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Sql(scripts = "/data-test.sql", executionPhase = BEFORE_TEST_METHOD)
-public class ProductE2E {
+public class E2ETestCase {
 
     @Autowired
     private MockMvc mockmvc;
