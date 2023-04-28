@@ -6,6 +6,7 @@ import com.gftraining.microservice_product.configuration.FeatureFlagsConfig;
 import com.gftraining.microservice_product.controllers.ProductController;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
+import com.gftraining.microservice_product.model.ResponseHandler;
 import com.gftraining.microservice_product.services.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -84,7 +87,7 @@ class ProductControllerTest {
     @Test
     @DisplayName("Given a Product, When calling service to add a new Product, Then the Product is created and is a Json")
     void addProduct() throws Exception {
-        given(productService.saveProduct(any(ProductDTO.class))).willReturn(productEntity.getId());
+        given(productService.saveProduct(any(ProductDTO.class))).willReturn(ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED, productEntity.getId()));
 
         mockmvc.perform(post("/products")
                         .content(asJsonString(productEntity))
@@ -98,7 +101,7 @@ class ProductControllerTest {
             "Then price constraint greater than zero is thrown and catch block is called and returns response error")
     void addProduct_ReturnBadRequest() throws Exception {
         ProductEntity productPriceZero = new ProductEntity(1L, "Pelota", "Juguetes", "pelota futbol", new BigDecimal(0), 24);
-        given(productService.saveProduct(any(ProductDTO.class))).willReturn(productEntity.getId());
+        given(productService.saveProduct(any(ProductDTO.class))).willReturn(ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED, productEntity.getId()));
 
         mockmvc.perform(post("/products")
                         .content(asJsonString(productPriceZero))
@@ -122,13 +125,15 @@ class ProductControllerTest {
     @DisplayName("Given any long and a json productEntity, When perform the put request /products/{id}, " +
             "Then expect return a message")
     void putProductById() throws Exception {
-        when(productService.putProductById(productDTO, 1L)).thenReturn("Product with id " + 1 + " updated successfully.");
+        when(productService.putProductById(productDTO, 1L))
+                .thenReturn(ResponseHandler.generateResponse("Product with id " + 1 + " updated successfully.",HttpStatus.OK,1L));
 
         mockmvc.perform(put("/products/{id}",1L).contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(productEntity)))
                 .andExpect(status().isOk());
 
-        assertThat(productService.putProductById(productDTO, 1L)).isEqualTo("Product with id " + 1 + " updated successfully.");
+        assertThat(productService.putProductById(productDTO, 1L))
+                .isEqualTo(ResponseHandler.generateResponse("Product with id " + 1 + " updated successfully.",HttpStatus.OK,1L));
     }
 
     @Test
@@ -149,12 +154,15 @@ class ProductControllerTest {
     @DisplayName("Given an id, When perform the delete request /products/{id}, " +
             "Then expect a message")
     void deleteProductById() throws Exception {
-        when(productService.deleteProductById(1L)).thenReturn("Product with id " + 1 + " deleted successfully.");
+
+        ResponseEntity<Object> result = ResponseHandler.generateResponse("Product with id " + 1 + " deleted successfully.", HttpStatus.OK, 1L);
+
+        when(productService.deleteProductById(1L)).thenReturn(result);
 
         mockmvc.perform(delete("/products/{id}",1L))
                 .andExpect(status().isOk());
 
-        assertThat(productService.deleteProductById(1L)).isEqualTo("Product with id " + 1 + " deleted successfully.");
+        assertThat(productService.deleteProductById(1L)).isEqualTo(result);
     }
 
     public static String asJsonString(final Object obj) {

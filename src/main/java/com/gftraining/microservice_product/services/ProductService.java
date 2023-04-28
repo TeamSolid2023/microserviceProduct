@@ -8,6 +8,7 @@ import com.gftraining.microservice_product.configuration.ServicesUrl;
 import com.gftraining.microservice_product.model.CartProductDTO;
 import com.gftraining.microservice_product.model.ProductDTO;
 import com.gftraining.microservice_product.model.ProductEntity;
+import com.gftraining.microservice_product.model.ResponseHandler;
 import com.gftraining.microservice_product.repositories.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -99,7 +100,7 @@ public class ProductService {
 				});
 	}
 	
-	public String deleteProductById(Long id) {
+	public ResponseEntity<Object> deleteProductById(Long id) {
 		log.info("Getting product with id " + id + "to be deleted");
 		if (productRepository.findById(id).isEmpty()) {
 			throw new EntityNotFoundException("Id " + id + " not found.");
@@ -127,7 +128,7 @@ public class ProductService {
 			message += " Feature flag to call USER is DISABLED.";
 		}
 
-		return message;
+		return ResponseHandler.generateResponse(message, HttpStatus.OK, id);
 	}
 	
 	public ProductEntity getProductById(Long id) {
@@ -183,7 +184,7 @@ public class ProductService {
 		return addFinalPriceToProductsList(products);
 	}
 	
-	public Long saveProduct(ProductDTO productDTO) {
+	public ResponseEntity<Object> saveProduct(ProductDTO productDTO) {
 		if (!categoriesConfig.getCategories().containsKey(productDTO.getCategory()))
 			throw new EntityNotFoundException("Category " + productDTO.getCategory() + " not found. Categories" +
 					" allowed: " + categoriesConfig.getCategories().keySet());
@@ -192,7 +193,7 @@ public class ProductService {
 		ProductEntity product = modelMapper.map(productDTO, ProductEntity.class);
 		log.info("Copied productDTO to a new ProductEntity to add as new product");
 		
-		return productRepository.save(product).getId();
+		return ResponseHandler.generateResponse("DDBB updated",HttpStatus.CREATED, productRepository.save(product).getId());
 	}
 	
 	public void updateProductsFromJson(String path) throws IOException {
@@ -207,7 +208,7 @@ public class ProductService {
 		productRepository.saveAll(products);
 	}
 	
-	public String putProductById(ProductDTO productDTO, Long id) {
+	public ResponseEntity<Object> putProductById(ProductDTO productDTO, Long id) {
 		if (!categoriesConfig.getCategories().containsKey(productDTO.getCategory()))
 			throw new EntityNotFoundException("Category " + productDTO.getCategory() + " not found. Categories" +
 					" allowed: " + categoriesConfig.getCategories().keySet());
@@ -235,7 +236,7 @@ public class ProductService {
 			message = message + " Feature flag to call CART is DISABLED.";
 		}
 
-		return message;
+		return ResponseHandler.generateResponse(message,HttpStatus.OK,id);
 	}
 	
 	public void updateStock(Integer units, Long id) {
