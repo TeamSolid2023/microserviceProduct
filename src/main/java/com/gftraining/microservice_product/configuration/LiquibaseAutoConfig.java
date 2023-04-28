@@ -10,14 +10,13 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.context.annotation.Configuration;
 
 
-
 @Configuration
-@ConditionalOnClass(value={liquibase.integration.spring.SpringLiquibase.class,liquibase.change.DatabaseChange.class})
-@ConditionalOnBean(value=javax.sql.DataSource.class)
-@ConditionalOnProperty(prefix="spring.liquibase",
-        name="enabled",
-        matchIfMissing=true)
-@AutoConfigureAfter(value={DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+@ConditionalOnClass(value = {liquibase.integration.spring.SpringLiquibase.class, liquibase.change.DatabaseChange.class})
+@ConditionalOnBean(value = javax.sql.DataSource.class)
+@ConditionalOnProperty(prefix = "spring.liquibase",
+        name = "enabled",
+        matchIfMissing = true)
+@AutoConfigureAfter(value = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 public class LiquibaseAutoConfig {
 
 

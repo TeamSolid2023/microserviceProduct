@@ -26,7 +26,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Product'
-              
+
         '404':
           description: product not found
           content:
@@ -49,7 +49,7 @@ paths:
               example:
                 msg: "Error: response failed"
                 error_code: 500
-                
+
   /products/name/{name_product}:
     get:
       tags:
@@ -94,8 +94,8 @@ paths:
               example:
                 msg: "Error: response failed"
                 error_code: 500
-                
-          
+
+
   /products/id/{id_product}:
     get:
       tags:
@@ -139,7 +139,7 @@ paths:
               example:
                 msg: "Error: response failed"
                 error_code: 500
-                
+
   /products/updateStock/{id_product}:
     put:
       tags:
@@ -220,7 +220,7 @@ paths:
                 error_code: 500
     
     delete:
-      tags: 
+      tags:
         - Products
       summary: delete a product
       description: delete an entire product
@@ -290,7 +290,7 @@ paths:
               example:
                 msg: "Error: response failed"
                 error_code: 500
-                
+
   /products/JSON_load:
     post:
       tags:
@@ -356,7 +356,7 @@ components:
           required:
             - name
           description: Product category
-          
+
         description:
           type: string
           example: Pelota Adidas Futbol Profesional.
@@ -368,7 +368,7 @@ components:
           type: integer
           format: int64
           example: 48
-   
+
     Error:
       type: object
       properties:

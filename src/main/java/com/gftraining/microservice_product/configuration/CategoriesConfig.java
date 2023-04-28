@@ -8,7 +8,7 @@ import java.util.Map;
 
 @Data
 @Configuration
-@ConfigurationProperties(prefix="static-table")
+@ConfigurationProperties(prefix = "static-table")
 public class CategoriesConfig {
     private Map<String, Integer> categories;
 }
